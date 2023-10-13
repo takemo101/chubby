@@ -4,9 +4,16 @@ namespace Takemo101\Chubby;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use DI\DependencyException;
 use DI\FactoryInterface;
+use DI\NotFoundException;
+use Invoker\Exception\InvocationException;
+use Invoker\Exception\NotCallableException;
+use Invoker\Exception\NotEnoughParametersException;
 use Invoker\InvokerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Bootstrap\Provider\EnvironmentProvider;
@@ -56,7 +63,7 @@ final class Application implements
     private Bootstrap $bootstrap;
 
     /**
-     * @var ContainerBuilder
+     * @var ContainerBuilder<Container>
      */
     private ContainerBuilder $builder;
 
@@ -73,7 +80,7 @@ final class Application implements
     /**
      * constructor
      *
-     * @param ApplicationPath $path
+     * @param ApplicationOption $option
      */
     public function __construct(
         ApplicationOption $option,
@@ -92,7 +99,7 @@ final class Application implements
     /**
      * Initialize the application.
      *
-     * @param ContainerBuilder $builder
+     * @param ContainerBuilder<Container> $builder
      * @param Bootstrap $bootstrap
      * @return void
      */
@@ -228,8 +235,8 @@ final class Application implements
     /**
      * Call the given function using the given parameters.
      *
-     * @param callable|array|string $callable Function to call.
-     * @param array $parameters Parameters to use.
+     * @param callable|string[]|string $callable Function to call.
+     * @param mixed[] $parameters Parameters to use.
      * @return mixed Result of the function.
      * @throws InvocationException Base exception class for all the sub-exceptions below.
      * @throws NotCallableException
@@ -244,7 +251,7 @@ final class Application implements
      * Resolves an entry by its name. If given a class name, it will return a new instance of that class.
      *
      * @param string $name       Entry name or a class name.
-     * @param array  $parameters Optional parameters to use to build the entry. Use this to force specific
+     * @param mixed[]  $parameters Optional parameters to use to build the entry. Use this to force specific
      *                           parameters to specific values. Parameters not defined in this array will
      *                           be automatically resolved.
      *
