@@ -43,7 +43,7 @@ final class Hook
             );
         } else {
             $this->filters[$tag] = new HookFilters(
-                new HookFilter(
+                HookFilter::fromCallable(
                     priority: $priority,
                     function: $function,
                 ),
