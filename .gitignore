@@ -7,4 +7,6 @@
 *.swp
 *.swo
 
+/.env
+
 memo.txt
