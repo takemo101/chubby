@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby;
 
+use DI\Container;
 use DI\ContainerBuilder;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
 use InvalidArgumentException;
@@ -9,7 +10,7 @@ use Takemo101\Chubby\Support\ApplicationPath;
 
 final readonly class ApplicationOption
 {
-    /** @var ContainerBuilder */
+    /** @var ContainerBuilder<Container> */
     public ContainerBuilder $builder;
 
     /** @var Bootstrap */
@@ -22,8 +23,8 @@ final readonly class ApplicationOption
      * @param string $configPath
      * @param string $settingPath
      * @param string $storagePath
-     * @param array $dotenvNames
-     * @param ContainerBuilder|null $builder
+     * @param string[] $dotenvNames
+     * @param ContainerBuilder<Container>|null $builder
      * @param Bootstrap|null $bootstrap
      */
     public function __construct(
