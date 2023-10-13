@@ -7,6 +7,7 @@
 *.swp
 *.swo
 
+/storage/logs/*.log
 /.env
 
 memo.txt
