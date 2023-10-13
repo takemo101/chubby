@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  chubby-app:
+    build:
+      context: './docker/apache'
+      args:
+        uid: ${UID}
+    environment:
+      - APACHE_RUN_USER=#${UID}
+      - APACHE_RUN_GROUP=#${UID}
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      - chubby
+
+  php:
+    image: shin1x1/php-dev:8.2-fpm-buster
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+
+  composer:
+    image: composer:latest
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+
+networks:
+  chubby:
+    driver: bridge

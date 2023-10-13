@@ -1,0 +1,63 @@
+{
+  "name": "takemo101/chubby",
+  "description": "A package to easily use the slim framework",
+  "keywords": ["php", "slim", "framework"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "takemo101",
+      "email": "takemo101@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.1.0",
+    "fig/http-message-util": "^1.1",
+    "illuminate/collections": "^10.28",
+    "monolog/monolog": "^3.4",
+    "nyholm/psr7": "^1.8",
+    "nyholm/psr7-server": "^1.0",
+    "php-di/slim-bridge": "^3.4",
+    "selective/basepath": "^2.2",
+    "slim/slim": "4.*",
+    "symfony/console": "^6.3",
+    "symfony/error-handler": "^6.3",
+    "symfony/uid": "^6.3",
+    "vlucas/phpdotenv": "^5.5"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.13",
+    "pestphp/pest": "^2.20",
+    "phpstan/phpstan": "^1.10",
+    "symfony/var-dumper": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Takemo101\\Chubby\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "lint": "pint -v",
+    "test:lint": "pint --test -v",
+    "test:types": "phpstan analyse --ansi",
+    "test:unit": "pest --colors=always",
+    "test": [
+      "@test:lint",
+      "@test:types",
+      "@test:unit"
+    ]
+  }
+}

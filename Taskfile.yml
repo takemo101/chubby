@@ -1,0 +1,40 @@
+version: '3'
+
+# please install Taskfile => https://taskfile.dev/ja-JP/installation/
+
+# template => https://go-task.github.io/slim-sprig/
+
+vars:
+  PINT_BIN: ./vendor/bin/pint
+  PEST_BIN: ./vendor/bin/pest
+  PHPSTAN_BIN: ./vendor/bin/phpstan
+
+tasks:
+  # ex: task composer -- install
+  composer:
+    cmds:
+      - docker-compose run --rm composer {{default "--version" .CLI_ARGS}}
+
+  start:
+    cmds:
+      - docker-compose up -d chubby-app
+
+  shell:
+    cmds:
+      - docker-compose exec chubby-app bash
+
+  stop:
+    cmds:
+      - docker-compose stop chubby-app
+
+  pint:
+    cmds:
+      - docker-compose run --rm php {{.PINT_BIN}} -v
+
+  analyze:
+    cmds:
+      - docker-compose run --rm php {{.PHPSTAN_BIN}} analyse --ansi --memory-limit=1G
+
+  test:
+    cmds:
+      - docker-compose run --rm php {{.PEST_BIN}} --colors=always
