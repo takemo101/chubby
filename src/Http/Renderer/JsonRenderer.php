@@ -28,8 +28,8 @@ final class JsonRenderer implements ResponseRenderer
      * Perform response writing process.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response The response
-     * @return ResponseInterface The response
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function render(
         ServerRequestInterface $request,
