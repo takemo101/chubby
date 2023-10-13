@@ -4,6 +4,7 @@ namespace Takemo101\Chubby;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use DI\Definition\Helper\DefinitionHelper;
 use DI\DependencyException;
 use DI\FactoryInterface;
 use DI\NotFoundException;
@@ -230,6 +231,25 @@ final class Application implements
     public function has(string $id): bool
     {
         return $this->getContainer()->has($id);
+    }
+
+    /**
+     * Define an object or a value in the container.
+     *
+     * @param string $name Entry name
+     * @param mixed|DefinitionHelper $value Value, use definition helpers to define objects
+     */
+    public function set(string $name, mixed $value): void
+    {
+        if ($this->isBooted()) {
+            $this->getContainer()->set($name, $value);
+        } else {
+            $this->builder->addDefinitions(
+                [
+                    $name => $value,
+                ],
+            );
+        }
     }
 
     /**
