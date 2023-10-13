@@ -289,7 +289,7 @@ final class Application implements
      *
      * @return Container
      */
-    public function getContainer(): Container
+    private function getContainer(): Container
     {
         return $this->container ?? throw new RuntimeException('container is not initialized.');
     }

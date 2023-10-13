@@ -40,12 +40,12 @@ final class ControllerInvoker implements InvocationStrategyInterface
         array $routeArguments
     ): ResponseInterface {
         /** @var ServerRequestInterface */
-        $request = $this->hook->apply(
+        $request = $this->hook->filter(
             ServerRequestInterface::class,
             $request,
         );
 
-        $this->hook->doActionByObject(
+        $this->hook->doByObjectType(
             new Context($request, $response),
         );
 
@@ -57,7 +57,7 @@ final class ControllerInvoker implements InvocationStrategyInterface
         );
 
         /** @var ResponseInterface */
-        $response = $this->hook->apply(
+        $response = $this->hook->filter(
             ResponseInterface::class,
             $output,
         );

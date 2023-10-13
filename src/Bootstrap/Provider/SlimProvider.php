@@ -65,13 +65,10 @@ class SlimProvider implements Provider
                             ),
                         );
 
-                    $hook->doActionByObject($slim);
+                    $hook->doByObjectType($slim);
 
                     return $slim;
                 },
-                ResponseTranslators::class => fn () => new ResponseTranslators(
-                    new RendererTranslator(),
-                ),
                 Psr17Factory::class => create(Psr17Factory::class),
                 ResponseFactoryInterface::class => get(Psr17Factory::class),
                 ServerRequestFactoryInterface::class => get(Psr17Factory::class),

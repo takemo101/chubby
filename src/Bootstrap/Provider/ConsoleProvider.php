@@ -52,7 +52,7 @@ class ConsoleProvider implements Provider
 
                     $console->addCommand(VersionCommand::class);
 
-                    $hook->doActionByObject($console);
+                    $hook->doByObjectType($console);
 
                     return $console;
                 }
