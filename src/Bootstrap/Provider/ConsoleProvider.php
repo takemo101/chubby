@@ -5,6 +5,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Console\Application as SymfonyConsole;
+use Takemo101\Chubby\Console\Command\VersionCommand;
 use Takemo101\Chubby\Console\CommandResolver;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
@@ -48,6 +49,8 @@ class ConsoleProvider implements Provider
                         application: $console,
                         resolver: $resolver,
                     );
+
+                    $console->addCommand(VersionCommand::class);
 
                     $hook->doActionByObject($console);
 

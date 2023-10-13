@@ -48,10 +48,8 @@ abstract class Command extends BaseCommand
             $this->input = $input;
             $this->output = $output;
 
-            $this->app->getContainer()
-                ->set(InputInterface::class, $input);
-            $this->app->getContainer()
-                ->set(OutputInterface::class, $output);
+            $this->app->set(InputInterface::class, $input);
+            $this->app->set(OutputInterface::class, $output);
 
             /** @var integer */
             $exitCode = $this->app->call([$this, 'handle'], [
