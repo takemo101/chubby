@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 use Selective\BasePath\BasePathMiddleware;
 use Slim\App as Slim;
 use Slim\Middleware\ErrorMiddleware;
-use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 
 hook()->onByType(
     function (Slim $slim) {
