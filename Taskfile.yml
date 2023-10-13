@@ -10,6 +10,10 @@ vars:
   PHPSTAN_BIN: ./vendor/bin/phpstan
 
 tasks:
+  setup:
+    cmds:
+      - cp .example.env .env
+
   # ex: task composer -- install
   composer:
     cmds:
