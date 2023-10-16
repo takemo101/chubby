@@ -93,4 +93,4 @@ describe(
             ]
         );
     }
-);
+)->group('config');

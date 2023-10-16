@@ -27,7 +27,7 @@ class ConfigTestCase extends BaseTestCase
      */
     public function setupConfigRepository(): void
     {
-        $this->repository =  new ConfigPhpRepository(
+        $this->repository = new ConfigPhpRepository(
             new LocalFilesystem(),
             dirname(__DIR__, 1) . '/resource/config',
         );
