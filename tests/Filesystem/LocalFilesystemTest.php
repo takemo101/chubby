@@ -174,7 +174,7 @@ describe(
                 $this->filesystem->delete($originalPath);
                 $this->filesystem->deleteDirectory($directory, false);
             },
-        );
+        )->skipOnWindows();
 
         test(
             'Get list information of existing files',
