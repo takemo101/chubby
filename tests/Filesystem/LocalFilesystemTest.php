@@ -240,7 +240,7 @@ describe(
                 $this->filesystem->makeDirectory($fromDirectoryPath, 0777, true);
                 $this->filesystem->makeDirectory($toDirectoryPath, 0777, true);
 
-                $this->filesystem->moveDirectory($fromDirectoryPath, $toDirectoryPath);
+                $this->filesystem->moveDirectory($fromDirectoryPath, $expectedDiretoryPath);
 
                 expect($this->filesystem->isDirectory($fromDirectoryPath))->not->toBeTrue();
                 expect($this->filesystem->isDirectory($expectedDiretoryPath))->toBeTrue();
