@@ -51,7 +51,7 @@
   },
   "scripts": {
     "lint": "pint -v",
-    "test:lint": "pint --test -v",
+    "test:lint": "pint --test --preset psr12 -v",
     "test:types": "phpstan analyse --ansi",
     "test:unit": "pest --colors=always",
     "test": [

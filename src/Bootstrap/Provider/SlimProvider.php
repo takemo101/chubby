@@ -22,8 +22,6 @@ use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
-use Takemo101\Chubby\Http\Translator\RendererTranslator;
-use Takemo101\Chubby\Http\Translator\ResponseTranslators;
 
 use function DI\get;
 use function DI\create;

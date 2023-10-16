@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Bootstrap;
 
 use DI\ContainerBuilder;
 use DI\Definition\Source\DefinitionSource;
-use Takemo101\Chubby\Loader\Loader;
 
 /**
  * PHP-DI definitions.

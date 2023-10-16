@@ -33,7 +33,11 @@ tasks:
 
   pint:
     cmds:
-      - docker-compose run --rm php {{.PINT_BIN}} -v
+      - docker-compose run --rm php {{.PINT_BIN}} --preset psr12 -v
+
+  lint:
+    cmds:
+      - docker-compose run --rm php {{.PINT_BIN}} --test --preset psr12 -v
 
   analyze:
     cmds:

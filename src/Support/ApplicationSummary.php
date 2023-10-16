@@ -2,8 +2,6 @@
 
 namespace Takemo101\Chubby\Support;
 
-use Takemo101\Chubby\Filesystem\PathHelper;
-
 /**
  * Application summary data
  */
