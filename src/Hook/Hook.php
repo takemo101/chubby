@@ -151,7 +151,7 @@ final class Hook
             foreach ($filter->actions() as $action) {
 
                 $result = call_user_func_array(
-                    $action->function,
+                    $action->getCallable(),
                     // Pass initial parameters if filter output is null
                     [$result ?? $parameter],
                 );
@@ -168,7 +168,7 @@ final class Hook
      * @param object $object
      * @return mixed
      */
-    public function filterByObjectType(object $object): mixed
+    public function filterByObject(object $object): mixed
     {
         $type = get_class($object);
 
@@ -195,7 +195,7 @@ final class Hook
             foreach ($filter->actions() as $action) {
 
                 call_user_func_array(
-                    $action->function,
+                    $action->getCallable(),
                     [$parameter],
                 );
             }
@@ -210,7 +210,7 @@ final class Hook
      * @param object $object
      * @return void
      */
-    public function doByObjectType(object $object): void
+    public function doByObject(object $object): void
     {
         $type = get_class($object);
 

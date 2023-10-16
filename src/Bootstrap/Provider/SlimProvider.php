@@ -63,7 +63,7 @@ class SlimProvider implements Provider
                             ),
                         );
 
-                    $hook->doByObjectType($slim);
+                    $hook->doByObject($slim);
 
                     return $slim;
                 },

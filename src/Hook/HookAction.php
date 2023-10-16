@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Hook;
 
 use Closure;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Action data executed by hook
@@ -12,34 +11,29 @@ use RuntimeException;
 final class HookAction
 {
     /**
-     * @var Closure
+     * construct
+     *
+     * @param string|mixed[]|object $function
+     * @throws InvalidArgumentException
      */
-    public Closure $function;
-
-    /**
-     * @var string
-     */
-    public readonly string $key;
-
     public function __construct(
-        string|array|object $function,
+        private string|array|object $function,
     ) {
         if (!is_callable($function)) {
             throw new InvalidArgumentException('The given value is not callable');
         }
-
-        $this->key = $this->createUniqueKey($function);
-        $this->function = Closure::fromCallable($function);
     }
 
     /**
-     * Create keys from callable values
+     * Get keys from callable values
      *
      * @param string|mixed[]|object $function
      * @return string
      */
-    private function createUniqueKey(string|array|object $function): string
+    public function getUniqueKey(): string
     {
+        $function = $this->function;
+
         if (is_string($function)) {
             return $function;
         }
@@ -48,13 +42,29 @@ final class HookAction
             return spl_object_hash($function);
         }
 
-        if (!is_array($function)) {
-            throw new RuntimeException('The given value is not callable');
-        }
-
         return (is_object($function[0])
             ? spl_object_hash($function[0])
             : $function[0]
         ) . $function[1];
+    }
+
+    /**
+     * Get callable
+     *
+     * @return callable
+     */
+    public function getCallable(): callable
+    {
+        return Closure::fromCallable($this->function);
+    }
+
+    /**
+     * Get original value.
+     *
+     * @return string|mixed[]|object
+     */
+    public function original(): string|array|object
+    {
+        return $this->function;
     }
 }

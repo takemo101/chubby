@@ -64,7 +64,7 @@ final class HookFilter
     public function add(HookAction ...$actions): self
     {
         foreach ($actions as $action) {
-            $this->actions[$action->key] = $action;
+            $this->actions[$action->getUniqueKey()] = $action;
         }
 
         return $this;
@@ -79,7 +79,7 @@ final class HookFilter
     public function remove(HookAction ...$actions): self
     {
         foreach ($actions as $action) {
-            unset($this->actions[$action->key]);
+            unset($this->actions[$action->getUniqueKey()]);
         }
 
         return $this;
