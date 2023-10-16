@@ -114,7 +114,7 @@ describe(
             0777,
             0755,
             0644,
-        ]);
+        ])->skipOnWindows();
 
         test(
             'Create a copy of an existing files',
