@@ -10,6 +10,9 @@ use InvalidArgumentException;
  */
 final class HookAction
 {
+    /** @var string */
+    public const ClassSeparator = '@';
+
     /**
      * construct
      *
@@ -45,7 +48,7 @@ final class HookAction
         return (is_object($function[0])
             ? spl_object_hash($function[0])
             : $function[0]
-        ) . '::' . $function[1];
+        ) . self::ClassSeparator . $function[1];
     }
 
     /**
