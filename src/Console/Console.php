@@ -12,6 +12,35 @@ use Takemo101\Chubby\Support\AbstractRunner;
 final readonly class Console extends AbstractRunner
 {
     /**
+     * Create an console instance.
+     *
+     * @return SymfonyConsoleAdapter
+     */
+    private function getConsole(): SymfonyConsoleAdapter
+    {
+        $this->getApp()->boot();
+
+        /** @var SymfonyConsoleAdapter */
+        $console = $this->getApp()->get(
+            SymfonyConsoleAdapter::class,
+        );
+
+        return $console;
+    }
+
+    /**
+     * Add command class instance.
+     *
+     * @return self
+     */
+    public function addCommand(string|object ...$commands): self
+    {
+        $this->getConsole()->addCommand(...$commands);
+
+        return $this;
+    }
+
+    /**
      * Runs the current application.
      *
      * @param InputInterface|null $input
@@ -22,14 +51,7 @@ final readonly class Console extends AbstractRunner
         ?InputInterface $input = null,
         ?OutputInterface $output = null,
     ): void {
-        $this->getApp()->boot();
-
-        /** @var SymfonyConsoleAdapter */
-        $console = $this->getApp()->get(
-            SymfonyConsoleAdapter::class,
-        );
-
-        $status = $console->run(
+        $status = $this->getConsole()->run(
             input: $input,
             output: $output,
         );
@@ -48,14 +70,7 @@ final readonly class Console extends AbstractRunner
         InputInterface $input,
         OutputInterface $output,
     ): int {
-        $this->getApp()->boot();
-
-        /** @var SymfonyConsoleAdapter */
-        $console = $this->getApp()->get(
-            SymfonyConsoleAdapter::class,
-        );
-
-        return $console->handle(
+        return $this->getConsole()->handle(
             input: $input,
             output: $output,
         );

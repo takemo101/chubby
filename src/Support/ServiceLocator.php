@@ -4,11 +4,11 @@ namespace Takemo101\Chubby\Support;
 
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Slim\App as Slim;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 /**
  * Have global access to your application's services
@@ -118,12 +118,12 @@ final class ServiceLocator
     /**
      * Get slim application.
      *
-     * @return Slim
+     * @return SlimHttpAdapter
      */
-    public static function slim(): Slim
+    public static function slim(): SlimHttpAdapter
     {
-        /** @var Slim */
-        $slim = self::app()->get(Slim::class);
+        /** @var SlimHttpAdapter */
+        $slim = self::app()->get(SlimHttpAdapter::class);
 
         return $slim;
     }

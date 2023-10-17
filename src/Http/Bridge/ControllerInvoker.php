@@ -45,7 +45,7 @@ final class ControllerInvoker implements InvocationStrategyInterface
             $request,
         );
 
-        $this->hook->doByObjectType(
+        $this->hook->doByObject(
             new Context($request, $response),
         );
 

@@ -2,16 +2,45 @@
 
 namespace Takemo101\Chubby\Http;
 
+use BadMethodCallException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\App as Slim;
+use Psr\Http\Message\UriInterface;
+use Slim\Interfaces\RouteInterface;
+use Slim\Interfaces\RouteGroupInterface;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**
  * Execute Http processing by Slim application.
+ *
+ * @method RouteInterface get(string $pattern, callable|string $callable)
+ * @method RouteInterface post(string $pattern, callable|string $callable)
+ * @method RouteInterface put(string $pattern, callable|string $callable)
+ * @method RouteInterface patch(string $pattern, callable|string $callable)
+ * @method RouteInterface delete(string $pattern, callable|string $callable)
+ * @method RouteInterface options(string $pattern, callable|string $callable)
+ * @method RouteInterface any(string $pattern, callable|string $callable)
+ * @method RouteInterface map(array $methods, string $pattern, callable|string $callable)
+ * @method RouteGroupInterface group(string $pattern, callable|string $callable)
+ * @method RouteInterface redirect(string $from, string|UriInterface $to, int $status = 302)
  */
 final readonly class Http extends AbstractRunner
 {
+    /**
+     * Create an slim instance.
+     *
+     * @return SlimHttpAdapter
+     */
+    private function getHttp(): SlimHttpAdapter
+    {
+        $this->getApp()->boot();
+
+        /** @var SlimHttpAdapter */
+        $slim = $this->getApp()->get(SlimHttpAdapter::class);
+
+        return $slim;
+    }
+
     /**
      * Run slim application
      *
@@ -20,12 +49,7 @@ final readonly class Http extends AbstractRunner
      */
     public function run(?ServerRequestInterface $request = null): void
     {
-        $this->getApp()->boot();
-
-        /** @var Slim */
-        $slim = $this->getApp()->get(Slim::class);
-
-        $slim->run($request);
+        $this->getHttp()->run($request);
     }
 
     /**
@@ -36,11 +60,28 @@ final readonly class Http extends AbstractRunner
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->getApp()->boot();
+        return $this->getHttp()->handle($request);
+    }
 
-        /** @var Slim */
-        $slim = $this->getApp()->get(Slim::class);
+    /**
+     * Call method from SlimHttpAdapter.
+     *
+     * @param string $name
+     * @param mixed[] $arguments
+     * @return mixed
+     * @throws BadMethodCallException
+     */
+    public function __call(string $name, array $arguments)
+    {
+        $http = $this->getHttp();
 
-        return $slim->handle($request);
+        if (method_exists($http, $name)) {
+            return call_user_func_array(
+                [$http, $name],
+                $arguments,
+            );
+        }
+
+        throw new BadMethodCallException("method not found: {$name}");
     }
 }

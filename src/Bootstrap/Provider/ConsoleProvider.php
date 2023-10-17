@@ -45,16 +45,16 @@ class ConsoleProvider implements Provider
                     CommandResolver $resolver,
                     Hook $hook,
                 ): SymfonyConsoleAdapter {
-                    $console = new SymfonyConsoleAdapter(
+                    $adapter = new SymfonyConsoleAdapter(
                         application: $console,
                         resolver: $resolver,
                     );
 
-                    $console->addCommand(VersionCommand::class);
+                    $adapter->addCommand(VersionCommand::class);
 
-                    $hook->doByObject($console);
+                    $hook->doByObject($adapter);
 
-                    return $console;
+                    return $adapter;
                 }
             ],
         );

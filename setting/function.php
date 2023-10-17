@@ -4,17 +4,10 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
-use Selective\BasePath\BasePathMiddleware;
-use Slim\App as Slim;
-use Slim\Middleware\ErrorMiddleware;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 hook()->onByType(
-    function (Slim $slim) {
-        $slim->addBodyParsingMiddleware();
-        $slim->addRoutingMiddleware();
-        $slim->add(BasePathMiddleware::class);
-        $slim->add(ErrorMiddleware::class);
-
+    function (SlimHttpAdapter $slim) {
         $slim->get(
             '/',
             function (ResponseInterface $response) {

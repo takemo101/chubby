@@ -13,7 +13,7 @@ return [
     'debug' => env('APP_DEBUG', true),
 
     // Base url
-    'url' => env('BASE_URL', 'http://localhost'),
+    'url' => env('BASE_URL'),
 
     // Timezone
     'timezone' => 'Asia/Tokyo',

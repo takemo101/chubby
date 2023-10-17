@@ -6,6 +6,7 @@ use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
 use RuntimeException;
+use Takemo101\Chubby\Filesystem\LocalSystem;
 use Takemo101\Chubby\Hook\Hook;
 
 /**
@@ -22,9 +23,11 @@ class DependencyProvider implements Provider
      * constructor
      *
      * @param ApplicationPath $path
+     * @param LocalSystem $filesystem
      */
     public function __construct(
         protected ApplicationPath $path,
+        protected LocalSystem $filesystem,
     ) {
         //
     }
@@ -37,19 +40,22 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
+        $dependencyPath = $this->getDependencyPath();
+
         /** @var mixed[] */
-        $dependency = require $this->getDependencyPath();
+        $dependency = $this->filesystem->exists($dependencyPath)
+            ? require $dependencyPath
+            : [];
 
         if (!is_array($dependency)) {
             throw new RuntimeException('Dependency definition must be array.');
         }
 
-        $definitions->add(
-            $dependency,
-            [
-                Hook::class => fn () => new Hook(),
-            ],
-        );
+        if (!empty($dependency)) {
+            $definitions->add(
+                $dependency,
+            );
+        }
     }
 
     /**

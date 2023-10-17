@@ -22,6 +22,7 @@ use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 use function DI\get;
 use function DI\create;
@@ -48,6 +49,7 @@ class SlimProvider implements Provider
             [
                 Slim::class => function (
                     ContainerInterface $container,
+                    ConfigRepository $config,
                     Hook $hook,
                 ): Slim {
                     $slim = Bridge::create($container);
@@ -63,9 +65,28 @@ class SlimProvider implements Provider
                             ),
                         );
 
+                    /** @var string|null */
+                    $url = $config->get('app.url');
+
+                    if ($url) {
+                        $slim->setBasePath($url);
+                    }
+
+                    $this->configure($slim);
+
                     $hook->doByObject($slim);
 
                     return $slim;
+                },
+                SlimHttpAdapter::class => function (
+                    Slim $slim,
+                    Hook $hook,
+                ): SlimHttpAdapter {
+                    $adapter = new SlimHttpAdapter($slim);
+
+                    $hook->doByObject($adapter);
+
+                    return $adapter;
                 },
                 Psr17Factory::class => create(Psr17Factory::class),
                 ResponseFactoryInterface::class => get(Psr17Factory::class),
@@ -125,5 +146,19 @@ class SlimProvider implements Provider
     public function boot(Application $app): void
     {
         //
+    }
+
+    /**
+     * Configure Slim application.
+     *
+     * @param Slim $slim
+     * @return void
+     */
+    protected function configure(Slim $slim): void
+    {
+        $slim->addBodyParsingMiddleware();
+        $slim->addRoutingMiddleware();
+        $slim->add(BasePathMiddleware::class);
+        $slim->add(ErrorMiddleware::class);
     }
 }

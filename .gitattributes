@@ -1,5 +1,10 @@
 /docs              export-ignore
+/docker            export-ignore
 /tests             export-ignore
+/public            export-ignore
+/config            export-ignore
+/settings          export-ignore
+/storage           export-ignore
 /.github           export-ignore
 /.php_cs           export-ignore
 .editorconfig      export-ignore
@@ -11,3 +16,7 @@ CHANGELOG.md       export-ignore
 CONTRIBUTING.md    export-ignore
 README.md          export-ignore
 Taskfile.yml       export-ignore
+docker-compose.yml export-ignore
+.env.example       export-ignore
+.htaccess          export-ignore
+console.php        export-ignore

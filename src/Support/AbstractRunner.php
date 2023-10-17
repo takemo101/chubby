@@ -4,7 +4,9 @@ namespace Takemo101\Chubby\Support;
 
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationOption;
+use Takemo101\Chubby\Bootstrap\Provider\ConsoleProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
+use Takemo101\Chubby\Bootstrap\Provider\SlimProvider;
 
 /**
  * Abstract class for running applications.
@@ -45,14 +47,36 @@ abstract readonly class AbstractRunner
     }
 
     /**
-     * Create an instance from application options.
+     * Create an application instance with standard functionality from any option.
      *
-     * @param ApplicationOption $option
+     * @param ApplicationOption|null $option
      * @return static
      */
-    public static function fromOption(
-        ApplicationOption $option,
+    public static function create(
+        ?ApplicationOption $option = null
     ): static {
-        return new static(new Application($option));
+        return new static(Application::create(
+            $option ?? ApplicationOption::from(),
+        )->addProvider(
+            new SlimProvider(),
+            new ConsoleProvider(),
+        ));
+    }
+
+    /**
+     * Create an application instance with simple functionality from any option.
+     *
+     * @param ApplicationOption|null $option
+     * @return static
+     */
+    public static function createSimple(
+        ?ApplicationOption $option = null
+    ): static {
+        return new static(Application::createSimple(
+            $option ?? ApplicationOption::from(),
+        )->addProvider(
+            new SlimProvider(),
+            new ConsoleProvider(),
+        ));
     }
 }

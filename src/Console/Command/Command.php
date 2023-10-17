@@ -2,92 +2,33 @@
 
 namespace Takemo101\Chubby\Console\Command;
 
-use Symfony\Component\Console\Command\Command as BaseCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use LogicException;
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 
 /**
- * Abstract command.
+ * Basic command.
  */
-abstract class Command extends BaseCommand
+abstract class Command extends AbstractCommand
 {
     /**
-     * @var InputInterface|null
-     */
-    private ?InputInterface $input = null;
-
-    /**
-     * @var OutputInterface|null
-     */
-    private ?OutputInterface $output = null;
-
-    /**
-     * @param string|null $name
+     * constructor
+     *
+     * @param ApplicationContainer $app
      *
      * @throws LogicException When the command name is empty
      */
     public function __construct(
-        protected readonly Application $app,
-        string $name = null,
+        protected readonly ApplicationContainer $app,
     ) {
-        parent::__construct($name);
+        parent::__construct();
     }
 
     /**
-     * execute command process
+     * Get application container.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code
+     * @return ApplicationContainer
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getContainer(): ApplicationContainer
     {
-        if (method_exists($this, 'handle')) {
-            $this->input = $input;
-            $this->output = $output;
-
-            $this->app->set(InputInterface::class, $input);
-            $this->app->set(OutputInterface::class, $output);
-
-            /** @var integer */
-            $exitCode = $this->app->call([$this, 'handle'], [
-                'input' => $input,
-                'output' => $output,
-            ]);
-
-            return $exitCode;
-        }
-
-        return self::SUCCESS;
-    }
-
-    /**
-     * Get input.
-     *
-     * @return InputInterface
-     */
-    protected function input(): InputInterface
-    {
-        if ($this->input === null) {
-            throw new LogicException('input is not set!');
-        }
-
-        return $this->input;
-    }
-
-    /**
-     * Get output.
-     *
-     * @return OutputInterface
-     */
-    protected function output(): OutputInterface
-    {
-        if ($this->output === null) {
-            throw new LogicException('output is not set!');
-        }
-
-        return $this->output;
+        return $this->app;
     }
 }
