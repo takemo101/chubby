@@ -326,9 +326,11 @@ final class Application implements ApplicationContainer
         );
 
         $app->addProvider(
+            new BootProvider(),
             new EnvironmentProvider($app->path),
             new ErrorProvider(),
             new ConfigProvider(),
+            new HelperProvider(),
             new LogProvider(),
         );
 

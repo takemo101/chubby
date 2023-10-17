@@ -6,6 +6,7 @@ use BadMethodCallException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
@@ -14,6 +15,8 @@ use Takemo101\Chubby\Support\AbstractRunner;
 /**
  * Execute Http processing by Slim application.
  *
+ * @method Http add(MiddlewareInterface|string|callable $middleware)
+ * @method Http addMiddleware(MiddlewareInterface $middleware)
  * @method string getBasePath()
  * @method RouteCollectorProxyInterface setBasePath(string $basePath)
  * @method RouteInterface get(string $pattern, callable|string $callable)
