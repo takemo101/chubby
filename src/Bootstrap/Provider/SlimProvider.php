@@ -49,6 +49,7 @@ class SlimProvider implements Provider
             [
                 Slim::class => function (
                     ContainerInterface $container,
+                    ConfigRepository $config,
                     Hook $hook,
                 ): Slim {
                     $slim = Bridge::create($container);
@@ -63,6 +64,13 @@ class SlimProvider implements Provider
                                 hook: $hook,
                             ),
                         );
+
+                    /** @var string|null */
+                    $basePath = $config->get('slim.base_path');
+
+                    if ($basePath) {
+                        $slim->setBasePath($basePath);
+                    }
 
                     $this->configure($slim);
 

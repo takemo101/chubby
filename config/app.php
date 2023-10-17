@@ -12,9 +12,6 @@ return [
     // Is debug mode enabled?
     'debug' => env('APP_DEBUG', true),
 
-    // Base url
-    'url' => env('BASE_URL'),
-
     // Timezone
     'timezone' => 'Asia/Tokyo',
 ];
