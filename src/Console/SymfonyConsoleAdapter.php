@@ -6,6 +6,7 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
 final class SymfonyConsoleAdapter
 {
@@ -18,24 +19,22 @@ final class SymfonyConsoleAdapter
      */
     public function __construct(
         private readonly Application $application,
+        private readonly CommandCollection $commands,
         private readonly CommandResolver $resolver,
     ) {
         //
     }
 
+    /**
+     * Add Symfony command.
+     * Add a class string or instance that implements the command.
+     *
+     * @param class-string<Command>|object<Command> ...$commands
+     * @return static
+     */
     public function addCommand(string|object ...$commands): static
     {
-        foreach ($commands as $command) {
-            $resolved = $this->resolver->resolve($command);
-
-            if (!$resolved) {
-                $name = $this->getClassName($command);
-
-                throw new RuntimeException("{$name} is not command class");
-            }
-
-            $this->application->add($resolved);
-        }
+        $this->commands->add(...$commands);
 
         return $this;
     }
@@ -51,6 +50,8 @@ final class SymfonyConsoleAdapter
         ?InputInterface $input = null,
         ?OutputInterface $output = null,
     ): int {
+        $this->submitCommands();
+
         return $this->application->run($input, $output);
     }
 
@@ -65,7 +66,31 @@ final class SymfonyConsoleAdapter
         InputInterface $input,
         OutputInterface $output,
     ): int {
+        $this->submitCommands();
+
         return $this->application->doRun($input, $output);
+    }
+
+    /**
+     * Submit commands
+     *
+     * @return void
+     */
+    private function submitCommands(): void
+    {
+        foreach ($this->commands->classes() as $command) {
+            $resolved = $this->resolver->resolve($command);
+
+            if (!$resolved) {
+                $name = $this->getClassName($command);
+
+                throw new RuntimeException("{$name} is not command class");
+            }
+
+            $this->application->add($resolved);
+        }
+
+        $this->commands->clear();
     }
 
     /**
