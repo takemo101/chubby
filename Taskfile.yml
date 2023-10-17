@@ -48,3 +48,8 @@ tasks:
     cmds:
       - docker-compose run --rm php {{.PEST_BIN}} --colors=always
         {{if .GROUP}}--group={{.GROUP}}{{end}}
+
+  # ex: task serve PORT=8000 ROOT=./public/index.php
+  serve:
+    cmds:
+      - php -S {{default "localhost" .HOST}}:{{default "8080" .PORT}} {{default "./public/index.php" .ROOT}}
