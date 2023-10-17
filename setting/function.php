@@ -4,6 +4,7 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
+use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 hook()->onByType(
@@ -27,6 +28,21 @@ hook()->onByType(
                     ->write($name);
 
                 return $response;
+            },
+        );
+
+        $slim->group(
+            '/group',
+            function (RouteCollectorProxy $group) {
+                $group->get('/a', function (
+                    ResponseInterface $response,
+                ) {
+                    $response
+                        ->getBody()
+                        ->write('This route is route.a');
+
+                    return $response;
+                })->setName('route.a');
             },
         );
     },

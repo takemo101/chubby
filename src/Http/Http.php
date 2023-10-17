@@ -8,11 +8,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteGroupInterface;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**
  * Execute Http processing by Slim application.
  *
+ * @method string getBasePath()
+ * @method RouteCollectorProxyInterface setBasePath(string $basePath)
  * @method RouteInterface get(string $pattern, callable|string $callable)
  * @method RouteInterface post(string $pattern, callable|string $callable)
  * @method RouteInterface put(string $pattern, callable|string $callable)

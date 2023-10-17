@@ -5,6 +5,7 @@ namespace Takemo101\Chubby\Http\Concern;
 use Psr\Http\Message\UriInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\App as Slim;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Interfaces\RouteGroupInterface;
 
 /**
@@ -14,6 +15,22 @@ use Slim\Interfaces\RouteGroupInterface;
  */
 trait HasRouteCollector
 {
+    /**
+     * Get the RouteCollectorProxy's base path
+     */
+    public function getBasePath(): string
+    {
+        return $this->application->getBasePath();
+    }
+
+    /**
+     * Set the RouteCollectorProxy's base path
+     */
+    public function setBasePath(string $basePath): RouteCollectorProxyInterface
+    {
+        return $this->application->setBasePath($basePath);
+    }
+
     /**
      * Add GET route
      *
