@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
-use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ServiceLocator;
 

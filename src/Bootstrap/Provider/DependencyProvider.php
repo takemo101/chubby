@@ -7,7 +7,6 @@ use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
 use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalSystem;
-use Takemo101\Chubby\Hook\Hook;
 
 /**
  * Dependency injection related.
