@@ -86,6 +86,16 @@ final class HookFilter
     }
 
     /**
+     * Check if there are any actions.
+     *
+     * @return boolean
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->actions);
+    }
+
+    /**
      * Clear all actions.
      *
      * @return self

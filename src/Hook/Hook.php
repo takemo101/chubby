@@ -96,7 +96,8 @@ final class Hook
 
 
     /**
-     * Removal of hook processing.
+     * Remove hook processing.
+     * Can be deleted by specifying tag, callable value and priority.
      *
      * @param string $tag
      * @param string|mixed[]|object $function
@@ -109,10 +110,32 @@ final class Hook
         int $priority = HookFilter::DefaultPriority,
     ): self {
         if (isset($this->filters[$tag])) {
-            $this->filters[$tag]->remove(
+
+            $filters = $this->filters[$tag];
+
+            $filters->remove(
                 priority: $priority,
                 function: $function,
             );
+
+            if ($filters->isEmpty()) {
+                unset($this->filters[$tag]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove all hook processing for tags
+     *
+     * @param string $tag
+     * @return self
+     */
+    public function removeAllByTag(string $tag): self
+    {
+        if (isset($this->filters[$tag])) {
+            unset($this->filters[$tag]);
         }
 
         return $this;

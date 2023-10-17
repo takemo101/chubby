@@ -51,9 +51,27 @@ final class HookFilters
      */
     public function remove(int $priority, string|array|object $function): self
     {
-        $this->get($priority)?->remove(new HookAction($function));
+        $filter = $this->get($priority);
+
+        if ($filter = $this->get($priority)) {
+            $filter->remove(new HookAction($function));
+
+            if ($filter->isEmpty()) {
+                unset($this->filters[$priority]);
+            }
+        }
 
         return $this;
+    }
+
+    /**
+     * Check if there are any filters.
+     *
+     * @return boolean
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->filters);
     }
 
     /**
