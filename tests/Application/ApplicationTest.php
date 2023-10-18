@@ -61,19 +61,26 @@ describe(
 
                 expect($initialProviderCount)->toBeGreaterThan(0);
 
-                $app->addProvider(
-                    new class() implements Provider
-                    {
-                        public function register(Definitions $definitions): void
-                        {
-                            //
-                        }
+                $provider = new class() implements Provider
+                {
+                    public const ProviderName = 'test';
 
-                        public function boot(Application $app): void
-                        {
-                            //
-                        }
-                    },
+                    public function register(Definitions $definitions): void
+                    {
+                        //
+                    }
+
+                    public function boot(Application $app): void
+                    {
+                        //
+                    }
+                };
+
+                // Provider will be overwritten and set if the defined name is duplicated
+                $app->addProvider(
+                    $provider,
+                    $provider,
+                    $provider,
                 );
 
                 expect(count($bootstrap->providers()))->toEqual($initialProviderCount + 1);
@@ -85,7 +92,7 @@ describe(
             function () {
                 $provider = new class() implements Provider
                 {
-                    public const ProviderName = 'test01';
+                    public const ProviderName = 'test';
 
                     public bool $booted = false;
 
