@@ -10,8 +10,9 @@ use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 hook()->onByType(
-    function (SlimHttpAdapter $slim) {
-        $slim->get(
+    function (SlimHttpAdapter $http) {
+
+        $http->get(
             '/',
             function (ResponseInterface $response) {
                 $response
@@ -22,17 +23,14 @@ hook()->onByType(
             },
         );
 
-        $slim->get(
+        $http->get(
             '/json',
-            function (Context $context) {
-
-                return new JsonRenderer(
-                    $context->request->getHeaders(),
-                );
-            },
+            fn (Context $context) => new JsonRenderer(
+                $context->request->getHeaders(),
+            ),
         );
 
-        $slim->get(
+        $http->get(
             '/{name}',
             function (ResponseInterface $response, string $name) {
                 $response
@@ -43,7 +41,7 @@ hook()->onByType(
             },
         );
 
-        $slim->group(
+        $http->group(
             '/group',
             function (RouteCollectorProxy $group) {
                 $group->get('/a', function (
