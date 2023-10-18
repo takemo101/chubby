@@ -25,6 +25,7 @@ use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
+use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 use function DI\get;
@@ -96,6 +97,7 @@ class HttpProvider implements Provider
                     $transformers = new ResponseTransformers(
                         new RendererTransformer(),
                         new ArrayableTransformer(),
+                        new StringableTransformer(),
                     );
 
                     $hook->doByObject($transformers);
