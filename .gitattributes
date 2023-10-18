@@ -19,4 +19,4 @@ Taskfile.yml       export-ignore
 docker-compose.yml export-ignore
 .env.example       export-ignore
 .htaccess          export-ignore
-console        export-ignore
+console            export-ignore
