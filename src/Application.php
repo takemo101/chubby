@@ -31,6 +31,7 @@ use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Support\Environment;
 
 use function DI\get;
 
@@ -114,15 +115,17 @@ final class Application implements ApplicationContainer
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                ApplicationSummary::class => function (): ApplicationSummary {
+                ApplicationSummary::class => function (
+                    Environment $environment,
+                ): ApplicationSummary {
                     /** @var ConfigRepository */
                     $config = $this->make(ConfigRepository::class);
 
                     /** @var string */
-                    $env = $config->get('app.env', 'local');
+                    $env = $config->get('app.env', $environment->get('APP_ENV', 'local'));
 
                     /** @var boolean */
-                    $debug = $config->get('app.debug', true);
+                    $debug = (bool) $config->get('app.debug', $environment->get('APP_DEBUG', true));
 
                     return new ApplicationSummary(
                         env: $env,

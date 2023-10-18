@@ -42,6 +42,16 @@ final class Bootstrap implements Provider
     }
 
     /**
+     * Get providers
+     *
+     * @return Provider[]
+     */
+    public function providers(): array
+    {
+        return $this->providers;
+    }
+
+    /**
      * Dependency definition registration process
      *
      * @param Definitions $definitions

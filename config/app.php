@@ -10,7 +10,7 @@ return [
     'env' => env('APP_ENV', 'local'),
 
     // Is debug mode enabled?
-    'debug' => env('APP_DEBUG', true),
+    'debug' => (bool) env('APP_DEBUG', true),
 
     // Timezone
     'timezone' => 'Asia/Tokyo',

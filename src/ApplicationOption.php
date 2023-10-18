@@ -62,7 +62,7 @@ final readonly class ApplicationOption
     public function createApplicationPath(): ApplicationPath
     {
         return new ApplicationPath(
-            basePath: $this->basePath,
+            basePath: realpath($this->basePath),
             configPath: $this->configPath,
             settingPath: $this->settingPath,
             storagePath: $this->storagePath,

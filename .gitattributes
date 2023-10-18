@@ -1,7 +1,6 @@
 /docs              export-ignore
 /docker            export-ignore
 /tests             export-ignore
-/public            export-ignore
 /config            export-ignore
 /settings          export-ignore
 /storage           export-ignore
