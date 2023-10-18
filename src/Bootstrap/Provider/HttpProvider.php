@@ -5,7 +5,6 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 use DI\Bridge\Slim\Bridge;
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -17,11 +16,15 @@ use Slim\Interfaces\ErrorHandlerInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
+use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
+use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
+use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 use function DI\get;
@@ -30,7 +33,7 @@ use function DI\create;
 /**
  * Slim application related.
  */
-class SlimProvider implements Provider
+class HttpProvider implements Provider
 {
     /**
      * @var string Provider name.
@@ -48,19 +51,18 @@ class SlimProvider implements Provider
         $definitions->add(
             [
                 Slim::class => function (
-                    ContainerInterface $container,
-                    ConfigRepository $config,
+                    ApplicationContainer $container,
+                    ResponseTransformers $transformers,
                     Hook $hook,
+                    ConfigRepository $config,
                 ): Slim {
                     $slim = Bridge::create($container);
-
-                    $invoker = $slim->getRouteCollector()
-                        ->getDefaultInvocationStrategy();
 
                     $slim->getRouteCollector()
                         ->setDefaultInvocationStrategy(
                             new ControllerInvoker(
-                                invoker: $invoker,
+                                invoker: $container,
+                                transformers: $transformers,
                                 hook: $hook,
                             ),
                         );
@@ -87,6 +89,18 @@ class SlimProvider implements Provider
                     $hook->doByObject($adapter);
 
                     return $adapter;
+                },
+                ResponseTransformers::class => function (
+                    Hook $hook,
+                ) {
+                    $transformers = new ResponseTransformers(
+                        new RendererTransformer(),
+                        new ArrayableTransformer(),
+                    );
+
+                    $hook->doByObject($transformers);
+
+                    return $transformers;
                 },
                 Psr17Factory::class => create(Psr17Factory::class),
                 ResponseFactoryInterface::class => get(Psr17Factory::class),

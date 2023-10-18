@@ -5,6 +5,8 @@
 
 use Psr\Http\Message\ResponseInterface;
 use Slim\Routing\RouteCollectorProxy;
+use Takemo101\Chubby\Http\Context;
+use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 hook()->onByType(
@@ -17,6 +19,16 @@ hook()->onByType(
                     ->write('Hello World!');
 
                 return $response;
+            },
+        );
+
+        $slim->get(
+            '/json',
+            function (Context $context) {
+
+                return new JsonRenderer(
+                    $context->request->getHeaders(),
+                );
             },
         );
 

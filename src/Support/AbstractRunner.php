@@ -6,7 +6,7 @@ use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationOption;
 use Takemo101\Chubby\Bootstrap\Provider\ConsoleProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
-use Takemo101\Chubby\Bootstrap\Provider\SlimProvider;
+use Takemo101\Chubby\Bootstrap\Provider\HttpProvider;
 
 /**
  * Abstract class for running applications.
@@ -58,7 +58,7 @@ abstract readonly class AbstractRunner
         return new static(Application::create(
             $option ?? ApplicationOption::from(),
         )->addProvider(
-            new SlimProvider(),
+            new HttpProvider(),
             new ConsoleProvider(),
         ));
     }
@@ -75,7 +75,7 @@ abstract readonly class AbstractRunner
         return new static(Application::createSimple(
             $option ?? ApplicationOption::from(),
         )->addProvider(
-            new SlimProvider(),
+            new HttpProvider(),
             new ConsoleProvider(),
         ));
     }
