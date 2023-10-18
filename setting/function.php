@@ -8,13 +8,14 @@ use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Support\Environment;
 
 hook()->onByType(
     function (SlimHttpAdapter $http) {
 
         $http->get(
             '/',
-            function (ResponseInterface $response) {
+            function (ResponseInterface $response, Environment $env) {
                 $response
                     ->getBody()
                     ->write('Hello World!');

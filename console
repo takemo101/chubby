@@ -7,7 +7,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 $console = Takemo101\Chubby\Console\Console::create(
     Takemo101\Chubby\ApplicationOption::from(
-        basePath: $_ENV['APP_BASE_PATH'] ?? __DIR__,
+        basePath: getenv('APP_BASE_PATH') ?: __DIR__,
     ),
 );
 
