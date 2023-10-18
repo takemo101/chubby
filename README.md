@@ -15,7 +15,7 @@ composer require takemo101/chubby
 // index.php
 
 use Psr\Http\Message\ResponseInterface;
-use Takemo101\Chubby\Http\Http;
+use Takemo101\Chubby\Http;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -42,7 +42,7 @@ $http->run();
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Takemo101\Chubby\Console\Command\CallableCommand;
-use Takemo101\Chubby\Console\Console;
+use Takemo101\Chubby\Console;
 
 require_once __DIR__ . '/vendor/autoload.php';
 

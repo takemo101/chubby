@@ -1,9 +1,10 @@
 <?php
 
-namespace Takemo101\Chubby\Console;
+namespace Takemo101\Chubby;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Takemo101\Chubby\Http;
+namespace Takemo101\Chubby;
 
 use BadMethodCallException;
 use Psr\Http\Message\ResponseInterface;
@@ -10,6 +10,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**
