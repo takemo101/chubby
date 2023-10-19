@@ -5,6 +5,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 use Closure;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Symfony\Component\Uid\Uuid;
 use InvalidArgumentException;
 
 /**
@@ -12,22 +13,27 @@ use InvalidArgumentException;
  */
 final readonly class ClosureProvider implements Provider, ProviderNameable
 {
+    /** @var string */
+    private string $name;
+
     /**
      * constructor
      *
-     * @param string $name Provider name.
      * @param null|Closure(Definitions):mixed $register
      * @param null|Closure(Application):void $boot
+     * @param string|null $name Provider name.
      * @throws InvalidArgumentException
      */
     public function __construct(
-        private string $name,
         private ?Closure $register = null,
         private ?Closure $boot = null,
+        ?string $name = null,
     ) {
         if (is_null($register) && is_null($boot)) {
             throw new InvalidArgumentException('register or boot must be set.');
         }
+
+        $this->name = $name ?? Uuid::v6()->toRfc4122();
     }
 
     /**
