@@ -3,6 +3,7 @@
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Closure;
+use DI\Definition\Source\DefinitionSource;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Uid\Uuid;
@@ -60,7 +61,11 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
 
         $result = call_user_func($this->register, $definitions);
 
-        if (is_array($result)) {
+        if (
+            is_string($result)
+            || is_array($result)
+            || $result instanceof DefinitionSource
+        ) {
             $definitions->add($result);
         }
     }
