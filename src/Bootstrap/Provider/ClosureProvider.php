@@ -7,7 +7,7 @@ use DI\Definition\Source\DefinitionSource;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Uid\Uuid;
-use InvalidArgumentException;
+use BadFunctionCallException;
 
 /**
  * Provide processing using Closure can be set.
@@ -52,6 +52,7 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
      *
      * @param Definitions $definitions
      * @return void
+     * @throws BadFunctionCallException
      */
     public function register(Definitions $definitions): void
     {
@@ -67,6 +68,10 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
             || $result instanceof DefinitionSource
         ) {
             $definitions->add($result);
+        }
+
+        if (!is_null($result)) {
+            throw new BadFunctionCallException('return value must be null or string or array or DefinitionSource.')
         }
     }
 
