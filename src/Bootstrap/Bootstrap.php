@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap;
 
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
+use Takemo101\Chubby\Bootstrap\Provider\ProviderNameable;
 
 /**
  * Application bootstrap
@@ -35,7 +36,12 @@ final class Bootstrap implements Provider
     public function addProvider(Provider ...$providers): self
     {
         foreach ($providers as $provider) {
-            $this->providers[$provider::ProviderName] = $provider;
+
+            $name = $provider instanceof ProviderNameable
+                ? $provider->getProviderName()
+                : $provider::ProviderName;
+
+            $this->providers[$name] = $provider;
         }
 
         return $this;
