@@ -17,7 +17,7 @@ describe(
         )->with([
             ['tag01', fn (string $data) => $data],
             ['tag02', new HookTestProcess()],
-            ['tag03', [new HookTestProcess, '__invoke']],
+            ['tag03', [new HookTestProcess(), '__invoke']],
             [HookTestProcess::class, fn (HookTestProcess $data) => $data],
         ]);
 
@@ -53,7 +53,7 @@ describe(
         )->with([
             ['tag01', fn (string $data) => $data],
             ['tag02', new HookTestProcess()],
-            ['tag03', [new HookTestProcess, '__invoke']],
+            ['tag03', [new HookTestProcess(), '__invoke']],
             [HookTestProcess::class, fn (HookTestProcess $data) => $data],
         ]);
 
@@ -109,7 +109,7 @@ describe(
         )->with([
             [fn () => fn (int $data) => $data + 1],
             [new HookTestProcess()],
-            [[new HookTestProcess, '__invoke']],
+            [[new HookTestProcess(), '__invoke']],
         ]);
 
         test(
@@ -197,7 +197,7 @@ describe(
 
 class HookTestProcess
 {
-    function __invoke(int $data)
+    public function __invoke(int $data)
     {
         return $data + 1;
     }

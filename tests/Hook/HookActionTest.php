@@ -45,8 +45,7 @@ describe(
         )->with([
             [
                 [
-                    new class()
-                    {
+                    new class () {
                         public function __invoke()
                         {
                             return 'a';
@@ -57,8 +56,7 @@ describe(
             ],
             [
                 [
-                    new class()
-                    {
+                    new class () {
                         public function __invoke()
                         {
                             return 'b';
