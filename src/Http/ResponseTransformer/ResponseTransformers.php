@@ -59,6 +59,8 @@ final class ResponseTransformers implements ResponseTransformer
             }
         }
 
-        return null;
+        return $data instanceof ResponseInterface
+            ? $data
+            : null;
     }
 }

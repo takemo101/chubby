@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 
 final class SymfonyConsoleAdapter
 {
@@ -37,6 +38,20 @@ final class SymfonyConsoleAdapter
         $this->commands->add(...$commands);
 
         return $this;
+    }
+
+    /**
+     * Find Symfony command.
+     *
+     * @param string $name
+     * @return Command
+     * @throws CommandNotFoundException
+     */
+    public function findCommand(string $name): Command
+    {
+        $this->submitCommands();
+
+        return $this->application->find($name);
     }
 
     /**

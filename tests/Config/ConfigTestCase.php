@@ -17,7 +17,7 @@ class ConfigTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->setupConfigRepository();
+        $this->setUpConfigRepository();
     }
 
     /**
@@ -25,7 +25,7 @@ class ConfigTestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setupConfigRepository(): void
+    public function setUpConfigRepository(): void
     {
         $this->repository = new ConfigPhpRepository(
             new LocalFilesystem(),

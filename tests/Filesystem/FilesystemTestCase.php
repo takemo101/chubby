@@ -16,7 +16,7 @@ class FilesystemTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->setupLocalFilesystem();
+        $this->setUpLocalFilesystem();
     }
 
     /**
@@ -24,7 +24,7 @@ class FilesystemTestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setupLocalFilesystem(): void
+    public function setUpLocalFilesystem(): void
     {
         $this->filesystem = new LocalFilesystem();
     }
