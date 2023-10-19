@@ -31,7 +31,7 @@ hook()->onByType(
         );
 
         $http->get(
-            '/{name}',
+            '/name/{name}',
             function (ResponseInterface $response, string $name) {
                 $response
                     ->getBody()
