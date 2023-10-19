@@ -3,7 +3,8 @@
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Takemo101\Chubby\Console\Command\CallableCommand;
+use Takemo101\Chubby\Application as ChubbyApplication;
+use Takemo101\Chubby\Console\Command\ClosureCommand;
 use Takemo101\Chubby\Console\CommandCollection;
 use Takemo101\Chubby\Console\CommandResolver;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
@@ -24,7 +25,7 @@ describe(
                 $console = new SymfonyConsoleAdapter(
                     $app,
                     new CommandCollection(
-                        CallableCommand::from(fn () => CallableCommand::SUCCESS)
+                        ClosureCommand::from(fn () => ClosureCommand::SUCCESS)
                             ->setName($name),
                     ),
                     new CommandResolver($this->getContainer()),
@@ -48,6 +49,10 @@ describe(
                 $tester = $this->command('version');
 
                 $tester->assertCommandIsSuccessful();
+
+                expect($tester->getDisplay())->toContain(
+                    ChubbyApplication::Version,
+                );
             },
         );
 
@@ -65,16 +70,16 @@ describe(
                 $tester->assertCommandIsSuccessful();
             }
         )->with([
-            CallableCommand::from(
-                fn () => CallableCommand::SUCCESS,
+            ClosureCommand::from(
+                fn () => ClosureCommand::SUCCESS,
                 'test01'
             ),
-            CallableCommand::from(
-                fn () => CallableCommand::SUCCESS,
+            ClosureCommand::from(
+                fn () => ClosureCommand::SUCCESS,
                 'test02'
             ),
-            CallableCommand::from(
-                fn () => CallableCommand::SUCCESS,
+            ClosureCommand::from(
+                fn () => ClosureCommand::SUCCESS,
                 'test03'
             ),
         ]);

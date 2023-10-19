@@ -8,9 +8,9 @@ use Takemo101\Chubby\Contract\ContainerInjectable;
 use LogicException;
 
 /**
- * Command that can be executed by a callable.
+ * Command that can be executed by a closure.
  */
-final class CallableCommand extends AbstractCommand implements ContainerInjectable
+final class ClosureCommand extends AbstractCommand implements ContainerInjectable
 {
     /**
      * @var ApplicationContainer|null
@@ -62,19 +62,6 @@ final class CallableCommand extends AbstractCommand implements ContainerInjectab
     public function setContainer(ApplicationContainer $container): void
     {
         $this->container = $container;
-    }
-
-    /**
-     * Create a new command from a callable.
-     *
-     * @param callable $callable
-     * @return static
-     */
-    public static function fromCallable(
-        callable $callable,
-        ?string $name = null,
-    ): self {
-        return self::from(Closure::fromCallable($callable), $name);
     }
 
     /**
