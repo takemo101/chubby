@@ -44,7 +44,7 @@ describe(
                 expect($path->getStoragePath())->toEqual($realBasePath . $storageDirectory);
                 expect($path->getDotenvNames())->toEqual($dotenvNames);
             },
-        );
+        )->skipOnWindows();
 
         test(
             'Provider is added to Bootstrap via Application',
