@@ -21,13 +21,15 @@ final class CallableCommand extends AbstractCommand implements ContainerInjectab
      * constructor
      *
      * @param Closure $closure
+     * @param string|null $name
      *
      * @throws LogicException When the command name is empty
      */
     public function __construct(
         protected readonly Closure $closure,
+        ?string $name = null,
     ) {
-        parent::__construct();
+        parent::__construct($name);
     }
 
     /**
@@ -68,9 +70,11 @@ final class CallableCommand extends AbstractCommand implements ContainerInjectab
      * @param callable $callable
      * @return static
      */
-    public static function fromCallable(callable $callable): self
-    {
-        return self::from(Closure::fromCallable($callable));
+    public static function fromCallable(
+        callable $callable,
+        ?string $name = null,
+    ): self {
+        return self::from(Closure::fromCallable($callable), $name);
     }
 
     /**
@@ -79,8 +83,10 @@ final class CallableCommand extends AbstractCommand implements ContainerInjectab
      * @param Closure $closure
      * @return static
      */
-    public static function from(Closure $closure): self
-    {
-        return new self($closure);
+    public static function from(
+        Closure $closure,
+        ?string $name = null,
+    ): self {
+        return new self($closure, $name);
     }
 }
