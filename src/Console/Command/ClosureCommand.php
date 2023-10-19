@@ -39,7 +39,7 @@ final class ClosureCommand extends AbstractCommand implements ContainerInjectabl
      */
     public function handle()
     {
-        return $this->getContainer()->call($this->closure);
+        return (int) $this->getContainer()->call($this->closure);
     }
 
     /**

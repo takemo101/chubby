@@ -40,7 +40,7 @@ abstract class AbstractCommand extends BaseCommand
             $this->getContainer()->set(OutputInterface::class, $output);
 
             /** @var integer */
-            $exitCode = $this->getContainer()->call([$this, 'handle'], [
+            $exitCode = (int) $this->getContainer()->call([$this, 'handle'], [
                 'input' => $input,
                 'output' => $output,
             ]);
