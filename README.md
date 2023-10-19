@@ -41,7 +41,7 @@ $http->run();
 // console
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Takemo101\Chubby\Console\Command\CallableCommand;
+use Takemo101\Chubby\Console\Command\ClosureCommand;
 use Takemo101\Chubby\Console;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -49,12 +49,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 $console = Console::createSimple();
 
 $console->addCommand(
-    CallableCommand::from(
+    ClosureCommand::from(
         function (OutputInterface $output) {
 
             $output->writeln('Hello World!');
 
-            return CallableCommand::SUCCESS;
+            return ClosureCommand::SUCCESS;
         },
     )->setName('hello'),
 );
