@@ -113,20 +113,27 @@ class HttpProvider implements Provider
                     ->getRouteCollector()
                     ->getRouteParser(),
                 BasePathMiddleware::class => fn (Slim $slim) => new BasePathMiddleware($slim),
-                ErrorHandlerInterface::class => function (
+                ErrorHandlerInterface::class => get(ErrorHandler::class),
+                ErrorHandler::class => function (
                     Slim $slim,
                     LoggerInterface $logger,
+                    Hook $hook,
                 ) {
-                    return new ErrorHandler(
+                    $errorHandler = new ErrorHandler(
                         $slim->getResponseFactory(),
                         $logger,
                     );
+
+                    $hook->doByObject($errorHandler);
+
+                    return $errorHandler;
                 },
                 ErrorMiddleware::class => function (
                     Slim $slim,
                     LoggerInterface $logger,
                     ErrorHandlerInterface $errorHandler,
-                    ConfigRepository $config
+                    ConfigRepository $config,
+                    Hook $hook,
                 ) {
                     /** @var boolean */
                     $displayErrorDetails = $config->get('display_error_details', true);
@@ -145,6 +152,8 @@ class HttpProvider implements Provider
                     );
 
                     $errorMiddleware->setDefaultErrorHandler($errorHandler);
+
+                    $hook->doByObject($errorMiddleware);
 
                     return $errorMiddleware;
                 },

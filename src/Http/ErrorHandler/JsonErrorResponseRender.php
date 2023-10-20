@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-final class JsonErrorResponseRender implements ErrorResponseRender
+class JsonErrorResponseRender implements ErrorResponseRender
 {
     /**
      * Perform response writing process.
@@ -28,10 +28,28 @@ final class JsonErrorResponseRender implements ErrorResponseRender
         ErrorSetting $setting,
     ): ?ResponseInterface {
         return (new JsonRenderer(
-            [
-                'error' => $this->getErrorDetails($exception, $setting),
-            ],
+            $this->createJsonContent(
+                $exception,
+                $setting,
+            ),
         ))->render($request, $response);
+    }
+
+    /**
+     * Create json content.
+     *
+     * @param Throwable $exception
+     * @param ErrorSetting $setting
+     *
+     * @return mixed
+     */
+    protected function createJsonContent(
+        Throwable $exception,
+        ErrorSetting $setting,
+    ): mixed {
+        return [
+            'error' => $this->getErrorDetails($exception, $setting),
+        ];
     }
 
     /**
