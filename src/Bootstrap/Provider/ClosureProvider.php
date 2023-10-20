@@ -4,10 +4,11 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Closure;
 use DI\Definition\Source\DefinitionSource;
-use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Uid\Uuid;
 use BadFunctionCallException;
+use InvalidArgumentException;
+use Takemo101\Chubby\ApplicationContainer;
 
 /**
  * Provide processing using Closure can be set.
@@ -21,7 +22,7 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
      * constructor
      *
      * @param null|Closure(Definitions):mixed $register
-     * @param null|Closure(Application):void $boot
+     * @param null|Closure(ApplicationContainer):void $boot
      * @param string|null $name Provider name.
      * @throws InvalidArgumentException
      */
@@ -68,25 +69,22 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
             || $result instanceof DefinitionSource
         ) {
             $definitions->add($result);
-        }
-
-        if (!is_null($result)) {
-            throw new BadFunctionCallException('return value must be null or string or array or DefinitionSource.')
+            return;
         }
     }
 
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         if (!$this->boot) {
             return;
         }
 
-        call_user_func($this->boot, $app);
+        call_user_func($this->boot, $container);
     }
 }

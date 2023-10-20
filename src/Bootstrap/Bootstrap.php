@@ -3,6 +3,7 @@
 namespace Takemo101\Chubby\Bootstrap;
 
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Bootstrap\Provider\ProviderNameable;
 
@@ -73,13 +74,13 @@ final class Bootstrap implements Provider
     /**
      * Run all providers
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         foreach ($this->providers as $provider) {
-            $provider->boot($app);
+            $provider->boot($container);
         }
     }
 }

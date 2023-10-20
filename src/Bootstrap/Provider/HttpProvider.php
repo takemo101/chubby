@@ -15,7 +15,6 @@ use Selective\BasePath\BasePathMiddleware;
 use Slim\Interfaces\ErrorHandlerInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Middleware\ErrorMiddleware;
-use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
@@ -156,10 +155,10 @@ class HttpProvider implements Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         //
     }

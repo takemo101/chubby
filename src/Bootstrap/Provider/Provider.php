@@ -2,7 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 
 /**
@@ -26,8 +26,8 @@ interface Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void;
+    public function boot(ApplicationContainer $container): void;
 }

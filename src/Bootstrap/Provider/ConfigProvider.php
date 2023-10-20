@@ -2,7 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
@@ -45,13 +45,13 @@ class ConfigProvider implements Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         /** @var ConfigRepository */
-        $config = $app->get(ConfigRepository::class);
+        $config = $container->get(ConfigRepository::class);
 
         date_default_timezone_set($config->get('app.timezone', 'UTC'));
     }
