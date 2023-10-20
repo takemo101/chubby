@@ -78,7 +78,7 @@ class ConfigPhpRepository implements ConfigRepository
         $ext = self::ConfigExtension;
 
         $paths = $this->filesystem->glob(
-            (new PathHelper)->join($directory, "*{$ext}"),
+            (new PathHelper())->join($directory, "*{$ext}"),
         );
 
         if (empty($paths)) {
