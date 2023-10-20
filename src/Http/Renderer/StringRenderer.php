@@ -36,7 +36,7 @@ final class StringRenderer implements ResponseRenderer
     ): ResponseInterface {
         $response = $response
             ->withStatus($this->status)
-            ->withHeader('Content-Type', 'text/html');
+            ->withHeader('Content-Type', 'text/plain');
 
         foreach ($this->headers as $key => $value) {
             $response = $response->withHeader($key, $value);

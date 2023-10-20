@@ -54,8 +54,8 @@ trait HasHttpTest
      * @return ServerRequestInterface
      */
     protected function createRequest(
-        string $method,
-        $uri,
+        string $method = 'GET',
+        $uri = '/',
         array $serverParams = [],
     ): ServerRequestInterface {
 
