@@ -32,8 +32,7 @@ describe(
             fn () => [
                 'hoge' => 'fuga',
             ],
-            new class() implements Arrayable, \JsonSerializable
-            {
+            new class () implements Arrayable, \JsonSerializable {
                 public function toArray(): array
                 {
                     return [
@@ -68,8 +67,7 @@ describe(
             },
         )->with([
             'hoge',
-            new class() implements \Stringable
-            {
+            new class () implements \Stringable {
                 public function __toString()
                 {
                     return 'fuga';

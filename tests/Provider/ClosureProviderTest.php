@@ -65,8 +65,7 @@ describe(
 dataset(
     'objects',
     [
-        new class('test01')
-        {
+        new class ('test01') {
             public function __construct(
                 public string $data,
             ) {
@@ -78,8 +77,7 @@ dataset(
                 $this->data = $data;
             }
         },
-        new class('test02')
-        {
+        new class ('test02') {
             public function __construct(
                 public string $data,
             ) {
