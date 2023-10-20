@@ -30,7 +30,7 @@ final class SymfonyConsoleAdapter
      * Add Symfony command.
      * Add a class string or instance that implements the command.
      *
-     * @param class-string<Command>|object<Command> ...$commands
+     * @param class-string<Command>|object ...$commands
      * @return static
      */
     public function addCommand(string|object ...$commands): static

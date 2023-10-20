@@ -58,7 +58,7 @@ class JsonErrorResponseRender implements ErrorResponseRender
      * @param Throwable $exception
      * @param ErrorSetting $setting
      *
-     * @return array Json error message
+     * @return array<string,mixed> Json error message
      */
     private function getErrorDetails(Throwable $exception, ErrorSetting $setting): array
     {

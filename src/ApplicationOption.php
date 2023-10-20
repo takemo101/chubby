@@ -22,7 +22,7 @@ final readonly class ApplicationOption
     /** @var string */
     public const DefaultStoragePath = '/storage';
 
-    /** @var string */
+    /** @var string[] */
     public const DefaultDotenvNames = ['.env'];
 
     /**
@@ -62,7 +62,7 @@ final readonly class ApplicationOption
     public function createApplicationPath(): ApplicationPath
     {
         return new ApplicationPath(
-            basePath: realpath($this->basePath),
+            basePath: realpath($this->basePath) ?: $this->basePath,
             configPath: $this->configPath,
             settingPath: $this->settingPath,
             storagePath: $this->storagePath,

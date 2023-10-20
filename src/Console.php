@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
@@ -32,6 +33,7 @@ final readonly class Console extends AbstractRunner
     /**
      * Add command class instance.
      *
+     * @param class-string<Command>|object ...$commands
      * @return self
      */
     public function addCommand(string|object ...$commands): self

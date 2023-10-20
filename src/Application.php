@@ -101,7 +101,6 @@ final class Application implements ApplicationContainer
      * Initialize the application.
      *
      * @param ContainerBuilder<Container> $builder
-     * @param Bootstrap $bootstrap
      * @return void
      */
     private function initialize(

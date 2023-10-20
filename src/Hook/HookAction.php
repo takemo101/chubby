@@ -30,7 +30,6 @@ final class HookAction
     /**
      * Get keys from callable values
      *
-     * @param string|mixed[]|object $function
      * @return string
      */
     public function getUniqueKey(): string
@@ -58,7 +57,10 @@ final class HookAction
      */
     public function getCallable(): callable
     {
-        return Closure::fromCallable($this->function);
+        /** @var callable */
+        $callable = $this->function;
+
+        return Closure::fromCallable($callable);
     }
 
     /**

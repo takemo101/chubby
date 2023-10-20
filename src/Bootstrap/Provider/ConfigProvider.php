@@ -53,6 +53,9 @@ class ConfigProvider implements Provider
         /** @var ConfigRepository */
         $config = $container->get(ConfigRepository::class);
 
-        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+        /** @var string */
+        $timezone = $config->get('app.timezone', 'UTC');
+
+        date_default_timezone_set($timezone);
     }
 }

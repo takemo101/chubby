@@ -3,20 +3,21 @@
 use Monolog\Level;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 use Takemo101\Chubby\Support\ServiceLocator;
 
-if (!function_exists('app')) {
+if (!function_exists('container')) {
     /**
-     * Access the application
+     * Access the application container.
      *
-     * @return Application
+     * @return ApplicationContainer
      */
-    function app(): Application
+    function container(): ApplicationContainer
     {
-        return ServiceLocator::app();
+        return ServiceLocator::container();
     }
 }
 

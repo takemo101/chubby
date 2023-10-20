@@ -83,8 +83,12 @@ final readonly class Http extends AbstractRunner
         $http = $this->getHttp();
 
         if (method_exists($http, $name)) {
+
+            /** @var callable */
+            $callable = [$http, $name];
+
             return call_user_func_array(
-                [$http, $name],
+                $callable,
                 $arguments,
             );
         }

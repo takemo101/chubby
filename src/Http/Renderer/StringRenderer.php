@@ -43,7 +43,7 @@ final class StringRenderer implements ResponseRenderer
         }
 
         $response->getBody()->write(
-            (string) $this->data,
+            (string) $this->data, // @phpstan-ignore-line
         );
 
         return $response;

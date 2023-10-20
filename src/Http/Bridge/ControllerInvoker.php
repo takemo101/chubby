@@ -31,9 +31,9 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
      * @param callable               $callable       The callable to invoke using the strategy.
      * @param ServerRequestInterface $request        The request object.
      * @param ResponseInterface      $response       The response object.
-     * @param array                  $routeArguments The route's placeholder arguments
+     * @param array<string,string>   $routeArguments The route's placeholder arguments
      *
-     * @return ResponseInterface|string The response from the callable.
+     * @return ResponseInterface The response from the callable.
      */
     public function __invoke(
         callable $callable,
@@ -67,6 +67,7 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @param array<string,string> $routeArguments
      * @return mixed[]
      */
     private function getInjectParameters(
@@ -98,7 +99,7 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
      * Inject route arguments to request attributes.
      *
      * @param ServerRequestInterface $request
-     * @param array $routeArguments
+     * @param array<string,string> $routeArguments
      * @return ServerRequestInterface
      */
     private function injectRouteArguments(

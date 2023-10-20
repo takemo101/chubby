@@ -73,7 +73,7 @@ class EnvironmentProvider implements Provider
                             'names' => $names,
                         ]);
 
-                        if (self::ShouldThrowsExceptionOnMissingDotenv) {
+                        if (static::ShouldThrowsExceptionOnMissingDotenv) {
                             throw $e;
                         }
                     }

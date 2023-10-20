@@ -6,6 +6,7 @@ use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Filesystem\LocalSystem;
 use Illuminate\Support\Arr;
+use Takemo101\Chubby\Filesystem\PathHelper;
 
 /**
  * config repository
@@ -77,9 +78,7 @@ class ConfigPhpRepository implements ConfigRepository
         $ext = self::ConfigExtension;
 
         $paths = $this->filesystem->glob(
-            $this->filesystem
-                ->helper
-                ->join($directory, "*{$ext}"),
+            (new PathHelper)->join($directory, "*{$ext}"),
         );
 
         if (empty($paths)) {
@@ -97,20 +96,18 @@ class ConfigPhpRepository implements ConfigRepository
      * Get data for the specified key (specify the key using dot notation)
      *
      * @param string $key
-     * @param mixed $default
-     * @return mixed
+     * @return void
      */
-    private function loadData(string $key, $default = null)
+    private function loadData(string $key): void
     {
         if (array_key_exists($key, $this->config)) {
-            $result = $this->resolve($this->config[$key]);
+            /** @var string|mixed[] */
+            $pathOrConfig = $this->config[$key];
+
+            $result = $this->resolve($pathOrConfig);
 
             $this->config[$key] = $result;
-
-            return $result;
         }
-
-        return $default;
     }
 
     /**

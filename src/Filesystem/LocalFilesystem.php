@@ -403,6 +403,10 @@ final readonly class LocalFilesystem implements LocalSystem
 
         $paths = $this->glob($this->helper->join($from, "*"));
 
+        if ($paths === null) {
+            return false;
+        }
+
         foreach ($paths as $path) {
             /** @var string */
             $target = $this->extract($path);
@@ -435,6 +439,10 @@ final readonly class LocalFilesystem implements LocalSystem
         }
 
         $paths = $this->glob($this->helper->join($path, "*"));
+
+        if ($paths === null) {
+            return false;
+        }
 
         foreach ($paths as $target) {
             if ($this->isDirectory($target)) {
