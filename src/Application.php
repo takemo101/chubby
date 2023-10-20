@@ -189,9 +189,9 @@ final class Application implements ApplicationContainer
 
         $this->container = $this->builder->build();
 
-        $this->bootstrap->boot($this);
-
         $this->isBooted = true;
+
+        $this->bootstrap->boot($this);
     }
 
     /**
