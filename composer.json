@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^8.1.0",
+    "php": "^8.2",
     "fig/http-message-util": "^1.1",
     "illuminate/collections": "^10.28",
     "monolog/monolog": "^3.4",

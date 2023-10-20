@@ -24,9 +24,11 @@ services:
     working_dir: /var/www/html
 
   composer:
-    image: composer:latest
+    image: composer:2.6.5
     volumes:
       - .:/var/www/html
+    environment:
+      - PHP_VERSION=8.2.11
     working_dir: /var/www/html
 
 networks:
