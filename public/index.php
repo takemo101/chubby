@@ -4,9 +4,9 @@ define('APP_START_TIME', microtime(true));
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$http = Takemo101\Chubby\Http\Http::fromOption(
-    new Takemo101\Chubby\ApplicationOption(
-        basePath: $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__),
+$http = Takemo101\Chubby\Http::create(
+    Takemo101\Chubby\ApplicationOption::from(
+        basePath: getenv('APP_BASE_PATH') ?: dirname(__DIR__),
     ),
 );
 

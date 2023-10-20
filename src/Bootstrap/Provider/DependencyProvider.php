@@ -2,11 +2,11 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
 use RuntimeException;
-use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Filesystem\LocalSystem;
 
 /**
  * Dependency injection related.
@@ -22,9 +22,11 @@ class DependencyProvider implements Provider
      * constructor
      *
      * @param ApplicationPath $path
+     * @param LocalSystem $filesystem
      */
     public function __construct(
         protected ApplicationPath $path,
+        protected LocalSystem $filesystem,
     ) {
         //
     }
@@ -37,28 +39,31 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
+        $dependencyPath = $this->getDependencyPath();
+
         /** @var mixed[] */
-        $dependency = require $this->getDependencyPath();
+        $dependency = $this->filesystem->exists($dependencyPath)
+            ? require $dependencyPath
+            : [];
 
         if (!is_array($dependency)) {
             throw new RuntimeException('Dependency definition must be array.');
         }
 
-        $definitions->add(
-            $dependency,
-            [
-                Hook::class => fn () => new Hook(),
-            ],
-        );
+        if (!empty($dependency)) {
+            $definitions->add(
+                $dependency,
+            );
+        }
     }
 
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         //
     }

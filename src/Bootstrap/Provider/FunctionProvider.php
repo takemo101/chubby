@@ -2,8 +2,9 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Filesystem\LocalSystem;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -20,9 +21,11 @@ class FunctionProvider implements Provider
      * constructor
      *
      * @param ApplicationPath $path
+     * @param LocalSystem $filesystem
      */
     public function __construct(
         protected ApplicationPath $path,
+        protected LocalSystem $filesystem,
     ) {
         //
     }
@@ -41,12 +44,16 @@ class FunctionProvider implements Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
-        require $this->getFunctionPath();
+        $functionPath = $this->getFunctionPath();
+
+        if ($this->filesystem->exists($functionPath)) {
+            require $functionPath;
+        }
     }
 
     /**

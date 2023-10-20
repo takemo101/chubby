@@ -5,8 +5,8 @@ namespace Takemo101\Chubby\Hook;
 // https://github.com/voku/php-hooks/blob/master/src/voku/helper/Hooks.php
 
 /**
- * フックフィルタ
- * アクションのコレクションとなる
+ * hook filter
+ * A collection of actions.
  */
 final class HookFilter
 {
@@ -23,7 +23,7 @@ final class HookFilter
     /**
      * constructor
      *
-     * @param integer $priority フィルタの優先度
+     * @param integer $priority Filter priority
      * @param HookAction ...$actions
      */
     public function __construct(
@@ -34,12 +34,11 @@ final class HookFilter
     }
 
     /**
-     * 優先度の調整
-     * 引数に与えた配列に優先度が含まれている場合は、
-     * 含まれてない優先度に調整するために、
-     * 優先度をインクリメントしていく
+     * Adjust action priority
+     * If the array given as an argument contains priorities,
+     * Increment the priority to adjust to a priority that is not included.
      *
-     * @param array<integer,mixed> $array 基準となる配列
+     * @param array<integer,mixed> $array Base array
      * @return integer
      */
     public function adjustPriority(array $array): int
@@ -57,7 +56,7 @@ final class HookFilter
     }
 
     /**
-     * アクション追加
+     * Add action
      *
      * @param HookAction ...$actions
      * @return self
@@ -65,14 +64,14 @@ final class HookFilter
     public function add(HookAction ...$actions): self
     {
         foreach ($actions as $action) {
-            $this->actions[$action->key] = $action;
+            $this->actions[$action->getUniqueKey()] = $action;
         }
 
         return $this;
     }
 
     /**
-     * アクション削除
+     * Delete target action.
      *
      * @param HookAction ...$actions
      * @return self
@@ -80,14 +79,24 @@ final class HookFilter
     public function remove(HookAction ...$actions): self
     {
         foreach ($actions as $action) {
-            unset($this->actions[$action->key]);
+            unset($this->actions[$action->getUniqueKey()]);
         }
 
         return $this;
     }
 
     /**
-     * アクションを全てクリア
+     * Check if there are any actions.
+     *
+     * @return boolean
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->actions);
+    }
+
+    /**
+     * Clear all actions.
      *
      * @return self
      */
@@ -119,19 +128,19 @@ final class HookFilter
     }
 
     /**
-     * callableな値からフィルタを作成
+     * Create filter from callable values.
      *
      * @param integer $priority
-     * @param callable $function
+     * @param string|mixed[]|object $function
      * @return self
      */
     public static function fromCallable(
         int $priority,
-        callable $function,
+        string|array|object $function,
     ): self {
         return new self(
             priority: $priority,
-            action: HookAction::fromCallable($function),
+            action: new HookAction($function),
         );
     }
 }

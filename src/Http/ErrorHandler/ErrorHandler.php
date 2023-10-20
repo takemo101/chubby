@@ -28,26 +28,41 @@ class ErrorHandler implements ErrorHandlerInterface
         private LoggerInterface $logger,
         ErrorResponseRender ...$renders
     ) {
-        $this->renders = empty($renders)
-            ? [
-                new HtmlErrorResponseRender(),
-                new JsonErrorResponseRender(),
-            ]
-            : $renders;
+        $this->setRender(...$renders);
     }
 
     /**
      * Add error response renderer.
      *
      * @param ErrorResponseRender ...$renders
-     * @return void
+     * @return static
      */
-    public function addRender(ErrorResponseRender ...$renders): void
+    public function addRender(ErrorResponseRender ...$renders): static
     {
         $this->renders = [
-            ...$this->renders,
             ...$renders,
+            ...$this->renders,
         ];
+
+        return $this;
+    }
+
+    /**
+     * Set error response renderer.
+     *
+     * @param ErrorResponseRender ...$renders
+     * @return static
+     */
+    public function setRender(ErrorResponseRender ...$renders): static
+    {
+        $this->renders = empty($renders)
+            ? [
+                new HtmlErrorResponseRender(),
+                new JsonErrorResponseRender(),
+            ]
+            : $renders;
+
+        return $this;
     }
 
     /**

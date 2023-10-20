@@ -3,6 +3,10 @@
 // Slim framework related settings
 
 return [
+
+    // Base path
+    'base_path' => env('BASE_PATH'),
+
     // Error output settings
     'error' => [
 

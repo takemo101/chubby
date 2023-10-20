@@ -2,8 +2,6 @@
 
 namespace Takemo101\Chubby\Support;
 
-use Takemo101\Chubby\Filesystem\PathHelper;
-
 /**
  * Application summary data
  */
@@ -18,7 +16,7 @@ final readonly class ApplicationSummary
      * constructor
      *
      * @param string $env local | development | production
-     * @param string $debug
+     * @param boolean $debug
      */
     public function __construct(
         string $env = 'local',

@@ -3,8 +3,7 @@
 namespace Takemo101\Chubby\Hook;
 
 /**
- * フックフィルタ
- * アクションのコレクションとなる
+ * collection of filters
  */
 final class HookFilters
 {
@@ -25,7 +24,7 @@ final class HookFilters
     }
 
     /**
-     * フィルタ追加
+     * Add filter
      *
      * @param HookFilter ...$filters
      * @return self
@@ -44,21 +43,39 @@ final class HookFilters
     }
 
     /**
-     * 優先度とcallableな値からフィルタ削除
+     * Remove filter from priority and callable values.
      *
      * @param integer ...$priority
-     * @param callable $function
+     * @param string|mixed[]|object $function
      * @return self
      */
-    public function remove(int $priority, object|array|string $function): self
+    public function remove(int $priority, string|array|object $function): self
     {
-        $this->get($priority)?->remove(HookAction::fromCallable($function));
+        $filter = $this->get($priority);
+
+        if ($filter = $this->get($priority)) {
+            $filter->remove(new HookAction($function));
+
+            if ($filter->isEmpty()) {
+                unset($this->filters[$priority]);
+            }
+        }
 
         return $this;
     }
 
     /**
-     * 優先度からフィルタを取得
+     * Check if there are any filters.
+     *
+     * @return boolean
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->filters);
+    }
+
+    /**
+     * Get filter by priority.
      *
      * @return HookFilter|null
      */
@@ -68,7 +85,7 @@ final class HookFilters
     }
 
     /**
-     * フィルタを全て取得
+     * Get all filters.
      *
      * @return array<integer,HookFilter>
      */
@@ -78,7 +95,7 @@ final class HookFilters
     }
 
     /**
-     * フィルタを全てクリア
+     * Clear all filters.
      *
      * @return self
      */

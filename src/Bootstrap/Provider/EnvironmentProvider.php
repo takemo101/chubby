@@ -3,10 +3,12 @@
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidPathException;
 use Dotenv\Repository\Adapter\PutenvAdapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Dotenv\Repository\RepositoryInterface;
-use Takemo101\Chubby\Application;
+use Psr\Log\LoggerInterface;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Support\Environment;
@@ -20,6 +22,11 @@ class EnvironmentProvider implements Provider
      * @var string Provider name.
      */
     public const ProviderName = 'environment';
+
+    /**
+     * @var bool Should throw exception on missing dotenv.
+     */
+    public const ShouldThrowsExceptionOnMissingDotenv = false;
 
     /**
      * constructor
@@ -42,18 +49,34 @@ class EnvironmentProvider implements Provider
     {
         $definitions->add(
             [
-                RepositoryInterface::class => function (): RepositoryInterface {
+                RepositoryInterface::class => function (
+                    LoggerInterface $logger,
+                ): RepositoryInterface {
                     $repository = RepositoryBuilder::createWithDefaultAdapters()
                         ->addAdapter(PutenvAdapter::class)
                         ->immutable()
                         ->make();
 
-                    Dotenv::create(
-                        repository: $repository,
-                        paths: $this->getDotenvPath(),
-                        names: $this->path->getDotenvNames(),
-                    )
-                        ->load();
+                    $paths = $this->getDotenvPaths();
+                    $names = $this->path->getDotenvNames();
+
+                    try {
+                        Dotenv::create(
+                            repository: $repository,
+                            paths: $paths,
+                            names: $names,
+                        )
+                            ->load();
+                    } catch (InvalidPathException $e) {
+                        $logger->warning($e, [
+                            'paths' => $paths,
+                            'names' => $names,
+                        ]);
+
+                        if (static::ShouldThrowsExceptionOnMissingDotenv) {
+                            throw $e;
+                        }
+                    }
 
                     return $repository;
                 },
@@ -65,10 +88,10 @@ class EnvironmentProvider implements Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         //
     }
@@ -76,9 +99,9 @@ class EnvironmentProvider implements Provider
     /**
      * Get dotenv path.
      *
-     * @return string
+     * @return string|string[];
      */
-    protected function getDotenvPath(): string
+    protected function getDotenvPaths(): string|array
     {
         return $this->path->getBasePath();
     }

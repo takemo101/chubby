@@ -4,11 +4,12 @@ namespace Takemo101\Chubby\Support;
 
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Slim\App as Slim;
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 /**
  * Have global access to your application's services
@@ -23,10 +24,10 @@ final class ServiceLocator
     /**
      * constructor
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      */
     private function __construct(
-        private readonly Application $app,
+        private readonly ApplicationContainer $container,
     ) {
         //
     }
@@ -34,11 +35,11 @@ final class ServiceLocator
     /**
      * Initialize singleton application instance.
      *
-     * @return self
+     * @return void
      */
-    public static function initialize(Application $app): void
+    public static function initialize(ApplicationContainer $container): void
     {
-        self::$instance = new self($app);
+        self::$instance = new self($container);
     }
 
     /**
@@ -54,13 +55,13 @@ final class ServiceLocator
     }
 
     /**
-     * Get application.
+     * Get application container.
      *
-     * @return Application
+     * @return ApplicationContainer
      */
-    public static function app(): Application
+    public static function container(): ApplicationContainer
     {
-        return self::instance()->app;
+        return self::instance()->container;
     }
 
     /**
@@ -71,7 +72,7 @@ final class ServiceLocator
     public static function env(): Environment
     {
         /** @var Environment */
-        $env = self::app()->get(Environment::class);
+        $env = self::container()->get(Environment::class);
 
         return $env;
     }
@@ -84,7 +85,7 @@ final class ServiceLocator
     public static function config(): ConfigRepository
     {
         /** @var ConfigRepository */
-        $config = self::app()->get(ConfigRepository::class);
+        $config = self::container()->get(ConfigRepository::class);
 
         return $config;
     }
@@ -97,7 +98,7 @@ final class ServiceLocator
     public static function logger(): LoggerInterface
     {
         /** @var LoggerInterface */
-        $logger = self::app()->get(LoggerInterface::class);
+        $logger = self::container()->get(LoggerInterface::class);
 
         return $logger;
     }
@@ -110,7 +111,7 @@ final class ServiceLocator
     public static function path(): ApplicationPath
     {
         /** @var ApplicationPath */
-        $path = self::app()->get(ApplicationPath::class);
+        $path = self::container()->get(ApplicationPath::class);
 
         return $path;
     }
@@ -118,12 +119,12 @@ final class ServiceLocator
     /**
      * Get slim application.
      *
-     * @return Slim
+     * @return SlimHttpAdapter
      */
-    public static function slim(): Slim
+    public static function slim(): SlimHttpAdapter
     {
-        /** @var Slim */
-        $slim = self::app()->get(Slim::class);
+        /** @var SlimHttpAdapter */
+        $slim = self::container()->get(SlimHttpAdapter::class);
 
         return $slim;
     }
@@ -136,7 +137,7 @@ final class ServiceLocator
     public static function console(): SymfonyConsoleAdapter
     {
         /** @var SymfonyConsoleAdapter */
-        $console = self::app()->get(SymfonyConsoleAdapter::class);
+        $console = self::container()->get(SymfonyConsoleAdapter::class);
 
         return $console;
     }
@@ -149,7 +150,7 @@ final class ServiceLocator
     public static function hook(): Hook
     {
         /** @var Hook */
-        $hook = self::app()->get(Hook::class);
+        $hook = self::container()->get(Hook::class);
 
         return $hook;
     }

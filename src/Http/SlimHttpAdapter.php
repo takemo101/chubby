@@ -5,13 +5,23 @@ namespace Takemo101\Chubby\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App as Slim;
-use Takemo101\Chubby\Support\AbstractRunner;
+use Takemo101\Chubby\Http\Concern\HasRouteCollector;
 
-/**
- * Execute Http processing by Slim application.
- */
-final readonly class Http extends AbstractRunner
+final class SlimHttpAdapter
 {
+    use HasRouteCollector;
+
+    /**
+     * constructor
+     *
+     * @param Slim $application
+     */
+    public function __construct(
+        private readonly Slim $application,
+    ) {
+        //
+    }
+
     /**
      * Run slim application
      *
@@ -20,12 +30,7 @@ final readonly class Http extends AbstractRunner
      */
     public function run(?ServerRequestInterface $request = null): void
     {
-        $this->getApp()->boot();
-
-        /** @var Slim */
-        $slim = $this->getApp()->get(Slim::class);
-
-        $slim->run($request);
+        $this->application->run($request);
     }
 
     /**
@@ -36,11 +41,6 @@ final readonly class Http extends AbstractRunner
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->getApp()->boot();
-
-        /** @var Slim */
-        $slim = $this->getApp()->get(Slim::class);
-
-        return $slim->handle($request);
+        return $this->application->handle($request);
     }
 }

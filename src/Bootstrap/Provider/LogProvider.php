@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Monolog\Level;
 use Psr\Log\LoggerInterface;
-use Takemo101\Chubby\Application;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Log\FileLoggerFactory;
@@ -68,10 +68,10 @@ class LogProvider implements Provider
     /**
      * Execute Bootstrap booting process.
      *
-     * @param Application $app
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function boot(Application $app): void
+    public function boot(ApplicationContainer $container): void
     {
         //
     }

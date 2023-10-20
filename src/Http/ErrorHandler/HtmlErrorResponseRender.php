@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Error\Renderers\HtmlErrorRenderer;
 use Throwable;
 
-final class HtmlErrorResponseRender implements ErrorResponseRender
+class HtmlErrorResponseRender implements ErrorResponseRender
 {
     /**
      * Perform response writing process.
@@ -34,12 +34,30 @@ final class HtmlErrorResponseRender implements ErrorResponseRender
         }
 
         $response->getBody()->write(
-            (new HtmlErrorRenderer())->__invoke(
+            $this->createHtmlContent(
                 $exception,
-                $setting->displayErrorDetails,
+                $setting,
             ),
         );
 
         return $response;
+    }
+
+    /**
+     * Create html content.
+     *
+     * @param Throwable $exception
+     * @param ErrorSetting $setting
+     *
+     * @return string
+     */
+    protected function createHtmlContent(
+        Throwable $exception,
+        ErrorSetting $setting,
+    ): string {
+        return (new HtmlErrorRenderer())->__invoke(
+            $exception,
+            $setting->displayErrorDetails,
+        );
     }
 }

@@ -10,6 +10,10 @@ vars:
   PHPSTAN_BIN: ./vendor/bin/phpstan
 
 tasks:
+  setup:
+    cmds:
+      - cp .example.env .env
+
   # ex: task composer -- install
   composer:
     cmds:
@@ -29,12 +33,23 @@ tasks:
 
   pint:
     cmds:
-      - docker-compose run --rm php {{.PINT_BIN}} -v
+      - docker-compose run --rm php {{.PINT_BIN}} --preset psr12 -v
+
+  lint:
+    cmds:
+      - docker-compose run --rm php {{.PINT_BIN}} --test --preset psr12 -v
 
   analyze:
     cmds:
       - docker-compose run --rm php {{.PHPSTAN_BIN}} analyse --ansi --memory-limit=1G
 
+  # ex: task test GROUP=xxx
   test:
     cmds:
       - docker-compose run --rm php {{.PEST_BIN}} --colors=always
+        {{if .GROUP}}--group={{.GROUP}}{{end}}
+
+  # ex: task serve PORT=8000 ROOT=./public/index.php
+  serve:
+    cmds:
+      - php -S {{default "localhost" .HOST}}:{{default "8080" .PORT}} {{default "./public/index.php" .ROOT}}

@@ -3,44 +3,73 @@
 namespace Takemo101\Chubby\Hook;
 
 use Closure;
+use InvalidArgumentException;
 
 /**
- * フックアクション
+ * Action data executed by hook
  */
 final class HookAction
 {
-    /**
-     * @var string
-     */
-    public readonly string $key;
+    /** @var string */
+    public const ClassSeparator = '@';
 
+    /**
+     * construct
+     *
+     * @param string|mixed[]|object $function
+     * @throws InvalidArgumentException
+     */
     public function __construct(
-        public readonly Closure $function,
+        private string|array|object $function,
     ) {
-        $this->key = $this->createUniqueKey($function);
+        if (!is_callable($function)) {
+            throw new InvalidArgumentException('The given value is not callable');
+        }
     }
 
     /**
-     * callableな値からキーの生成
+     * Get keys from callable values
      *
-     * @param Closure $function
      * @return string
      */
-    private function createUniqueKey(Closure $function): string
+    public function getUniqueKey(): string
     {
-        return spl_object_hash($function);
+        $function = $this->function;
+
+        if (is_string($function)) {
+            return $function;
+        }
+
+        if (is_object($function)) {
+            return spl_object_hash($function);
+        }
+
+        return (is_object($function[0])
+            ? spl_object_hash($function[0])
+            : $function[0]
+        ) . self::ClassSeparator . $function[1];
     }
 
     /**
-     * callableな値から生成する
+     * Get callable
      *
-     * @param callable $callable
-     * @return self
+     * @return callable
      */
-    public static function fromCallable(callable $callable): self
+    public function getCallable(): callable
     {
-        return new self(
-            Closure::fromCallable($callable),
-        );
+        /** @var callable */
+        $callable = $this->function;
+
+        return Closure::fromCallable($callable);
+    }
+
+    /**
+     * Get original value.
+     *
+     * @return string|mixed[]|object
+     */
+    public function original(): string|array|object
+    {
+        return $this->function;
     }
 }

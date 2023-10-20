@@ -4,19 +4,15 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
-use Selective\BasePath\BasePathMiddleware;
-use Slim\App as Slim;
-use Slim\Middleware\ErrorMiddleware;
+use Slim\Routing\RouteCollectorProxy;
+use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
+use Takemo101\Chubby\Http\SlimHttpAdapter;
 
 hook()->onByType(
-    function (Slim $slim) {
-        $slim->addBodyParsingMiddleware();
-        $slim->addRoutingMiddleware();
-        $slim->add(BasePathMiddleware::class);
-        $slim->add(ErrorMiddleware::class);
+    function (SlimHttpAdapter $http) {
 
-        $slim->get(
+        $http->get(
             '/',
             function (ResponseInterface $response) {
                 $response
@@ -27,14 +23,36 @@ hook()->onByType(
             },
         );
 
-        $slim->get(
-            '/{name}',
+        $http->get(
+            '/json',
+            fn (Context $context) => new JsonRenderer(
+                $context->request->getHeaders(),
+            ),
+        );
+
+        $http->get(
+            '/name/{name}',
             function (ResponseInterface $response, string $name) {
                 $response
                     ->getBody()
                     ->write($name);
 
                 return $response;
+            },
+        );
+
+        $http->group(
+            '/group',
+            function (RouteCollectorProxy $group) {
+                $group->get('/a', function (
+                    ResponseInterface $response,
+                ) {
+                    $response
+                        ->getBody()
+                        ->write('This route is route.a');
+
+                    return $response;
+                })->setName('route.a');
             },
         );
     },

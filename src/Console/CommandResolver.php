@@ -2,8 +2,9 @@
 
 namespace Takemo101\Chubby\Console;
 
-use DI\FactoryInterface;
 use Symfony\Component\Console\Command\Command;
+use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Contract\ContainerInjectable;
 
 /**
  * Command resolution
@@ -13,10 +14,10 @@ final class CommandResolver
     /**
      * constructor
      *
-     * @param FactoryInterface $factory
+     * @param ApplicationContainer $container
      */
     public function __construct(
-        private readonly FactoryInterface $factory,
+        private readonly ApplicationContainer $container,
     ) {
         //
     }
@@ -25,16 +26,26 @@ final class CommandResolver
      * Resolves to command object.
      * If unresolvable, return null.
      *
-     * @param class-string<Command>|object $command
+     * @param class-string<Command>|object|callable $command
      * @return Command|null
      */
-    public function resolve(string|object $command): ?Command
+    public function resolve(string|object|callable $command): ?Command
     {
-        return is_string($command)
-            ? $this->getCommandObjectOr(
-                $this->factory->make($command),
-            )
-            : $this->getCommandObjectOr($command);
+        $object = $this->getCommandObjectOr(
+            is_string($command)
+                ? $this->container->make($command)
+                : $command
+        );
+
+        if (!$object) {
+            return null;
+        }
+
+        if ($object instanceof ContainerInjectable) {
+            $object->setContainer($this->container);
+        }
+
+        return $object;
     }
 
     /**
