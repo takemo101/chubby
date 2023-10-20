@@ -11,7 +11,6 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Selective\BasePath\BasePathMiddleware;
 use Slim\Interfaces\ErrorHandlerInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Middleware\ErrorMiddleware;
@@ -112,7 +111,6 @@ class HttpProvider implements Provider
                 RouteParserInterface::class => fn (Slim $slim) => $slim
                     ->getRouteCollector()
                     ->getRouteParser(),
-                BasePathMiddleware::class => fn (Slim $slim) => new BasePathMiddleware($slim),
                 ErrorHandlerInterface::class => get(ErrorHandler::class),
                 ErrorHandler::class => function (
                     Slim $slim,
@@ -182,7 +180,6 @@ class HttpProvider implements Provider
     {
         $slim->addBodyParsingMiddleware();
         $slim->addRoutingMiddleware();
-        $slim->add(BasePathMiddleware::class);
         $slim->add(ErrorMiddleware::class);
     }
 }
