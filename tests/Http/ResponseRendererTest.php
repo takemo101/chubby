@@ -29,7 +29,7 @@ describe(
                 expect($actual->getHeaderLine('Content-Type'))->toEqual('application/json');
             },
         )->with([
-            [
+            fn () => [
                 'hoge' => 'fuga',
             ],
             new class() implements Arrayable, \JsonSerializable
