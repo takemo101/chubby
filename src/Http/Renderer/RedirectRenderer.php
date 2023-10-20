@@ -24,10 +24,6 @@ final class RedirectRenderer implements ResponseRenderer
         if ($url === '') {
             throw new InvalidArgumentException('The url is empty.');
         }
-
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException('The url is invalid.');
-        }
     }
 
     /**
