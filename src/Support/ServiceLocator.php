@@ -117,16 +117,16 @@ final class ServiceLocator
     }
 
     /**
-     * Get slim application.
+     * Get http application.
      *
      * @return SlimHttpAdapter
      */
-    public static function slim(): SlimHttpAdapter
+    public static function http(): SlimHttpAdapter
     {
         /** @var SlimHttpAdapter */
-        $slim = self::container()->get(SlimHttpAdapter::class);
+        $http = self::container()->get(SlimHttpAdapter::class);
 
-        return $slim;
+        return $http;
     }
 
     /**

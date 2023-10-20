@@ -105,15 +105,15 @@ if (!function_exists('storage_path')) {
     }
 }
 
-if (!function_exists('slim')) {
+if (!function_exists('http')) {
     /**
-     * Get slim application.
+     * Get http application.
      *
      * @return SlimHttpAdapter
      */
-    function slim(): SlimHttpAdapter
+    function http(): SlimHttpAdapter
     {
-        return ServiceLocator::slim();
+        return ServiceLocator::http();
     }
 }
 
