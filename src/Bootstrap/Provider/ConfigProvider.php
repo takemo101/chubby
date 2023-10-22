@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
+use DI\Factory\RequestedEntry;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
@@ -23,7 +24,7 @@ class ConfigProvider implements Provider
     /**
      * @var string
      */
-    public const ConfigPrependKey = 'config.';
+    public const ConfigPrependKey = 'config';
 
     /**
      * Execute Bootstrap providing process.
@@ -46,6 +47,18 @@ class ConfigProvider implements Provider
 
                     return $config;
                 },
+                self::ConfigPrependKey . '.*' => function (
+                    ConfigRepository $config,
+                    RequestedEntry $entry,
+                ) {
+                    $key = (string) preg_replace(
+                        '/^' . self::ConfigPrependKey . '\./',
+                        '',
+                        $entry->getName(),
+                    );
+
+                    return $config->get($key);
+                },
             ],
         );
     }
@@ -61,38 +74,9 @@ class ConfigProvider implements Provider
         /** @var ConfigRepository */
         $config = $container->get(ConfigRepository::class);
 
-        $this->setAllConfigToContainer($container, $config);
         $this->setDefaultTimezone($config);
     }
 
-    /**
-     * Set config data to container.
-     *
-     * @param ApplicationContainer $container
-     * @param ConfigRepository $config
-     * @return void
-     */
-    private function setAllConfigToContainer(
-        ApplicationContainer $container,
-        ConfigRepository $config,
-    ): void {
-        $allConfig = $config->all();
-
-        if (!empty($allConfig)) {
-            $dotAllConfig = Arr::dot($allConfig, self::ConfigPrependKey);
-
-            foreach ($dotAllConfig as $key => $value) {
-                $container->set($key, $value);
-            }
-        }
-    }
-
-    /**
-     * Set default timezone.
-     *
-     * @param ConfigRepository $config
-     * @return void
-     */
     private function setDefaultTimezone(ConfigRepository $config): void
     {
         /** @var string */
