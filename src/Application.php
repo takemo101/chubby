@@ -24,13 +24,12 @@ use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Support\ApplicationSummary;
 use Takemo101\Chubby\Bootstrap\Provider\BootProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
-use Takemo101\Chubby\Bootstrap\Provider\DependencyProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
-use Takemo101\Chubby\Bootstrap\Provider\FunctionProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Support\Environment;
 
 use function DI\get;
@@ -48,26 +47,6 @@ final class Application implements ApplicationContainer
     public const Version = '0.1.0';
 
     /**
-     * @var ApplicationPath
-     */
-    private ApplicationPath $path;
-
-    /**
-     * @var LocalSystem
-     */
-    private LocalSystem $filesystem;
-
-    /**
-     * @var Bootstrap
-     */
-    private Bootstrap $bootstrap;
-
-    /**
-     * @var ContainerBuilder<Container>
-     */
-    private ContainerBuilder $builder;
-
-    /**
      * @var Container|null
      */
     private ?Container $container = null;
@@ -80,32 +59,42 @@ final class Application implements ApplicationContainer
     /**
      * constructor
      *
-     * @param ApplicationOption $option
+     * @param ApplicationPath $path
+     * @param Bootstrap $bootstrap
+     * @param ContainerBuilder<Container> $builder
      */
     public function __construct(
-        ApplicationOption $option,
+        private readonly ApplicationPath $path,
+        private readonly Bootstrap $bootstrap,
+        private readonly ContainerBuilder $builder,
     ) {
-        $this->path = $option->createApplicationPath();
-
-        $this->filesystem = new LocalFilesystem();
-
         $this->initialize(
-            $option->builder,
+            $bootstrap,
+            $builder,
         );
-
-        $this->builder = $option->builder;
-        $this->bootstrap = $option->bootstrap;
     }
 
     /**
      * Initialize the application.
      *
+     * @param Bootstrap $bootstrap
      * @param ContainerBuilder<Container> $builder
      * @return void
      */
     private function initialize(
+        Bootstrap $bootstrap,
         ContainerBuilder $builder,
     ): void {
+        // Add a provider that satisfies the dependencies required to run the application
+        $bootstrap->addProvider(
+            new BootProvider(),
+            new EnvironmentProvider($this->path),
+            new ErrorProvider(),
+            new ConfigProvider(),
+            new LogProvider(),
+            new HelperProvider(),
+        );
+
         $builder->addDefinitions(
             [
                 Application::class => $this,
@@ -131,7 +120,8 @@ final class Application implements ApplicationContainer
                         debug: $debug,
                     );
                 },
-                LocalSystem::class => $this->filesystem,
+                PathHelper::class => fn () => new PathHelper(),
+                LocalSystem::class => fn (PathHelper $helper) => new LocalFilesystem($helper),
             ],
         );
     }
@@ -288,54 +278,18 @@ final class Application implements ApplicationContainer
     }
 
     /**
-     * Create an instance of the application with standard functionality.
+     * Create an instance from ApplicationOption.
      *
      * @param ApplicationOption $option
      * @return self
      */
-    public static function create(
+    public static function fromOption(
         ApplicationOption $option,
     ): self {
-        $app = new self(
-            $option,
+        return new self(
+            $option->createApplicationPath(),
+            $option->bootstrap,
+            $option->builder,
         );
-
-        $app->addProvider(
-            new BootProvider(),
-            new EnvironmentProvider($app->path),
-            new ErrorProvider(),
-            new ConfigProvider(),
-            new HelperProvider(),
-            new LogProvider(),
-            new FunctionProvider($app->path, $app->filesystem),
-            new DependencyProvider($app->path, $app->filesystem),
-        );
-
-        return $app;
-    }
-
-    /**
-     * Create an instance of an application with simple functionality.
-     *
-     * @param ApplicationOption $option
-     * @return self
-     */
-    public static function createSimple(
-        ApplicationOption $option,
-    ): self {
-        $app = new self(
-            $option,
-        );
-
-        $app->addProvider(
-            new BootProvider(),
-            new EnvironmentProvider($app->path),
-            new ErrorProvider(),
-            new ConfigProvider(),
-            new HelperProvider(),
-            new LogProvider(),
-        );
-
-        return $app;
     }
 }

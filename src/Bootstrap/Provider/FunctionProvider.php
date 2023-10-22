@@ -18,19 +18,6 @@ class FunctionProvider implements Provider
     public const ProviderName = 'function';
 
     /**
-     * constructor
-     *
-     * @param ApplicationPath $path
-     * @param LocalSystem $filesystem
-     */
-    public function __construct(
-        protected ApplicationPath $path,
-        protected LocalSystem $filesystem,
-    ) {
-        //
-    }
-
-    /**
      * Execute Bootstrap providing process.
      *
      * @param Definitions $definitions
@@ -49,9 +36,15 @@ class FunctionProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        $functionPath = $this->getFunctionPath();
+        /** @var ApplicationPath */
+        $path = $container->get(ApplicationPath::class);
 
-        if ($this->filesystem->exists($functionPath)) {
+        /** @var LocalSystem */
+        $filesystem = $container->get(LocalSystem::class);
+
+        $functionPath = $this->getFunctionPath($path);
+
+        if ($filesystem->exists($functionPath)) {
             require $functionPath;
         }
     }
@@ -59,10 +52,11 @@ class FunctionProvider implements Provider
     /**
      * Get function path.
      *
+     * @param ApplicationPath $path
      * @return string
      */
-    protected function getFunctionPath(): string
+    protected function getFunctionPath(ApplicationPath $path): string
     {
-        return $this->path->getSettingPath('function.php');
+        return $path->getSettingPath('function.php');
     }
 }

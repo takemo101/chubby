@@ -51,7 +51,7 @@ describe(
             function () {
                 $bootstrap = new Bootstrap();
 
-                $app = Application::create(
+                $app = Application::fromOption(
                     ApplicationOption::from(
                         bootstrap: $bootstrap,
                     ),
@@ -107,7 +107,7 @@ describe(
                     }
                 };
 
-                $app = Application::create(
+                $app = Application::fromOption(
                     ApplicationOption::from(
                         bootstrap: new Bootstrap($provider),
                     ),
