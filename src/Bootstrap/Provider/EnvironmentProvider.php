@@ -34,7 +34,7 @@ class EnvironmentProvider implements Provider
      * @param ApplicationPath $path
      */
     public function __construct(
-        protected ApplicationPath $path,
+        private ApplicationPath $path,
     ) {
         //
     }
@@ -57,7 +57,7 @@ class EnvironmentProvider implements Provider
                         ->immutable()
                         ->make();
 
-                    $paths = $this->getDotenvPaths();
+                    $paths = $this->getDotenvPaths($this->path);
                     $names = $this->path->getDotenvNames();
 
                     try {
@@ -99,10 +99,11 @@ class EnvironmentProvider implements Provider
     /**
      * Get dotenv path.
      *
+     * @param ApplicationPath $path
      * @return string|string[];
      */
-    protected function getDotenvPaths(): string|array
+    protected function getDotenvPaths(ApplicationPath $path): string|array
     {
-        return $this->path->getBasePath();
+        return $path->getBasePath();
     }
 }
