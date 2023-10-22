@@ -76,6 +76,12 @@ class ConfigProvider implements Provider
         $this->setDefaultTimezone($config);
     }
 
+    /**
+     * Set default timezone.
+     *
+     * @param ConfigRepository $config
+     * @return void
+     */
     private function setDefaultTimezone(ConfigRepository $config): void
     {
         /** @var string */
