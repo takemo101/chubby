@@ -9,7 +9,6 @@ use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalSystem;
 use Takemo101\Chubby\Support\ApplicationPath;
-use Illuminate\Support\Arr;
 
 /**
  * Config data related.
