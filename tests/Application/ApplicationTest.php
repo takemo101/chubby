@@ -57,11 +57,12 @@ describe(
                     ),
                 );
 
-                $initialProviderCount = count($bootstrap->providers());
+                $initialProviderCount = count($bootstrap->getProviders());
 
                 expect($initialProviderCount)->toBeGreaterThan(0);
 
-                $provider = new class () implements Provider {
+                $provider = new class() implements Provider
+                {
                     public const ProviderName = 'test';
 
                     public function register(Definitions $definitions): void
@@ -82,14 +83,15 @@ describe(
                     $provider,
                 );
 
-                expect(count($bootstrap->providers()))->toEqual($initialProviderCount + 1);
+                expect(count($bootstrap->getProviders()))->toEqual($initialProviderCount + 1);
             },
         );
 
         test(
             "Run Bootstrap's Provider via Application",
             function () {
-                $provider = new class () implements Provider {
+                $provider = new class() implements Provider
+                {
                     public const ProviderName = 'test';
 
                     public bool $booted = false;
@@ -159,7 +161,8 @@ describe(
                 $app->boot();
 
                 expect(fn () => $app->addProvider(
-                    new class () implements Provider {
+                    new class() implements Provider
+                    {
                         public function register(Definitions $definitions): void
                         {
                             //
