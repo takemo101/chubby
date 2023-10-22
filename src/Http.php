@@ -95,4 +95,20 @@ final readonly class Http extends AbstractRunner
 
         throw new BadMethodCallException("method not found: {$name}");
     }
+
+    /**
+     * Create a simple instance with only Http functionality available from options
+     *
+     * @param ApplicationOption|null $option
+     * @return self
+     */
+    public static function createSimple(
+        ?ApplicationOption $option = null,
+    ): self {
+        return new self(
+            ApplicationBuilder::fromOption($option)
+                ->addHttp()
+                ->getApplication(),
+        );
+    }
 }
