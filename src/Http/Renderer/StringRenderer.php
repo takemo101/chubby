@@ -5,9 +5,13 @@ namespace Takemo101\Chubby\Http\Renderer;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Takemo101\Chubby\Contract\Renderable;
 
-final class StringRenderer implements ResponseRenderer
+class StringRenderer implements ResponseRenderer
 {
+    /** @var string */
+    public const ContentType = 'text/plain';
+
     /**
      * constructor
      *
@@ -36,14 +40,20 @@ final class StringRenderer implements ResponseRenderer
     ): ResponseInterface {
         $response = $response
             ->withStatus($this->status)
-            ->withHeader('Content-Type', 'text/plain');
+            ->withHeader('Content-Type', static::ContentType);
 
         foreach ($this->headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
 
+        $data = $this->data;
+
+        if ($data instanceof Renderable) {
+            $data = $data->render();
+        }
+
         $response->getBody()->write(
-            (string) $this->data, // @phpstan-ignore-line
+            (string) $data, // @phpstan-ignore-line
         );
 
         return $response;
