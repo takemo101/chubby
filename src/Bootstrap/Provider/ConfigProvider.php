@@ -8,6 +8,7 @@ use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -38,11 +39,14 @@ class ConfigProvider implements Provider
                 ConfigRepository::class => function (
                     LocalSystem $filesystem,
                     ApplicationPath $path,
+                    Hook $hook,
                 ): ConfigRepository {
                     $config = new ConfigPhpRepository(
                         filesystem: $filesystem,
                         directory: $path->getConfigPath(),
                     );
+
+                    $hook->do(ConfigRepository::class, $config);
 
                     return $config;
                 },
