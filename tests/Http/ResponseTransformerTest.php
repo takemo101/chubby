@@ -2,10 +2,13 @@
 
 use Psr\Http\Message\ResponseInterface;
 use Takemo101\Chubby\Contract\Arrayable;
+use Takemo101\Chubby\Contract\Renderable;
+use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\Renderer\RedirectRenderer;
 use Takemo101\Chubby\Http\Renderer\StringRenderer;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
+use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
@@ -15,7 +18,7 @@ describe(
     'response transformer',
     function () {
         test(
-            'transform',
+            'Convert array value to json response with ArrayableTransformer',
             function ($data) {
                 /** @var AppTestCase $this */
 
@@ -38,7 +41,8 @@ describe(
             fn () => [
                 'hoge' => 'fuga',
             ],
-            new class () implements Arrayable, \JsonSerializable {
+            new class() implements Arrayable, \JsonSerializable
+            {
                 public function toArray(): array
                 {
                     return [
@@ -54,7 +58,7 @@ describe(
         ]);
 
         test(
-            'transform2',
+            'Convert string value to text response with StringableTransformer',
             function ($data) {
                 /** @var AppTestCase $this */
 
@@ -68,12 +72,13 @@ describe(
                 expect($response)->toBeInstanceOf(ResponseInterface::class);
                 expect($response->getBody()->__toString())->toEqual((string)$data);
                 expect($response->getHeaderLine('Content-Type'))->toEqual(
-                    'text/plain',
+                    StringRenderer::ContentType,
                 );
             },
         )->with([
             'hoge',
-            new class () implements \Stringable {
+            new class() implements \Stringable
+            {
                 public function __toString()
                 {
                     return 'hoge';
@@ -82,7 +87,52 @@ describe(
         ]);
 
         test(
-            'transform3',
+            'Convert object value to html response with RenderableTransformer',
+            function ($data) {
+                /** @var AppTestCase $this */
+
+                $request = $this->createRequest();
+                $response = $this->createResponse();
+
+                $transformer = new RenderableTransformer();
+
+                $response = $transformer->transform($data, $request, $response);
+
+                expect($response)->toBeInstanceOf(ResponseInterface::class);
+                expect($response->getBody()->__toString())->toEqual((string)$data);
+                expect($response->getHeaderLine('Content-Type'))->toEqual(
+                    HtmlRenderer::ContentType,
+                );
+            },
+        )->with([
+            new class() implements \Stringable, Renderable
+            {
+                public function __toString()
+                {
+                    return $this->render();
+                }
+
+                public function render(): string
+                {
+                    return 'hoge';
+                }
+            },
+            new class() implements \Stringable, Renderable
+            {
+                public function __toString()
+                {
+                    return $this->render();
+                }
+
+                public function render(): string
+                {
+                    return 'piyo';
+                }
+            },
+        ]);
+
+        test(
+            'Convert ResponseRenderer object to json response using RendererTransformer',
             function ($data) {
                 /** @var AppTestCase $this */
 
@@ -98,11 +148,12 @@ describe(
         )->with([
             new JsonRenderer(['hoge' => 'fuga']),
             new StringRenderer('hoge'),
+            new HtmlRenderer('<div>piyo</div>'),
             new RedirectRenderer('http://example.com'),
         ]);
 
         test(
-            'transform4',
+            'Convert values ​​in various formats into responses using ResponseTransformers',
             function ($data) {
                 /** @var AppTestCase $this */
 
@@ -111,6 +162,7 @@ describe(
 
                 $transformer = new ResponseTransformers(
                     new ArrayableTransformer(),
+                    new RenderableTransformer(),
                     new StringableTransformer(),
                 );
 
@@ -122,7 +174,8 @@ describe(
             fn () => [
                 'hoge' => 'fuga',
             ],
-            new class () implements Arrayable, \JsonSerializable {
+            new class() implements Arrayable, \JsonSerializable
+            {
                 public function toArray(): array
                 {
                     return [
@@ -136,10 +189,23 @@ describe(
                 }
             },
             'hoge',
-            new class () implements \Stringable {
+            new class() implements \Stringable
+            {
                 public function __toString()
                 {
                     return 'hoge';
+                }
+            },
+            new class() implements \Stringable, Renderable
+            {
+                public function __toString()
+                {
+                    return $this->render();
+                }
+
+                public function render(): string
+                {
+                    return 'piyo';
                 }
             },
         ]);
