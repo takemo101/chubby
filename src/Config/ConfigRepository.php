@@ -52,4 +52,11 @@ interface ConfigRepository extends ArrayAccess
      * @return boolean
      */
     public function has(string $key): bool;
+
+    /**
+     * Get all data.
+     *
+     * @return array<string,mixed>
+     */
+    public function all(): array;
 }

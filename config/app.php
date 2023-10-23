@@ -2,9 +2,11 @@
 
 // Application basic settings
 
+use Takemo101\Chubby\Application;
+
 return [
     // Application name
-    'name' => env('APP_NAME', 'Chubby'),
+    'name' => env('APP_NAME', Application::Name),
 
     // Application environment
     'env' => env('APP_ENV', 'local'),

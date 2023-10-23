@@ -1,5 +1,6 @@
 <?php
 
+use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Tests\Config\ConfigTestCase;
 
 describe(
@@ -92,5 +93,32 @@ describe(
                 ['another-config.bar', 'baz'],
             ]
         );
+
+        test(
+            '',
+            function (array $excepted) {
+                $repository = new ConfigPhpRepository();
+
+                foreach ($excepted as $key => $value) {
+                    $repository->set($key, $value);
+                }
+
+                expect($repository->all())->toEqual($excepted);
+            },
+        )->with([
+            fn () => [
+                'hoge' => [
+                    'fuga' => 'piyo',
+                ],
+                'foo' => ['bar'],
+            ],
+            fn () => [
+                'test' => [
+                    'test' => 'test',
+                ],
+                'test01' => ['test'],
+                'test02' => ['test'],
+            ],
+        ]);
     }
 )->group('config');

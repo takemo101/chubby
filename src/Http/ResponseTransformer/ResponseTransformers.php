@@ -53,14 +53,16 @@ final class ResponseTransformers implements ResponseTransformer
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ?ResponseInterface {
+        if ($data instanceof ResponseInterface) {
+            return $data;
+        }
+
         foreach ($this->transformers as $transformer) {
             if ($output = $transformer->transform($data, $request, $response)) {
                 return $output;
             }
         }
 
-        return $data instanceof ResponseInterface
-            ? $data
-            : null;
+        return null;
     }
 }

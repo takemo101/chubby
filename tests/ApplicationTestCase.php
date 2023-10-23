@@ -5,6 +5,7 @@ namespace Tests;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationOption;
+use Takemo101\Chubby\ApplicationBuilder;
 
 class ApplicationTestCase extends BaseTestCase
 {
@@ -15,7 +16,7 @@ class ApplicationTestCase extends BaseTestCase
      */
     public function createApplication(): Application
     {
-        return Application::createSimple(
+        return ApplicationBuilder::build(
             ApplicationOption::from(
                 basePath: __DIR__ . '/../',
             ),

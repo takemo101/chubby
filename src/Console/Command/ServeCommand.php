@@ -84,6 +84,7 @@ final class ServeCommand extends Command
             $port,
             $this->getScriptPath(
                 $path->getBasePath($script),
+                $this->getDefaultScriptPaths($path),
             ),
             $path->getBasePath(),
             $environments,
@@ -148,22 +149,40 @@ final class ServeCommand extends Command
      * If the specified script file does not exist, return the default script file path.
      *
      * @param string $script
+     * @param string[] $defaultPaths
      * @return string
      */
-    private function getScriptPath(string $script): string
-    {
-        return file_exists($script)
-            ? $script
-            : $this->getDefaultScriptPath();
+    private function getScriptPath(
+        string $script,
+        array $defaultPaths,
+    ): string {
+        /** @var string[] */
+        $paths = array_unique([
+            $script,
+            ...$defaultPaths,
+        ]);
+
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        throw new RuntimeException('Unable to find the script file.');
     }
 
     /**
      * Get default script path.
      *
-     * @return string
+     * @param ApplicationPath $path
+     * @return string[]
      */
-    private function getDefaultScriptPath(): string
+    private function getDefaultScriptPaths(ApplicationPath $path): array
     {
-        return __DIR__ . '/../../../public/index.php';
+        return [
+            $path->getBasePath('/public/index.php'),
+            $path->getBasePath('/index.php'),
+            $path->getSettingPath('/index.php'),
+        ];
     }
 }

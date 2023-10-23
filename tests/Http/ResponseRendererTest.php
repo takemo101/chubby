@@ -2,6 +2,8 @@
 
 use Fig\Http\Message\StatusCodeInterface;
 use Takemo101\Chubby\Contract\Arrayable;
+use Takemo101\Chubby\Contract\Renderable;
+use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\Renderer\RedirectRenderer;
 use Takemo101\Chubby\Http\Renderer\StringRenderer;
@@ -32,7 +34,8 @@ describe(
             fn () => [
                 'hoge' => 'fuga',
             ],
-            new class () implements Arrayable, \JsonSerializable {
+            new class() implements Arrayable, \JsonSerializable
+            {
                 public function toArray(): array
                 {
                     return [
@@ -63,17 +66,30 @@ describe(
 
                 expect($actual->getStatusCode())->toEqual($exceptedStatusCode);
                 expect($actual->getBody()->__toString())->toEqual((string) $data);
-                expect($actual->getHeaderLine('Content-Type'))->toEqual('text/plain');
+                expect($actual->getHeaderLine('Content-Type'))->toEqual(StringRenderer::ContentType);
             },
-        )->with([
-            'hoge',
-            new class () implements \Stringable {
-                public function __toString()
-                {
-                    return 'fuga';
-                }
+        )->with('stringables');
+
+        test(
+            'Convert string data to response with HtmlRenderer',
+            function ($data) {
+                /** @var AppTestCase $this */
+
+                $request = $this->createRequest();
+                $response = $this->createResponse();
+
+                $exceptedStatusCode = StatusCodeInterface::STATUS_ACCEPTED;
+
+                $renderer = new HtmlRenderer($data, $exceptedStatusCode);
+
+                $actual = $renderer->render($request, $response);
+
+                expect($actual->getStatusCode())->toEqual($exceptedStatusCode);
+                expect($actual->getBody()->__toString())->toEqual((string) $data);
+                expect($actual->getHeaderLine('Content-Type'))->toEqual(HtmlRenderer::ContentType);
             },
-        ]);
+        )->with('stringables');
+
 
         test(
             'Set the redirect destination in RedirectRenderer and convert it to a redirect response',
@@ -95,3 +111,29 @@ describe(
         );
     }
 )->group('renderer');
+
+dataset(
+    'stringables',
+    [
+        'hoge',
+        new class() implements \Stringable
+        {
+            public function __toString()
+            {
+                return 'fuga';
+            }
+        },
+        new class() implements \Stringable, Renderable
+        {
+            public function __toString()
+            {
+                return $this->render();
+            }
+
+            public function render(): string
+            {
+                return 'piyo';
+            }
+        },
+    ]
+);

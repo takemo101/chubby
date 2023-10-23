@@ -78,4 +78,20 @@ final readonly class Console extends AbstractRunner
             output: $output,
         );
     }
+
+    /**
+     * Create a simple instance with only Console functionality available from options
+     *
+     * @param ApplicationOption|null $option
+     * @return self
+     */
+    public static function createSimple(
+        ?ApplicationOption $option = null,
+    ): self {
+        return new self(
+            ApplicationBuilder::fromOption($option)
+                ->addConsole()
+                ->getApplication(),
+        );
+    }
 }

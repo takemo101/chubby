@@ -39,7 +39,7 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
-        $dependencyPath = $this->getDependencyPath();
+        $dependencyPath = $this->getDependencyPath($this->path);
 
         /** @var mixed[] */
         $dependency = $this->filesystem->exists($dependencyPath)
@@ -71,10 +71,12 @@ class DependencyProvider implements Provider
     /**
      * Get dependency definitions path.
      *
+     * @param ApplicationPath $path
      * @return string
      */
-    protected function getDependencyPath(): string
-    {
-        return $this->path->getSettingPath('dependency.php');
+    protected function getDependencyPath(
+        ApplicationPath $path,
+    ): string {
+        return $path->getSettingPath('dependency.php');
     }
 }

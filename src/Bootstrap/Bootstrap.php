@@ -13,7 +13,7 @@ use Takemo101\Chubby\Bootstrap\Provider\ProviderNameable;
 final class Bootstrap implements Provider
 {
     /**
-     * @var Provider[]
+     * @var array<string,Provider>
      */
     private array $providers;
 
@@ -51,9 +51,9 @@ final class Bootstrap implements Provider
     /**
      * Get providers
      *
-     * @return Provider[]
+     * @return array<string,Provider>
      */
-    public function providers(): array
+    public function getProviders(): array
     {
         return $this->providers;
     }

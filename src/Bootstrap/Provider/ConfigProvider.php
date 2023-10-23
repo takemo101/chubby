@@ -2,11 +2,13 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
+use DI\Factory\RequestedEntry;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -18,6 +20,11 @@ class ConfigProvider implements Provider
      * @var string Provider name.
      */
     public const ProviderName = 'config';
+
+    /**
+     * @var string
+     */
+    public const ConfigPrependKey = 'config';
 
     /**
      * Execute Bootstrap providing process.
@@ -32,11 +39,28 @@ class ConfigProvider implements Provider
                 ConfigRepository::class => function (
                     LocalSystem $filesystem,
                     ApplicationPath $path,
+                    Hook $hook,
                 ): ConfigRepository {
-                    return new ConfigPhpRepository(
+                    $config = new ConfigPhpRepository(
                         filesystem: $filesystem,
                         directory: $path->getConfigPath(),
                     );
+
+                    $hook->do(ConfigRepository::class, $config);
+
+                    return $config;
+                },
+                self::ConfigPrependKey . '.*' => function (
+                    ConfigRepository $config,
+                    RequestedEntry $entry,
+                ) {
+                    $key = (string) preg_replace(
+                        '/^' . self::ConfigPrependKey . '\./',
+                        '',
+                        $entry->getName(),
+                    );
+
+                    return $config->get($key);
                 },
             ],
         );
@@ -53,6 +77,17 @@ class ConfigProvider implements Provider
         /** @var ConfigRepository */
         $config = $container->get(ConfigRepository::class);
 
+        $this->setDefaultTimezone($config);
+    }
+
+    /**
+     * Set default timezone.
+     *
+     * @param ConfigRepository $config
+     * @return void
+     */
+    private function setDefaultTimezone(ConfigRepository $config): void
+    {
         /** @var string */
         $timezone = $config->get('app.timezone', 'UTC');
 

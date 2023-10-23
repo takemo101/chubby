@@ -37,7 +37,7 @@ class LogProvider implements Provider
                 ): LoggerFactory {
 
                     /** @var string */
-                    $path = $config->get('log.path', 'log');
+                    $path = $config->get('log.path', $path->getStoragePath('logs'));
 
                     /** @var string */
                     $filename = $config->get('log.filename', 'error.log');

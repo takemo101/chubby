@@ -5,9 +5,11 @@ define('APP_START_TIME', microtime(true));
 
 require __DIR__ . '/vendor/autoload.php';
 
-$console = Takemo101\Chubby\Console::create(
-    Takemo101\Chubby\ApplicationOption::from(
-        basePath: getenv('APP_BASE_PATH') ?: __DIR__,
+$console = new Takemo101\Chubby\Console(
+    Takemo101\Chubby\ApplicationBuilder::buildStandard(
+        Takemo101\Chubby\ApplicationOption::from(
+            basePath: getenv('APP_BASE_PATH') ?: __DIR__,
+        ),
     ),
 );
 

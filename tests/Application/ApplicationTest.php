@@ -51,13 +51,13 @@ describe(
             function () {
                 $bootstrap = new Bootstrap();
 
-                $app = Application::create(
+                $app = Application::fromOption(
                     ApplicationOption::from(
                         bootstrap: $bootstrap,
                     ),
                 );
 
-                $initialProviderCount = count($bootstrap->providers());
+                $initialProviderCount = count($bootstrap->getProviders());
 
                 expect($initialProviderCount)->toBeGreaterThan(0);
 
@@ -82,7 +82,7 @@ describe(
                     $provider,
                 );
 
-                expect(count($bootstrap->providers()))->toEqual($initialProviderCount + 1);
+                expect(count($bootstrap->getProviders()))->toEqual($initialProviderCount + 1);
             },
         );
 
@@ -107,7 +107,7 @@ describe(
                     }
                 };
 
-                $app = Application::create(
+                $app = Application::fromOption(
                     ApplicationOption::from(
                         bootstrap: new Bootstrap($provider),
                     ),

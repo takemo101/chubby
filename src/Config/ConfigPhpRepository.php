@@ -158,6 +158,7 @@ class ConfigPhpRepository implements ConfigRepository
     public function set(string $key, $value): void
     {
         $firstKey = $this->firstDotKey($key);
+
         $this->loadData($firstKey);
 
         Arr::set($this->config, $key, $value);
@@ -175,6 +176,27 @@ class ConfigPhpRepository implements ConfigRepository
         $this->loadData($firstKey);
 
         return Arr::has($this->config, $key);
+    }
+
+    /**
+     * Get all data.
+     *
+     * @return array<string,mixed>
+     */
+    public function all(): array
+    {
+        foreach ($this->config as $key => $value) {
+            /** @var string|mixed[] */
+            $pathOrConfig = $value;
+
+            if (is_string($pathOrConfig)) {
+                $result = $this->resolve($pathOrConfig);
+
+                $this->config[$key] = $result;
+            }
+        }
+
+        return $this->config;
     }
 
     /**
