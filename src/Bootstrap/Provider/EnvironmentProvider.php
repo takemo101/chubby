@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
+use DI\Factory\RequestedEntry;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Dotenv\Repository\Adapter\PutenvAdapter;
@@ -27,6 +28,11 @@ class EnvironmentProvider implements Provider
      * @var bool Should throw exception on missing dotenv.
      */
     public const ShouldThrowsExceptionOnMissingDotenv = false;
+
+    /**
+     * @var string
+     */
+    public const EnvPrependKey = 'env';
 
     /**
      * constructor
@@ -81,6 +87,20 @@ class EnvironmentProvider implements Provider
                     return $repository;
                 },
                 Environment::class => fn (RepositoryInterface $repository) => new Environment($repository),
+                // Inject the value like #[Inject('env.APP_NAME')]
+                self::EnvPrependKey . '.*' => function (
+                    Environment $env,
+                    RequestedEntry $entry,
+                ) {
+                    $key = (string) preg_replace(
+                        '/^' . self::EnvPrependKey . '\./',
+                        '',
+                        $entry->getName(),
+                    );
+
+                    return $env->get($key);
+                },
+
             ],
         );
     }
