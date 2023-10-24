@@ -4,37 +4,37 @@ namespace Takemo101\Chubby\Http\Renderer;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RedirectRenderer implements ResponseRenderer
+abstract class AbstractRenderer implements ResponseRenderer
 {
+    /** @var string */
+    public const ContentType = 'text/plain';
+
     /**
      * constructor
      *
-     * @param string $url
+     * @param mixed $data
      * @param int $status
      * @param array<string,string> $headers
      */
-    public function __construct(
-        private string $url,
-        private int $status = StatusCodeInterface::STATUS_FOUND,
+    final public function __construct(
+        private mixed $data,
+        private int $status = StatusCodeInterface::STATUS_OK,
         private array $headers = []
     ) {
-        if ($url === '') {
-            throw new InvalidArgumentException('The url is empty.');
-        }
+        //
     }
 
     /**
-     * Set url to be rendered.
+     * Set data to be rendered.
      *
-     * @param string $url
+     * @param mixed $data
      * @return static
      */
-    public function setUrl(string $url): static
+    public function setData(mixed $data): static
     {
-        $this->url = $url;
+        $this->data = $data;
 
         return $this;
     }
@@ -78,12 +78,24 @@ class RedirectRenderer implements ResponseRenderer
     ): ResponseInterface {
         $response = $response
             ->withStatus($this->status)
-            ->withHeader('Location', $this->url);
+            ->withHeader('Content-Type', static::ContentType);
 
         foreach ($this->headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
 
+        $response->getBody()->write(
+            $this->getContent($this->data),
+        );
+
         return $response;
     }
+
+    /**
+     * Get response body content to be rendered.
+     *
+     * @param mixed $data
+     * @return string
+     */
+    abstract protected function getContent(mixed $data): string;
 }

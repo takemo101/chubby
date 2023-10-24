@@ -50,6 +50,7 @@ class ConfigProvider implements Provider
 
                     return $config;
                 },
+                // Inject the value like #[Inject('config.app.name')]
                 self::ConfigPrependKey . '.*' => function (
                     ConfigRepository $config,
                     RequestedEntry $entry,
