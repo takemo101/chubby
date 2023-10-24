@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Takemo101\Chubby\Support\Environment;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Takemo101\Chubby\Filesystem\LocalSystem;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -17,12 +18,22 @@ use Takemo101\Chubby\Support\ApplicationPath;
 final class ServeCommand extends Command
 {
     /**
+     * @var LocalSystem
+     */
+    private LocalSystem $filesystem;
+
+    /**
      * Configures the current command.
      *
      * @return void
      */
     protected function configure()
     {
+        /** @var LocalSystem */
+        $filesystem = $this->getContainer()->get(LocalSystem::class);
+
+        $this->filesystem = $filesystem;
+
         /** @var Environment */
         $env = $this->getContainer()->get(Environment::class);
 
@@ -48,7 +59,7 @@ final class ServeCommand extends Command
             ->addOption(
                 name: 'script',
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'PHP script file in document root',
+                description: 'PHP script file or document root',
                 default: $script,
             );
     }
@@ -70,7 +81,7 @@ final class ServeCommand extends Command
         /** @var string */
         $host = $input->getOption('host');
         /** @var string */
-        $script = $input->getOption('script');
+        $scriptOrDocumentRoot = $input->getOption('script');
 
         $environments = [
             'APP_BASE_PATH' => $path->getBasePath(),
@@ -83,7 +94,7 @@ final class ServeCommand extends Command
             $host,
             $port,
             $this->getScriptPath(
-                $path->getBasePath($script),
+                $path->getBasePath($scriptOrDocumentRoot),
                 $this->getDefaultScriptPaths($path),
             ),
             $path->getBasePath(),
@@ -133,12 +144,13 @@ final class ServeCommand extends Command
         }
 
         return new Process(
-            command: [
+            command: array_filter([
                 $binary,
                 '-S',
                 $host . ':' . $port,
+                $this->filesystem->isDirectory($script) ? '-t' : null,
                 $script,
-            ],
+            ]),
             cwd: $currentDirectory,
             env: $environments,
         );
@@ -163,7 +175,7 @@ final class ServeCommand extends Command
         ]);
 
         foreach ($paths as $path) {
-            if (file_exists($path)) {
+            if ($this->filesystem->exists($path)) {
                 return $path;
             }
         }
