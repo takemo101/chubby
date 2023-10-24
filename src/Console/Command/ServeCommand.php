@@ -29,7 +29,10 @@ final class ServeCommand extends Command
      */
     protected function configure()
     {
-        $this->filesystem = $this->getContainer()->get(LocalSystem::class);
+        /** @var LocalSystem */
+        $filesystem = $this->getContainer()->get(LocalSystem::class);
+
+        $this->filesystem = $filesystem;
 
         /** @var Environment */
         $env = $this->getContainer()->get(Environment::class);
