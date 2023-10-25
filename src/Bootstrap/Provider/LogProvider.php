@@ -12,6 +12,7 @@ use Takemo101\Chubby\Log\DefaultLoggerFactory;
 use Takemo101\Chubby\Log\Factory\ConsoleHandlerFactory;
 use Takemo101\Chubby\Log\Factory\FileHandlerFactory;
 use Takemo101\Chubby\Log\LoggerFactory;
+use Takemo101\Chubby\Log\LoggerHandlerFactory;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Takemo101\Chubby\Support\ApplicationPath;
@@ -97,12 +98,15 @@ class LogProvider implements Provider
                     );
                 },
                 LoggerHandlerFactoryCollection::class => function (
+                    ConfigRepository $config,
                     Hook $hook,
                 ) {
-                    $factories = new LoggerHandlerFactoryCollection(
+                    /** @var class-string<LoggerHandlerFactory>[] */
+                    $handlerFactories = $config->get('log.factories', [
                         FileHandlerFactory::class,
-                        ConsoleHandlerFactory::class,
-                    );
+                    ]);
+
+                    $factories = new LoggerHandlerFactoryCollection(...$handlerFactories);
 
                     $hook->doByObject($factories);
 
