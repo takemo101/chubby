@@ -4,6 +4,7 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
@@ -14,10 +15,12 @@ hook()->onByType(
 
         $http->get(
             '/',
-            function (ResponseInterface $response) {
+            function (ResponseInterface $response, LoggerInterface $logger) {
                 $response
                     ->getBody()
                     ->write('Hello World!');
+
+                $logger->info('hello');
 
                 return $response;
             },

@@ -1,20 +1,17 @@
 <?php
 
-namespace Takemo101\Chubby\Log;
+namespace Takemo101\Chubby\Log\Factory;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Level;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-use Monolog\Processor\UidProcessor;
-use Symfony\Component\Uid\Uuid;
+use Takemo101\Chubby\Log\LoggerHandlerFactory;
 
 /**
- * Logger factory that outputs to a file.
+ * Create a handler that outputs logs in file format.
  */
-final class FileLoggerFactory implements LoggerFactory
+final readonly class FileHandlerFactory implements LoggerHandlerFactory
 {
     /**
      * constructor
@@ -24,36 +21,19 @@ final class FileLoggerFactory implements LoggerFactory
      * @param Level $level
      */
     public function __construct(
-        private readonly string $path,
-        private readonly string $filename,
-        private readonly Level $level,
+        private string $path,
+        private string $filename = 'error.log',
+        private Level $level = Level::Debug,
     ) {
         //
     }
 
     /**
-     * Create logger.
-     *
-     * @param string|null $name
-     * @return LoggerInterface
-     */
-    public function create(?string $name = null): LoggerInterface
-    {
-        $logger = new Logger($name ?? Uuid::v4()->toRfc4122());
-
-        $logger->pushProcessor(new UidProcessor());
-
-        $logger->pushHandler($this->createHandler());
-
-        return $logger;
-    }
-
-    /**
-     * Create file handler.
+     * Create logger handler.
      *
      * @return HandlerInterface
      */
-    private function createHandler(): HandlerInterface
+    public function create(): HandlerInterface
     {
         $handler = new RotatingFileHandler(
             filename: $this->createPath(),
