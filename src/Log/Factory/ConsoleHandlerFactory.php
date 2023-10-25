@@ -9,6 +9,7 @@ use Monolog\Level;
 
 /**
  * Create a handler to output logs in the stream.
+ * Create a StreamHandler.
  */
 final readonly class ConsoleHandlerFactory implements LoggerHandlerFactory
 {
@@ -30,7 +31,6 @@ final readonly class ConsoleHandlerFactory implements LoggerHandlerFactory
     /**
      * Create logger handler.
      *
-     * @param Level $level
      * @return HandlerInterface
      */
     public function create(): HandlerInterface

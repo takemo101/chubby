@@ -12,12 +12,10 @@ use Takemo101\Chubby\Log\DefaultLoggerFactory;
 use Takemo101\Chubby\Log\Factory\ConsoleHandlerFactory;
 use Takemo101\Chubby\Log\Factory\FileHandlerFactory;
 use Takemo101\Chubby\Log\LoggerFactory;
-use Takemo101\Chubby\Log\LoggerHandlerFactory;
+use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Takemo101\Chubby\Support\ApplicationPath;
-
-use function DI\get;
 
 /**
  * Logger related.
