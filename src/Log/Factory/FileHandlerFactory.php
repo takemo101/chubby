@@ -6,7 +6,6 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Level;
-use Takemo101\Chubby\Log\LoggerHandlerFactory;
 
 /**
  * Create a handler that outputs logs in file format.

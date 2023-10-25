@@ -1,8 +1,9 @@
 <?php
 
-namespace Takemo101\Chubby\Log;
+namespace Takemo101\Chubby\Log\Factory;
 
 use Monolog\Handler\HandlerInterface;
+use Monolog\Level;
 
 interface LoggerHandlerFactory
 {

@@ -2,8 +2,8 @@
 
 namespace Takemo101\Chubby\Log;
 
-use Symfony\Component\Console\Command\Command;
 use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 
 /**
  * LoggerHandlerFactory resolution

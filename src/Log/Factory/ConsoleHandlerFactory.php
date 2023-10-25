@@ -6,7 +6,6 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
-use Takemo101\Chubby\Log\LoggerHandlerFactory;
 
 /**
  * Create a handler to output logs in the stream.
@@ -19,11 +18,10 @@ final readonly class ConsoleHandlerFactory implements LoggerHandlerFactory
      * constructor
      *
      * @param string $stream
-     * @param string $filename
      * @param Level $level
      */
     public function __construct(
-        private mixed $stream = self::DefaultStream,
+        private string $stream = self::DefaultStream,
         private Level $level = Level::Debug,
     ) {
         //
@@ -32,6 +30,7 @@ final readonly class ConsoleHandlerFactory implements LoggerHandlerFactory
     /**
      * Create logger handler.
      *
+     * @param Level $level
      * @return HandlerInterface
      */
     public function create(): HandlerInterface

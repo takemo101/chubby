@@ -3,6 +3,7 @@
 namespace Takemo101\Chubby\Log;
 
 use Monolog\Handler\HandlerInterface;
+use Monolog\Level;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Monolog\Processor\UidProcessor;
