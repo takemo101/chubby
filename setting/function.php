@@ -6,6 +6,7 @@
 use Psr\Http\Message\ResponseInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Http\Context;
+use Takemo101\Chubby\Http\Middleware\DomainRoute;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 
@@ -22,6 +23,17 @@ hook()->onByType(
                 return $response;
             },
         );
+
+        $http->get(
+            '/domain',
+            function (ResponseInterface $response, string $domain) {
+                $response
+                    ->getBody()
+                    ->write("Hello {$domain}!");
+
+                return $response;
+            },
+        )->add(DomainRoute::fromDomain('{domain}.localhost'));
 
         $http->get(
             '/json',
