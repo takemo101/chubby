@@ -2,7 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use DI\Bridge\Slim\Bridge;
+use Invoker\CallableResolver as InvokerCallableResolver;
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -13,12 +13,14 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\ErrorHandlerInterface;
 use Slim\Interfaces\RouteParserInterface;
+use Slim\Interfaces\CallableResolverInterface;
 use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
+use Takemo101\Chubby\Http\Bridge\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
@@ -50,22 +52,24 @@ class HttpProvider implements Provider
     {
         $definitions->add(
             [
-                Slim::class => function (
+                SlimFactory::class => fn (
                     ApplicationContainer $container,
                     ResponseTransformers $transformers,
                     Hook $hook,
+                ) => new SlimFactory(
+                    container: $container,
+                    invocationStrategy: new ControllerInvoker(
+                        invoker: $container,
+                        transformers: $transformers,
+                        hook: $hook,
+                    ),
+                ),
+                Slim::class => function (
+                    SlimFactory $factory,
+                    Hook $hook,
                     ConfigRepository $config,
                 ): Slim {
-                    $slim = Bridge::create($container);
-
-                    $slim->getRouteCollector()
-                        ->setDefaultInvocationStrategy(
-                            new ControllerInvoker(
-                                invoker: $container,
-                                transformers: $transformers,
-                                hook: $hook,
-                            ),
-                        );
+                    $slim = $factory->create();
 
                     /** @var string|null */
                     $basePath = $config->get('slim.base_path');
@@ -113,6 +117,9 @@ class HttpProvider implements Provider
                 RouteParserInterface::class => fn (Slim $slim) => $slim
                     ->getRouteCollector()
                     ->getRouteParser(),
+                CallableResolverInterface::class => fn (
+                    ApplicationContainer $container,
+                ) => new InvokerCallableResolver($container),
                 ErrorHandlerInterface::class => get(ErrorHandler::class),
                 ErrorHandler::class => function (
                     Slim $slim,
