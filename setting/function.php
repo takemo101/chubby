@@ -38,7 +38,7 @@ hook()->onByType(
         $http->get(
             '/json',
             fn (Context $context) => new JsonRenderer(
-                $context->request->getHeaders(),
+                $context->getRequest()->getHeaders(),
             ),
         );
 
