@@ -76,18 +76,18 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
-        /** @var ServerRequestInterface */
-        $hookedRequest = $this->hook->filter(
-            ServerRequestInterface::class,
-            $this->injectRouteArguments($request, $routeArguments),
-        );
-
-        $domainRouteContext = DomainRouteContext::fromRequest($hookedRequest);
+        $domainRouteContext = DomainRouteContext::fromRequest($request);
 
         $routeArguments = [
             ...$domainRouteContext->getArguments(),
             ...$routeArguments,
         ];
+
+        /** @var ServerRequestInterface */
+        $hookedRequest = $this->hook->filter(
+            ServerRequestInterface::class,
+            $this->injectRouteArguments($request, $routeArguments),
+        );
 
         $context = new Context(
             request: $hookedRequest,
@@ -97,9 +97,9 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
 
         return [
             'context' => $context,
-            'request'  => $context->request,
-            'response' => $response,
-            ...$routeArguments,
+            'request'  => $context->getRequest(),
+            'response' => $context->getResponse(),
+            ...$context->getRouteArguments(),
             ...$request->getAttributes(),
         ];
     }
