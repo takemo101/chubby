@@ -39,15 +39,26 @@ describe(
                 $app = $this->createApplication();
 
                 $original = clone $object;
+                $objectName = get_class($object);
+
+                $data = new class(uniqid()) extends stdClass
+                {
+                    public function __construct(
+                        public string $data,
+                    ) {
+                        //
+                    }
+                };
 
                 $app->addProvider(
                     new ClosureProvider(
                         register: fn () => [
-                            get_class($object) => $object,
+                            $objectName => $object,
+                            stdClass::class => $data,
                         ],
-                        boot: fn (ApplicationContainer $container) => $container->get(
-                            get_class($object)
-                        )->change(uniqid()),
+                        boot: fn (ApplicationContainer $container, stdClass $data) => $container->get(
+                            $objectName,
+                        )->change($data->data),
                     ),
                 );
 
@@ -65,7 +76,8 @@ describe(
 dataset(
     'objects',
     [
-        new class ('test01') {
+        new class('test01')
+        {
             public function __construct(
                 public string $data,
             ) {
@@ -77,7 +89,8 @@ dataset(
                 $this->data = $data;
             }
         },
-        new class ('test02') {
+        new class('test02')
+        {
             public function __construct(
                 public string $data,
             ) {
