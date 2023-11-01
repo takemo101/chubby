@@ -1,6 +1,6 @@
 <?php
 
-namespace Takemo101\Chubby\Http\Support;
+namespace Takemo101\Chubby\Http\Routing;
 
 /**
  * Result of dispatch by DomainRouteDispatcher

@@ -11,15 +11,22 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class Context
 {
     /**
+     * @var array<string,mixed>
+     */
+    public array $routeArguments;
+
+    /**
      * constructor
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @param array<string,mixed> $routeArguments
      */
     public function __construct(
-        public readonly ServerRequestInterface $request,
-        public readonly ResponseInterface $response,
+        public ServerRequestInterface $request,
+        public ResponseInterface $response,
+        array $routeArguments = [],
     ) {
-        //
+        $this->routeArguments = $routeArguments;
     }
 }

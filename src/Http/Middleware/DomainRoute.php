@@ -7,7 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpNotFoundException;
-use Takemo101\Chubby\Http\Support\DomainRouteDispatcher;
+use Takemo101\Chubby\Http\Routing\DomainRouteContext;
+use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 
 /**
  * Handles the next middleware when a domain route is found for the request.
@@ -16,7 +17,6 @@ final class DomainRoute implements MiddlewareInterface
 {
     /** @var string */
     public const CommonRequestMethod = '*';
-
     /**
      * constructor
      *
@@ -45,11 +45,11 @@ final class DomainRoute implements MiddlewareInterface
             throw new HttpNotFoundException($request);
         }
 
-        foreach ($result->getArguments() as $key => $value) {
-            $request = $request->withAttribute($key, $value);
-        }
+        $context = new DomainRouteContext($result->getArguments());
 
-        return $handler->handle($request);
+        return $handler->handle(
+            $context->composeRequest($request),
+        );
     }
 
     /**

@@ -4,7 +4,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Takemo101\Chubby\Http\Middleware\DomainRoute;
-use Takemo101\Chubby\Http\Support\DomainRouteDispatcher;
+use Takemo101\Chubby\Http\Routing\DomainRouteContext;
+use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 use Tests\AppTestCase;
 
 describe(
@@ -55,8 +56,10 @@ describe(
                     $mock,
                 );
 
+                $context = DomainRouteContext::fromRequest($mock?->actualRequest);
+
                 foreach ($routeArguments as $key => $argument) {
-                    expect($mock?->actualRequest->getAttribute($key))->toEqual($argument);
+                    expect($context->getArguments()[$key])->toEqual($argument);
                 }
             },
         )->with('domain-routes');
