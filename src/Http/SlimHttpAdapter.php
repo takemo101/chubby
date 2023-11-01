@@ -5,11 +5,11 @@ namespace Takemo101\Chubby\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App as Slim;
-use Takemo101\Chubby\Http\Concern\HasRouteCollector;
+use Takemo101\Chubby\Http\Concern\HasRouteCollectorProxy;
 
 final class SlimHttpAdapter
 {
-    use HasRouteCollector;
+    use HasRouteCollectorProxy;
 
     /**
      * constructor
