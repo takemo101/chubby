@@ -28,7 +28,7 @@ final class DomainRouteCollector
     /**
      * Add a route
      *
-     * @param string $domain
+     * @param string $pattern
      * @param callable(ServerRequestInterface):RequestHandlerInterface $handler
      * @return DomainRoute
      */

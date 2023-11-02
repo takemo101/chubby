@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Interfaces\MiddlewareDispatcherInterface;
 use Slim\ResponseEmitter;

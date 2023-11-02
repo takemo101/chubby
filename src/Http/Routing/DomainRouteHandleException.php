@@ -8,10 +8,17 @@ use Closure;
 
 final class DomainRouteHandleException extends RuntimeException
 {
+    /**
+     * constructor
+     *
+     * @param string $message
+     * @param integer $code
+     * @param Throwable|null $previous
+     */
     public function __construct(
-        $message = 'Cannot handle request.',
-        $code = 0,
-        Throwable $previous = null,
+        string $message = 'Cannot handle request.',
+        int $code = 0,
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

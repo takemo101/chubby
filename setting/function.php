@@ -4,7 +4,6 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\DomainRouter;

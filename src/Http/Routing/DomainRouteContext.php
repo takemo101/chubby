@@ -9,7 +9,7 @@ final readonly class DomainRouteContext
     public const DomainRouteArguments = '__domain__';
 
     /**
-     * @var array<string,string
+     * @var array<string,string>
      */
     private array $arguments;
 
@@ -37,7 +37,7 @@ final readonly class DomainRouteContext
     /**
      * Get request with contextual data.
      *
-     * @param array<string,string> $arguments
+     * @param ServerRequestInterface $request
      */
     public function composeRequest(ServerRequestInterface $request): ServerRequestInterface
     {

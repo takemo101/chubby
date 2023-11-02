@@ -9,6 +9,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpNotFoundException;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
+use Takemo101\Chubby\Http\Routing\DomainRouteResult;
 
 /**
  * Handles the next middleware when a domain route is found for the request.
@@ -56,18 +57,21 @@ final class DomainRouting implements MiddlewareInterface
     {
         $host = $request->getUri()->getHost();
 
-        $result = $this->dispatcher->dispatch($host);
+        $routedResult = $this->dispatcher->dispatch($host);
 
-        if (!$result->isFound()) {
+        if (!$routedResult->isFound()) {
             throw new HttpNotFoundException($request);
         }
 
-        $context = new DomainRouteContext($result->getArguments());
+        $context = new DomainRouteContext($routedResult->getArguments());
 
-        return [
+        /** @var array{0:ServerRequestInterface,1:DomainRouteResult} */
+        $result = [
             $context->composeRequest($request),
-            $result,
+            $routedResult,
         ];
+
+        return $result;
     }
 
 

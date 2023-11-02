@@ -4,6 +4,8 @@ namespace Takemo101\Chubby\Http\Routing;
 
 use InvalidArgumentException;
 use Closure;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 final class DomainRoute
 {
@@ -15,7 +17,8 @@ final class DomainRoute
     /**
      * constructor
      *
-     * @param array<string,callable> $routes
+     * @param string $pattern
+     * @param callable(ServerRequestInterface):RequestHandlerInterface $handler
      */
     public function __construct(
         private readonly string $pattern,

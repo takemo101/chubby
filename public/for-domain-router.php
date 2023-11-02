@@ -1,6 +1,5 @@
 <?php
 
-use Takemo101\Chubby\Http\DomainRouter;
 
 define('APP_START_TIME', microtime(true));
 
