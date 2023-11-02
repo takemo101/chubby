@@ -12,7 +12,7 @@ $app = Takemo101\Chubby\ApplicationBuilder::buildStandard(
 );
 
 // Functionality can be expanded by adding instances of classes that implement Provider.
-// $http->addProvider(ExampleProvider::class);
+// $app->addProvider(ExampleProvider::class);
 
 $app->boot();
 
