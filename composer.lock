@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c13c4fc64a38b72b2618565afc63ca0a",
+    "content-hash": "d3970658176fac9a4bf368a171062742",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -321,16 +321,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.1",
+            "version": "v1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "e5a3057a5591e1cfe8183034b0203921abe2c902"
+                "reference": "076fe2cf128bd54b4341cdc6d49b95b34e101e4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/e5a3057a5591e1cfe8183034b0203921abe2c902",
-                "reference": "e5a3057a5591e1cfe8183034b0203921abe2c902",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/076fe2cf128bd54b4341cdc6d49b95b34e101e4c",
+                "reference": "076fe2cf128bd54b4341cdc6d49b95b34e101e4c",
                 "shasum": ""
             },
             "require": {
@@ -377,7 +377,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2023-07-14T13:56:28+00:00"
+            "time": "2023-10-17T13:38:16+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -801,47 +801,6 @@
                 }
             ],
             "time": "2023-08-10T14:57:56+00:00"
-        },
-        {
-            "name": "php-di/slim-bridge",
-            "version": "3.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PHP-DI/Slim-Bridge.git",
-                "reference": "d14c95b34b3c5ba2e8c40020dd93fdcc8f3ba875"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Slim-Bridge/zipball/d14c95b34b3c5ba2e8c40020dd93fdcc8f3ba875",
-                "reference": "d14c95b34b3c5ba2e8c40020dd93fdcc8f3ba875",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1 || ^8.0",
-                "php-di/invoker": "^2.0.0",
-                "php-di/php-di": "^6.0|^7.0",
-                "slim/slim": "^4.2.0"
-            },
-            "require-dev": {
-                "laminas/laminas-diactoros": "^2.1",
-                "phpunit/phpunit": ">= 7.0 < 10"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "DI\\Bridge\\Slim\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHP-DI integration in Slim",
-            "support": {
-                "issues": "https://github.com/PHP-DI/Slim-Bridge/issues",
-                "source": "https://github.com/PHP-DI/Slim-Bridge/tree/3.4.0"
-            },
-            "time": "2023-06-29T14:08:47+00:00"
         },
         {
             "name": "phpoption/phpoption",

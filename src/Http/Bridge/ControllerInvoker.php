@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
+use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 
 final readonly class ControllerInvoker implements InvocationStrategyInterface
 {
@@ -75,6 +76,13 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
+        $domainRouteContext = DomainRouteContext::fromRequest($request);
+
+        $routeArguments = [
+            ...$domainRouteContext->getArguments(),
+            ...$routeArguments,
+        ];
+
         /** @var ServerRequestInterface */
         $hookedRequest = $this->hook->filter(
             ServerRequestInterface::class,
@@ -82,15 +90,16 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $context = new Context(
-            $hookedRequest,
-            $response,
+            request: $hookedRequest,
+            response: $response,
+            routeArguments: $routeArguments,
         );
 
         return [
             'context' => $context,
-            'request'  => $context->request,
-            'response' => $response,
-            ...$routeArguments,
+            'request'  => $context->getRequest(),
+            'response' => $context->getResponse(),
+            ...$context->getRouteArguments(),
             ...$request->getAttributes(),
         ];
     }

@@ -35,7 +35,7 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
             throw new InvalidArgumentException('register or boot must be set.');
         }
 
-        $this->name = $name ?? Uuid::v6()->toRfc4122();
+        $this->name = $name ?? $this->createUniqueName();
     }
 
     /**
@@ -85,6 +85,19 @@ final readonly class ClosureProvider implements Provider, ProviderNameable
             return;
         }
 
-        call_user_func($this->boot, $container);
+        // The callable value set in the property boot is executed by the InvokerInterface
+        $container->call($this->boot, [
+            'container' => $container,
+        ]);
+    }
+
+    /**
+     * Create a unique provider name.
+     *
+     * @return string
+     */
+    private function createUniqueName(): string
+    {
+        return Uuid::v6()->toRfc4122();
     }
 }
