@@ -43,13 +43,13 @@ final readonly class DomainRouter
     /**
      * Add a route
      *
-     * @param string $domain
+     * @param string $pattern
      * @param callable $handler
      * @return DomainRoute
      */
-    public function route(string $domain, callable $handler): DomainRoute
+    public function route(string $pattern, callable $handler): DomainRoute
     {
-        return $this->routeCollector->addRoute($domain, $handler);
+        return $this->routeCollector->addRoute($pattern, $handler);
     }
 
     /**

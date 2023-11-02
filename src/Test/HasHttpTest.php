@@ -53,7 +53,7 @@ trait HasHttpTest
      * @param mixed[] $serverParams server parameters
      * @return ServerRequestInterface
      */
-    protected function createRequest(
+    public function createRequest(
         string $method = 'GET',
         $uri = '/',
         array $serverParams = [],
@@ -74,7 +74,7 @@ trait HasHttpTest
      * @param mixed[] $serverParams server parameters
      * @return ServerRequestInterface
      */
-    protected function createFormRequest(
+    public function createFormRequest(
         string $method,
         $uri,
         ?array $data = null,
@@ -99,7 +99,7 @@ trait HasHttpTest
      *
      * @return ServerRequestInterface
      */
-    protected function createJsonRequest(
+    public function createJsonRequest(
         string $method,
         $uri,
         ?array $data = null,

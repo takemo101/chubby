@@ -40,7 +40,7 @@ final readonly class DomainRouteHandler implements RequestHandlerInterface
         /** @var DomainRouteResult */
         $routedResult = $results[1];
 
-        $handler = $this->invokeRoutedResult(
+        $handler = $this->invokeRoute(
             $routedResult,
             $routedRequest,
         );
@@ -55,7 +55,7 @@ final readonly class DomainRouteHandler implements RequestHandlerInterface
      * @param ServerRequestInterface $routedRequest
      * @return RequestHandlerInterface
      */
-    public function invokeRoutedResult(
+    private function invokeRoute(
         DomainRouteResult $routedResult,
         ServerRequestInterface $routedRequest,
     ): RequestHandlerInterface {

@@ -20,8 +20,8 @@ final class DomainRouteCollector
     public function __construct(
         array $routes = [],
     ) {
-        foreach ($routes as $domain => $callable) {
-            $this->addRoute($domain, $callable);
+        foreach ($routes as $domain => $handler) {
+            $this->addRoute($domain, $handler);
         }
     }
 
