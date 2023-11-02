@@ -3,7 +3,7 @@
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Takemo101\Chubby\Http\Middleware\DomainRoute;
+use Takemo101\Chubby\Http\Middleware\DomainRouting;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 use Tests\AppTestCase;
@@ -14,7 +14,7 @@ describe(
         test(
             'The domain route configured for the host is found.',
             function (string $route, string $host, array $routeArguments) {
-                $dispatcher = new DomainRouteDispatcher($route);
+                $dispatcher = DomainRouteDispatcher::fromDomain($route);
 
                 $result = $dispatcher->dispatch($host);
 
@@ -31,7 +31,7 @@ describe(
                 $request = $this->createRequest('GET', 'http://' . $host);
                 $response = $this->createResponse();
 
-                $middleware = DomainRoute::fromDomain($route);
+                $middleware = DomainRouting::fromDomain($route);
 
                 $mock = new class($response) implements RequestHandlerInterface
                 {

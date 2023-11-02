@@ -2,22 +2,33 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
+use Closure;
+
 /**
  * Result of dispatch by DomainRouteDispatcher
  */
 final readonly class DomainRouteResult
 {
     /**
+     * @var Closure
+     */
+    private Closure $handler;
+
+    /**
      * constructor
      *
      * @param boolean $found
+     * @param callable $handler
      * @param array<string,string> $arguments
      */
     public function __construct(
         private bool $found,
+        callable $handler,
         private array $arguments = []
     ) {
-        //
+        $this->handler = $handler instanceof Closure
+            ? $handler
+            : Closure::fromCallable($handler);
     }
 
     /**
@@ -42,5 +53,15 @@ final readonly class DomainRouteResult
         }
 
         return array_map('rawurldecode', $this->arguments);
+    }
+
+    /**
+     * Get the handler of the found route.
+     *
+     * @return Closure
+     */
+    public function getHandler(): Closure
+    {
+        return $this->handler;
     }
 }

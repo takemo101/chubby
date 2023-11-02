@@ -13,7 +13,7 @@ use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 /**
  * Handles the next middleware when a domain route is found for the request.
  */
-final class DomainRoute implements MiddlewareInterface
+final class DomainRouting implements MiddlewareInterface
 {
     /** @var string */
     public const CommonRequestMethod = '*';
@@ -37,6 +37,23 @@ final class DomainRoute implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $result = $this->performRouting($request);
+
+        /** @var ServerRequestInterface */
+        $routedRequest = $result[0];
+
+        return $handler->handle($routedRequest);
+    }
+
+    /**
+     * Perform routing
+     *
+     * @param  ServerRequestInterface $request PSR7 Server Request
+     * @return array{0:ServerRequestInterface,1:DomainRouteResult}
+     * @throws HttpNotFoundException
+     */
+    public function performRouting(ServerRequestInterface $request): array
+    {
         $host = $request->getUri()->getHost();
 
         $result = $this->dispatcher->dispatch($host);
@@ -47,10 +64,13 @@ final class DomainRoute implements MiddlewareInterface
 
         $context = new DomainRouteContext($result->getArguments());
 
-        return $handler->handle(
+        return [
             $context->composeRequest($request),
-        );
+            $result,
+        ];
     }
+
+
 
     /**
      * Create a new instance.
@@ -59,6 +79,6 @@ final class DomainRoute implements MiddlewareInterface
      */
     public static function fromDomain(string $domain): self
     {
-        return new self(new DomainRouteDispatcher($domain));
+        return new self(DomainRouteDispatcher::fromDomain($domain));
     }
 }

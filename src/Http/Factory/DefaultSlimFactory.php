@@ -1,13 +1,13 @@
 <?php
 
-namespace Takemo101\Chubby\Http\Bridge;
+namespace Takemo101\Chubby\Http\Factory;
 
 use Psr\Container\ContainerInterface;
 use Slim\App as Slim;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\InvocationStrategyInterface;
 
-final readonly class SlimFactory
+final readonly class DefaultSlimFactory implements SlimFactory
 {
     /**
      * constructor
