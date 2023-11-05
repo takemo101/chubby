@@ -7,7 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $http = new Takemo101\Chubby\Http(
     Takemo101\Chubby\ApplicationBuilder::buildStandard(
         Takemo101\Chubby\ApplicationOption::from(
-            basePath: getenv('APP_BASE_PATH') ?: __DIR__,
+            basePath: getenv('APP_BASE_PATH') ?: dirname(__DIR__),
         ),
     ),
 );

@@ -4,13 +4,19 @@
 // Here, mainly configure routing and middleware.
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Routing\RouteCollectorProxy;
+use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\DomainRouter;
 use Takemo101\Chubby\Http\Factory\ConfiguredSlimFactory;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
+use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
+use Takemo101\Chubby\Http\Renderer\StaticRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Support\ApplicationPath;
 
 hook()
     ->onByType(
@@ -26,6 +32,41 @@ hook()
                     return $response;
                 },
             );
+
+            $http->get(
+                '/static/{path:.*}',
+                function (
+                    ServerRequestInterface $request,
+                    ApplicationPath $appPath,
+                    LocalFilesystem $filesystem,
+                    string $path,
+                ) {
+
+                    $filePath = $appPath->getBasePath('/public/assets/' . $path);
+
+                    if (!$filesystem->exists($filePath)) {
+                        throw new HttpNotFoundException(
+                            $request,
+                            sprintf('File not found: %s', $filePath),
+                        );
+                    }
+
+                    return StaticRenderer::fromPath(
+                        $filePath,
+                    );
+                },
+            )->setName('static');
+
+            $http->get(
+                '/image',
+                function () {
+                    return new HtmlRenderer(
+                        <<<HTML
+                            <img src="/static/sample.jpeg" />
+                        HTML
+                    );
+                },
+            )->setName('image');
 
             $http->get(
                 '/domain',

@@ -78,7 +78,7 @@ abstract class AbstractRenderer implements ResponseRenderer
     ): ResponseInterface {
         $response = $response
             ->withStatus($this->status)
-            ->withHeader('Content-Type', static::ContentType);
+            ->withHeader('Content-Type', $this->getContentType());
 
         foreach ($this->headers as $key => $value) {
             $response = $response->withHeader($key, $value);
@@ -89,6 +89,16 @@ abstract class AbstractRenderer implements ResponseRenderer
         );
 
         return $response;
+    }
+
+    /**
+     * Get response content type.
+     *
+     * @return string
+     */
+    protected function getContentType(): string
+    {
+        return static::ContentType;
     }
 
     /**
