@@ -9,6 +9,10 @@ use RuntimeException;
  */
 class LocalFilesystemException extends RuntimeException
 {
+    /**
+     * @param string $path
+     * @return self
+     */
     public static function notFound(string $path): self
     {
         return new self("File not found at path [{$path}].");
@@ -16,7 +20,7 @@ class LocalFilesystemException extends RuntimeException
 
     /**
      * @param string $path
-     * @return static
+     * @return self
      */
     public static function ioError(string $path): self
     {

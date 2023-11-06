@@ -31,9 +31,7 @@ final class FinfoMimeTypeGuesser implements MimeTypeGuesser
             throw new InvalidArgumentException(sprintf('The "%s" file does not exist or is not readable.', $data->getPathname()));
         }
 
-        if (false === $finfo = new finfo(FILEINFO_MIME_TYPE)) {
-            return null;
-        }
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
 
         $mimeType = $finfo->file($data->getPathname());
 
@@ -42,6 +40,6 @@ final class FinfoMimeTypeGuesser implements MimeTypeGuesser
             $mimeType = $mimeStart . $mimeStart === $mimeType ? $mimeStart : $mimeType;
         }
 
-        return $mimeType;
+        return $mimeType ?: null;
     }
 }

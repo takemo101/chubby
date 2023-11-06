@@ -138,13 +138,19 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
         return $this;
     }
 
+    /**
+     * Set etag.
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     protected function setEtag(ResponseInterface $response): ResponseInterface
     {
         $data = $this->getData();
 
         if ($data instanceof SplFileInfo) {
             $tag = base64_encode(
-                hash_file('sha256', $data->getPathname(), true),
+                hash_file('sha256', $data->getPathname(), true) ?: throw new RuntimeException('Failed to generate hash.')
             );
 
             $response = $response->withHeader('ETag', $tag);
@@ -166,13 +172,23 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
         return $this;
     }
 
+    /**
+     * Set last modified.
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     protected function setLastModified(ResponseInterface $response): ResponseInterface
     {
         $data = $this->getData();
 
         if ($data instanceof SplFileInfo) {
 
-            $date = DateTime::createFromFormat('U', (string) $data->getMTime())
+            if (false === $date = DateTime::createFromFormat('U', (string) $data->getMTime())) {
+                throw new RuntimeException('Failed to create DateTime object.');
+            }
+
+            $date = $date
                 ->setTimezone(new DateTimeZone('UTC'));
 
             $response = $response->withHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');

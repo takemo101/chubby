@@ -22,12 +22,14 @@ final readonly class SymfonyLocalFilesystem implements LocalFilesystem
     private SymfonyFilesystem $fs;
 
     /**
-     * @var MimeTypeGuesser
+     * @var MimeTypeGuesser<SplFileInfo>
      */
     private MimeTypeGuesser $mimeTypeGuesser;
 
     /**
      * constructor
+     *
+     * @param MimeTypeGuesser<SplFileInfo>|null $mimeTypeGuesser
      */
     public function __construct(
         ?MimeTypeGuesser $mimeTypeGuesser = null
@@ -145,7 +147,11 @@ final readonly class SymfonyLocalFilesystem implements LocalFilesystem
     public function chmod(string $path, int $permission = 0o755, bool $recursive = false): bool
     {
         try {
-            $this->fs->chmod($path, $permission, $recursive);
+            $this->fs->chmod(
+                files: $path,
+                mode: $permission,
+                recursive: $recursive,
+            );
         } catch (IOException) {
             return false;
         }
@@ -210,7 +216,7 @@ final readonly class SymfonyLocalFilesystem implements LocalFilesystem
     /**
      * Symbolic relative link.
      *
-     * @param string $target 
+     * @param string $target
      * @param string $link
      * @return boolean
      */
@@ -233,7 +239,7 @@ final readonly class SymfonyLocalFilesystem implements LocalFilesystem
         try {
             $this->fs->hardlink($target, $link);
         } catch (FileNotFoundException $e) {
-            throw LocalFilesystemException::notFound($e->getPath());
+            throw LocalFilesystemException::notFound($e->getPath() ?? $target);
         } catch (IOException) {
             return false;
         }

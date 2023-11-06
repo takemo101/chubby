@@ -67,7 +67,7 @@ interface LocalFilesystem
      * @param boolean $recursive
      * @return boolean
      */
-    public function chmod(string $path, int $permission = 0o755): bool;
+    public function chmod(string $path, int $permission = 0o755, bool $recursive = true): bool;
 
     /**
      * Copy file.
@@ -271,7 +271,6 @@ interface LocalFilesystem
      * Delete directory.
      *
      * @param string $path
-     * @param boolean $keep
      * @return boolean
      */
     public function deleteDirectory(string $path): bool;
