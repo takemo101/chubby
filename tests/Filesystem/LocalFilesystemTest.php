@@ -177,6 +177,26 @@ describe(
         )->skipOnWindows();
 
         test(
+            'Create a relative symbolic link for an existing file',
+            function () {
+                /** @var FilesystemTestCase $this */
+
+                $directory = $this->getTestResourcePath('link-directory');
+                $this->filesystem->makeDirectory($directory);
+
+                $originalPath = $this->getTestResourcePath('original-file.txt');
+                $this->filesystem->write($originalPath, 'test');
+                $linkPath = $directory . '/link-file.text';
+                $this->filesystem->relativeSymlink($originalPath, $linkPath);
+
+                expect($this->filesystem->isLink($linkPath))->toBeTrue();
+
+                $this->filesystem->delete($originalPath);
+                $this->filesystem->deleteDirectory($directory, false);
+            },
+        )->skipOnWindows();
+
+        test(
             'Get list information of existing files',
             function () {
                 /** @var FilesystemTestCase $this */

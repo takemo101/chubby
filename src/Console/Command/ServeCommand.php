@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Takemo101\Chubby\Support\Environment;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -18,9 +18,9 @@ use Takemo101\Chubby\Support\ApplicationPath;
 final class ServeCommand extends Command
 {
     /**
-     * @var LocalSystem
+     * @var LocalFilesystem
      */
-    private LocalSystem $filesystem;
+    private LocalFilesystem $filesystem;
 
     /**
      * Configures the current command.
@@ -29,8 +29,8 @@ final class ServeCommand extends Command
      */
     protected function configure()
     {
-        /** @var LocalSystem */
-        $filesystem = $this->getContainer()->get(LocalSystem::class);
+        /** @var LocalFilesystem */
+        $filesystem = $this->getContainer()->get(LocalFilesystem::class);
 
         $this->filesystem = $filesystem;
 

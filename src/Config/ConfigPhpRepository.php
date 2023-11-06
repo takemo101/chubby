@@ -4,9 +4,9 @@ namespace Takemo101\Chubby\Config;
 
 use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
-use Takemo101\Chubby\Filesystem\LocalSystem;
 use Illuminate\Support\Arr;
 use Takemo101\Chubby\Filesystem\PathHelper;
+use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 /**
  * config repository
@@ -19,9 +19,9 @@ class ConfigPhpRepository implements ConfigRepository
     public const ConfigExtension = '.php';
 
     /**
-     * @var LocalSystem
+     * @var LocalFilesystem
      */
-    protected LocalSystem $filesystem;
+    protected LocalFilesystem $filesystem;
 
     /**
      * @var array<string,mixed>
@@ -31,14 +31,14 @@ class ConfigPhpRepository implements ConfigRepository
     /**
      * constructor
      *
-     * @param LocalSystem|null $filesystem
+     * @param LocalFilesystem|null $filesystem
      * @param string|null $directory
      */
     public function __construct(
-        ?LocalSystem $filesystem = null,
+        ?LocalFilesystem $filesystem = null,
         ?string $directory = null,
     ) {
-        $this->filesystem = $filesystem ?? new LocalFilesystem();
+        $this->filesystem = $filesystem ?? new SymfonyLocalFilesystem();
 
         if ($directory) {
             $this->load($directory);

@@ -4,7 +4,7 @@ namespace Tests\Config;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
-use Takemo101\Chubby\Filesystem\LocalFilesystem;
+use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 class ConfigTestCase extends BaseTestCase
 {
@@ -28,7 +28,7 @@ class ConfigTestCase extends BaseTestCase
     public function setUpConfigRepository(): void
     {
         $this->repository = new ConfigPhpRepository(
-            new LocalFilesystem(),
+            new SymfonyLocalFilesystem(),
             dirname(__DIR__, 1) . '/resource/config',
         );
     }

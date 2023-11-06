@@ -6,7 +6,6 @@ use Takemo101\Chubby\Bootstrap\Provider\ConsoleProvider;
 use Takemo101\Chubby\Bootstrap\Provider\DependencyProvider;
 use Takemo101\Chubby\Bootstrap\Provider\FunctionProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HttpProvider;
-use Takemo101\Chubby\Filesystem\LocalFilesystem;
 
 /**
  * Support classes for building applications.
@@ -37,7 +36,7 @@ class ApplicationBuilder
         $this->getApplication()->addProvider(
             new DependencyProvider(
                 $this->getApplication()->getPath(),
-                new LocalFilesystem(),
+                $this->getApplication()->getFilesystem(),
             ),
         );
 
