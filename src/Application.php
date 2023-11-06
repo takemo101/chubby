@@ -28,8 +28,8 @@ use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
-use Takemo101\Chubby\Filesystem\LocalSystem;
 use Takemo101\Chubby\Filesystem\PathHelper;
+use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 use function DI\get;
 
@@ -51,6 +51,11 @@ final class Application implements ApplicationContainer
     private ?Container $container = null;
 
     /**
+     * @var LocalFilesystem
+     */
+    private LocalFilesystem $filesystem;
+
+    /**
      * @var bool
      */
     private bool $isBooted = false;
@@ -67,6 +72,8 @@ final class Application implements ApplicationContainer
         private readonly Bootstrap $bootstrap,
         private readonly ContainerBuilder $builder,
     ) {
+        $this->filesystem = new SymfonyLocalFilesystem();
+
         $this->initialize(
             $bootstrap,
             $builder,
@@ -117,7 +124,7 @@ final class Application implements ApplicationContainer
                     );
                 },
                 PathHelper::class => fn () => new PathHelper(),
-                LocalSystem::class => fn (PathHelper $helper) => new LocalFilesystem($helper),
+                LocalFilesystem::class => $this->filesystem,
             ],
         );
     }
@@ -148,6 +155,16 @@ final class Application implements ApplicationContainer
     public function getPath(): ApplicationPath
     {
         return $this->path;
+    }
+
+    /**
+     * Get filesystem instance.
+     *
+     * @return LocalFilesystem
+     */
+    public function getFilesystem(): LocalFilesystem
+    {
+        return $this->filesystem;
     }
 
     /**

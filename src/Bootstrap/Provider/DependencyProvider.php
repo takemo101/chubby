@@ -6,7 +6,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
 use RuntimeException;
-use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Filesystem\LocalFilesystem;
 
 /**
  * Dependency injection related.
@@ -22,11 +22,11 @@ class DependencyProvider implements Provider
      * constructor
      *
      * @param ApplicationPath $path
-     * @param LocalSystem $filesystem
+     * @param LocalFilesystem $filesystem
      */
     public function __construct(
         protected ApplicationPath $path,
-        protected LocalSystem $filesystem,
+        protected LocalFilesystem $filesystem,
     ) {
         //
     }

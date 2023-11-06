@@ -2,67 +2,27 @@
 
 namespace Takemo101\Chubby\Filesystem;
 
-use ErrorException;
-
 /**
  * Local Filesystem
  */
-final readonly class LocalFilesystem implements LocalSystem
+interface LocalFilesystem
 {
     /**
-     * @var PathHelper
-     */
-    public PathHelper $helper;
-
-    /**
-     * constructor
-     *
-     * @param PathHelper|null $helper
-     */
-    public function __construct(
-        ?PathHelper $helper = null,
-    ) {
-        $this->helper = $helper ?? new PathHelper();
-    }
-
-    /**
      * File exists?
-     *
-     * @return PathHelper
-     */
-    public function helper(): PathHelper
-    {
-        return $this->helper;
-    }
-
-    /**
-     *  ファイル存在
      *
      * @param string $path
      * @return boolean
      */
-    public function exists(string $path): bool
-    {
-        return file_exists($path);
-    }
+    public function exists(string $path): bool;
 
     /**
      * Load file.
      * Get null if it cannot be read.
      *
      * @param string $path
-     * @throws LocalSystemException
      * @return null|string
      */
-    public function read(string $path): ?string
-    {
-        if ($this->isFile($path)) {
-            $content = file_get_contents($path);
-            return $content === false ? null : $content;
-        }
-
-        throw new LocalSystemException("does not exist at path [{$path}]");
-    }
+    public function read(string $path): ?string;
 
     /**
      * File write (overwrite)
@@ -71,10 +31,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string|resource $content
      * @return boolean
      */
-    public function write(string $path, $content): bool
-    {
-        return (bool)file_put_contents($path, $content);
-    }
+    public function write(string $path, $content): bool;
 
     /**
      * Additional file writing  (to the top)
@@ -83,14 +40,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $content
      * @return boolean
      */
-    public function prepend(string $path, string $content): bool
-    {
-        if ($this->exists($path)) {
-            return $this->write($path, $content . $this->read($path));
-        }
-
-        return $this->write($path, $content);
-    }
+    public function prepend(string $path, string $content): bool;
 
     /**
      * Additional file writing (to the end)
@@ -99,10 +49,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $content
      * @return boolean
      */
-    public function append(string $path, string $content): bool
-    {
-        return (bool)file_put_contents($path, $content, FILE_APPEND);
-    }
+    public function append(string $path, string $content): bool;
 
     /**
      * Delete file.
@@ -110,28 +57,17 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return boolean
      */
-    public function delete(string $path): bool
-    {
-        try {
-            $result = @unlink($path);
-        } catch (ErrorException $e) {
-            $result = false;
-        }
-
-        return $result;
-    }
+    public function delete(string $path): bool;
 
     /**
      * Change file permissions.
      *
      * @param string $path
      * @param integer $permission
+     * @param boolean $recursive
      * @return boolean
      */
-    public function chmod(string $path, int $permission = 0o755): bool
-    {
-        return chmod($path, $permission);
-    }
+    public function chmod(string $path, int $permission = 0o755, bool $recursive = true): bool;
 
     /**
      * Copy file.
@@ -140,10 +76,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $to
      * @return boolean
      */
-    public function copy(string $from, string $to): bool
-    {
-        return copy($from, $to);
-    }
+    public function copy(string $from, string $to): bool;
 
     /**
      * Move file.
@@ -152,10 +85,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $to
      * @return boolean
      */
-    public function move(string $from, string $to): bool
-    {
-        return rename($from, $to);
-    }
+    public function move(string $from, string $to): bool;
 
     /**
      * Symbolic link.
@@ -164,32 +94,34 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $link
      * @return boolean
      */
-    public function symlink(string $target, string $link): bool
-    {
-        if (PHP_OS_FAMILY === 'Windows') {
-            return false;
-        }
+    public function symlink(string $target, string $link): bool;
 
-        return symlink($target, $link);
-    }
+    /**
+     * Symbolic relative link.
+     *
+     * @param string $target
+     * @param string $link
+     * @return boolean
+     */
+    public function relativeSymlink(string $target, string $link): bool;
+
+    /**
+     * Hard link.
+     *
+     * @param string $target
+     * @param string $link
+     * @throws LocalFilesystemException
+     * @return boolean
+     */
+    public function hardlink(string $target, string $link): bool;
 
     /**
      * Obtain link destinations for symbolic links.
      *
      * @param string $path
-     * @throws LocalSystemException
      * @return null|string
      */
-    public function readlink(string $path): ?string
-    {
-        if ($this->exists($path) && $this->isLink($path)) {
-            $link = readlink($path);
-
-            return $link ? $link : null;
-        }
-
-        throw new LocalSystemException("does not exist or link at path [{$path}]");
-    }
+    public function readlink(string $path): ?string;
 
     /**
      * Get the normalized absolute path.
@@ -197,43 +129,25 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return null|string
      */
-    public function realpath(string $path): ?string
-    {
-        $path = realpath($path);
-
-        return $path ? $path : null;
-    }
+    public function realpath(string $path): ?string;
 
     /**
      * Get file size.
      *
      * @param string $path
      * @return integer
-     * @throws LocalSystemException
+     * @throws LocalFilesystemException
      */
-    public function size(string $path): int
-    {
-        if ($size = filesize($path)) {
-            return $size;
-        }
-
-        throw new LocalSystemException("does not exist at path [{$path}]");
-    }
+    public function size(string $path): int;
 
     /**
      * Get the file's modification timestamp.
      *
      * @param string $path
      * @return integer
+     * @throws LocalFilesystemException
      */
-    public function time(string $path): int
-    {
-        if ($time = filemtime($path)) {
-            return $time;
-        }
-
-        throw new LocalSystemException("does not exist at path [{$path}]");
-    }
+    public function time(string $path): int;
 
     /**
      * Is the specified path a file?
@@ -241,10 +155,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return boolean
      */
-    public function isFile(string $path): bool
-    {
-        return is_file($path);
-    }
+    public function isFile(string $path): bool;
 
     /**
      * Is the specified path a directory?
@@ -252,10 +163,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return boolean
      */
-    public function isDirectory(string $path): bool
-    {
-        return is_dir($path);
-    }
+    public function isDirectory(string $path): bool;
 
     /**
      * Is the specified path a symbolic link?
@@ -263,10 +171,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return boolean
      */
-    public function isLink(string $path): bool
-    {
-        return is_link($path);
-    }
+    public function isLink(string $path): bool;
 
     /**
      * Is the specified path readable?
@@ -274,10 +179,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return boolean
      */
-    public function isReadable(string $path): bool
-    {
-        return is_readable($path);
-    }
+    public function isReadable(string $path): bool;
 
     /**
      * Is the specified path writable?
@@ -285,23 +187,16 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return bool
      */
-    public function isWritable(string $path): bool
-    {
-        return is_writable($path);
-    }
+    public function isWritable(string $path): bool;
 
     /**
      * Extract meta-information for a file at a specified path.
      *
      * @param string $path
      * @param integer $option
-     * @throws LocalSystemException
-     * @return string|array{dirname?:string,basename:string,extension?:string,filename:string}
+     * @return string|array{dirname:string,basename:string,extension:string,filename:string}
      */
-    public function extract(string $path, int $option = PATHINFO_BASENAME): string|array
-    {
-        return pathinfo($path, $option);
-    }
+    public function extract(string $path, int $option = PATHINFO_BASENAME): string|array;
 
     /**
      * Obtain permissions for files in the specified path.
@@ -309,12 +204,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return null|integer
      */
-    public function permission(string $path): ?int
-    {
-        $result = fileperms($path);
-
-        return $result === false ? null : $result;
-    }
+    public function permission(string $path): ?int;
 
     /**
      * Get file type.
@@ -322,12 +212,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return null|string
      */
-    public function type(string $path): ?string
-    {
-        $result = filetype($path);
-
-        return $result === false ? null : $result;
-    }
+    public function type(string $path): ?string;
 
     /**
      * Get file mimetype
@@ -335,18 +220,16 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $path
      * @return null|string
      */
-    public function mimeType(string $path): ?string
-    {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    public function mimeType(string $path): ?string;
 
-        if ($finfo === false) {
-            return null;
-        }
-
-        $result = finfo_file($finfo, $path);
-
-        return $result === false ? null : $result;
-    }
+    /**
+     * Get a hash of the file path.
+     *
+     * @param  string  $path
+     * @param  string  $algorithm
+     * @return string
+     */
+    public function hash(string $path, string $algorithm = 'md5');
 
     /**
      * Find pathnames that match a pattern and return them as an array.
@@ -354,12 +237,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $pattern
      * @return null|string[]
      */
-    public function glob(string $pattern): ?array
-    {
-        $result = glob($pattern);
-
-        return $result === false ? null : $result;
-    }
+    public function glob(string $pattern): ?array;
 
     /**
      * Create directory.
@@ -369,10 +247,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param boolean $recursive
      * @return boolean
      */
-    public function makeDirectory(string $path, int $permission = 0o755, bool $recursive = true): bool
-    {
-        return mkdir($path, $permission, $recursive);
-    }
+    public function makeDirectory(string $path, int $permission = 0o755, bool $recursive = true): bool;
 
     /**
      * Move directory.
@@ -381,10 +256,7 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $to
      * @return boolean
      */
-    public function moveDirectory(string $from, string $to): bool
-    {
-        return @rename($from, $to) === true;
-    }
+    public function moveDirectory(string $from, string $to): bool;
 
     /**
      * Copy directory.
@@ -393,71 +265,13 @@ final readonly class LocalFilesystem implements LocalSystem
      * @param string $to
      * @return boolean
      */
-    public function copyDirectory(string $from, string $to): bool
-    {
-        if (!$this->isDirectory($from)) {
-            return false;
-        }
-
-        $this->makeDirectory($to, 0o777);
-
-        $paths = $this->glob($this->helper->join($from, "*"));
-
-        if ($paths === null) {
-            return false;
-        }
-
-        foreach ($paths as $path) {
-            /** @var string */
-            $target = $this->extract($path);
-
-            $target = $this->helper->join($to, $target);
-
-            if ($this->isDirectory($path)) {
-                return $this->copyDirectory($path, $target);
-            }
-
-            if (!$this->copy($path, $target)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+    public function copyDirectory(string $from, string $to): bool;
 
     /**
      * Delete directory.
      *
      * @param string $path
-     * @param boolean $keep
      * @return boolean
      */
-    public function deleteDirectory(string $path, bool $keep = true): bool
-    {
-        if (!$this->isDirectory($path)) {
-            return false;
-        }
-
-        $paths = $this->glob($this->helper->join($path, "*"));
-
-        if ($paths === null) {
-            return false;
-        }
-
-        foreach ($paths as $target) {
-            if ($this->isDirectory($target)) {
-                if (!$this->deleteDirectory($target, $keep)) {
-                    return false;
-                }
-            } elseif (!$this->delete($target)) {
-                return false;
-            }
-        }
-
-        if (!$keep) {
-            rmdir($path);
-        }
-
-        return true;
-    }
+    public function deleteDirectory(string $path): bool;
 }

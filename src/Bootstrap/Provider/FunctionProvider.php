@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
-use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -39,8 +39,8 @@ class FunctionProvider implements Provider
         /** @var ApplicationPath */
         $path = $container->get(ApplicationPath::class);
 
-        /** @var LocalSystem */
-        $filesystem = $container->get(LocalSystem::class);
+        /** @var LocalFilesystem */
+        $filesystem = $container->get(LocalFilesystem::class);
 
         $functionPath = $this->getFunctionPath($path);
 

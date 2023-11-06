@@ -30,6 +30,7 @@ use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\Factory\ConfiguredSlimFactory;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
+use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
@@ -85,9 +86,11 @@ class HttpProvider implements Provider
                     return $adapter;
                 },
                 ResponseTransformers::class => function (
+                    InjectableFilter $injectableFilter,
                     Hook $hook,
                 ) {
                     $transformers = new ResponseTransformers(
+                        $injectableFilter,
                         new RendererTransformer(),
                         new ArrayableTransformer(),
                         new RenderableTransformer(),

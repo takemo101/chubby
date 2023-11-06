@@ -7,7 +7,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
-use Takemo101\Chubby\Filesystem\LocalSystem;
+use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ApplicationPath;
 
@@ -37,7 +37,7 @@ class ConfigProvider implements Provider
         $definitions->add(
             [
                 ConfigRepository::class => function (
-                    LocalSystem $filesystem,
+                    LocalFilesystem $filesystem,
                     ApplicationPath $path,
                     Hook $hook,
                 ): ConfigRepository {
