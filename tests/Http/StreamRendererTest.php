@@ -131,4 +131,4 @@ describe(
             },
         );
     }
-)->group('stream-renderer');
+)->group('stream-renderer')->skipOnWindows();

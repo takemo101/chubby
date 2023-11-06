@@ -5,6 +5,7 @@ namespace Takemo101\Chubby\Filesystem\Mime;
 use SplFileInfo;
 use finfo;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * @implements MimeTypeGuesser<SplFileInfo>
@@ -29,6 +30,10 @@ final class FinfoMimeTypeGuesser implements MimeTypeGuesser
 
         if (!$data->isFile() || !$data->isReadable()) {
             throw new InvalidArgumentException(sprintf('The "%s" file does not exist or is not readable.', $data->getPathname()));
+        }
+
+        if (!class_exists(finfo::class)) {
+            throw new RuntimeException('PHP needs to be compiled with FileInfo support to use this component.');
         }
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
