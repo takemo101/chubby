@@ -131,7 +131,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
      * @param boolean $autoEtag
      * @return static
      */
-    public function enableAutoEtag(bool $autoEtag): static
+    public function enableAutoEtag(bool $autoEtag = true): static
     {
         $this->autoEtag = $autoEtag;
 
@@ -165,7 +165,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
      * @param boolean $autoLastModified
      * @return static
      */
-    public function enableAutoLastModified(bool $autoLastModified): static
+    public function enableAutoLastModified(bool $autoLastModified = true): static
     {
         $this->autoLastModified = $autoLastModified;
 

@@ -87,5 +87,48 @@ describe(
             dirname(__DIR__, 1) . '/resource/asset/sample.jpeg',
             dirname(__DIR__, 1) . '/resource/asset/sample.txt',
         ]);
+
+        test(
+            'Enable Etag in StreamRenderer',
+            function () {
+                /** @var AppTestCase $this */
+
+                $request = $this->createRequest();
+                $response = $this->createResponse();
+
+                $renderer = StaticRenderer::fromPath(dirname(__DIR__, 1) . '/resource/asset/sample.jpeg');
+
+                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+
+                $renderer->enableAutoEtag();
+
+                $actual = $renderer->render($request, $response);
+
+                expect($actual->getStatusCode())->toEqual(StatusCodeInterface::STATUS_OK);
+                expect($actual->getHeaderLine('ETag'))->not->toBeEmpty();
+            },
+        );
+
+
+        test(
+            'Enable LastModified in StreamRenderer',
+            function () {
+                /** @var AppTestCase $this */
+
+                $request = $this->createRequest();
+                $response = $this->createResponse();
+
+                $renderer = StaticRenderer::fromPath(dirname(__DIR__, 1) . '/resource/asset/sample.jpeg');
+
+                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+
+                $renderer->enableAutoLastModified();
+
+                $actual = $renderer->render($request, $response);
+
+                expect($actual->getStatusCode())->toEqual(StatusCodeInterface::STATUS_OK);
+                expect($actual->getHeaderLine('Last-Modified'))->not->toBeEmpty();
+            },
+        );
     }
 )->group('stream-renderer');
