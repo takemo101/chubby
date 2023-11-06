@@ -7,7 +7,7 @@ use Takemo101\Chubby\Http\Renderer\StaticRenderer;
 use Tests\AppTestCase;
 
 describe(
-    'response renderer',
+    'stream response renderer',
     function () {
         test(
             'Converting file data to response with StaticRenderer',
@@ -34,7 +34,7 @@ describe(
                 new \SplFileInfo(dirname(__DIR__, 1) . '/resource/asset/sample.txt'),
                 'text/plain',
             ],
-        ]);
+        ])->skipOnWindows();
 
         test(
             'Converting file data to download response with AttatchmentRenderer',
@@ -107,7 +107,7 @@ describe(
                 expect($actual->getStatusCode())->toEqual(StatusCodeInterface::STATUS_OK);
                 expect($actual->getHeaderLine('ETag'))->not->toBeEmpty();
             },
-        );
+        )->skipOnWindows();
 
 
         test(
@@ -129,6 +129,6 @@ describe(
                 expect($actual->getStatusCode())->toEqual(StatusCodeInterface::STATUS_OK);
                 expect($actual->getHeaderLine('Last-Modified'))->not->toBeEmpty();
             },
-        );
+        )->skipOnWindows();
     }
-)->group('stream-renderer')->skipOnWindows();
+)->group('stream-renderer');
