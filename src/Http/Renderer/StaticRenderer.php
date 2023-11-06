@@ -29,7 +29,7 @@ final class StaticRenderer extends AbstractStreamRenderer
             }
         }
 
-        return static::DefaultMimeType;
+        return static::DefaultContentType;
     }
 
     /**

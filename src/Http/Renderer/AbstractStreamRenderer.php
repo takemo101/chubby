@@ -19,7 +19,7 @@ use DateTimeZone;
 abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactoryInjectable
 {
     /** @var string */
-    public const DefaultMimeType = 'application/octet-stream';
+    public const DefaultContentType = 'application/octet-stream';
 
     /**
      * @var StreamFactoryInterface|null
@@ -242,8 +242,6 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
                 ->withHeader('Content-Length', (string)$stream->getSize())
         );
 
-        $response = $this->configureResponse($response);
-
         if ($this->autoEtag) {
             $response = $this->setEtag($response);
         }
@@ -262,7 +260,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
      */
     protected function getContentType(): string
     {
-        return $this->getMimeType() ?: static::DefaultMimeType;
+        return $this->getMimeType() ?: static::DefaultContentType;
     }
 
     /**
