@@ -28,6 +28,7 @@ use Takemo101\Chubby\Http\DomainRouter;
 use Takemo101\Chubby\Http\Factory\DefaultSlimFactory;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
+use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
 use Takemo101\Chubby\Http\Factory\ConfiguredSlimFactory;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
@@ -113,15 +114,26 @@ class HttpProvider implements Provider
                 CallableResolverInterface::class => fn (
                     ApplicationContainer $container,
                 ) => new CallableResolver($container),
+                ErrorResponseRenders::class => function (
+                    Hook $hook,
+                ) {
+                    $renders = new ErrorResponseRenders();
+
+                    $hook->doByObject($renders);
+
+                    return $renders;
+                },
                 ErrorHandlerInterface::class => get(ErrorHandler::class),
                 ErrorHandler::class => function (
                     Slim $slim,
                     LoggerInterface $logger,
+                    ErrorResponseRenders $renders,
                     Hook $hook,
                 ) {
                     $errorHandler = new ErrorHandler(
                         $slim->getResponseFactory(),
                         $logger,
+                        $renders,
                     );
 
                     $hook->doByObject($errorHandler);

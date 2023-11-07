@@ -2,62 +2,48 @@
 
 namespace Takemo101\Chubby\Http\ErrorHandler;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Error\Renderers\HtmlErrorRenderer;
+use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
+use Takemo101\Chubby\Http\Renderer\ResponseRenderer;
 use Throwable;
 
-class HtmlErrorResponseRender implements ErrorResponseRender
+class HtmlErrorResponseRender extends AbstractErrorResponseRender
 {
     /**
-     * Perform response writing process.
-     * Returns null if there is no response.
+     * Determine if the response should be rendered.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param Throwable $exception
-     * @param ErrorSetting $setting
      *
-     * @return ResponseInterface|null
+     * @return bool
      */
-    public function render(
+    protected function shouldRender(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        Throwable $exception,
-        ErrorSetting $setting,
-    ): ?ResponseInterface {
-
+    ): bool {
         $accept = $request->getHeaderLine('Accept');
 
-        if (!str_contains($accept, 'text/html')) {
-            return null;
-        }
-
-        $response->getBody()->write(
-            $this->createHtmlContent(
-                $exception,
-                $setting,
-            ),
-        );
-
-        return $response;
+        return str_contains($accept, 'text/html');
     }
 
     /**
-     * Create html content.
+     * Create error response renderer.
      *
+     * @param ServerRequestInterface $request
      * @param Throwable $exception
      * @param ErrorSetting $setting
      *
-     * @return string
+     * @return ResponseRenderer
      */
-    protected function createHtmlContent(
+    protected function createRenderer(
+        ServerRequestInterface $request,
         Throwable $exception,
         ErrorSetting $setting,
-    ): string {
-        return (new HtmlErrorRenderer())->__invoke(
-            $exception,
-            $setting->displayErrorDetails,
+    ): ResponseRenderer {
+        return new HtmlRenderer(
+            (new HtmlErrorRenderer())->__invoke(
+                $exception,
+                $setting->displayErrorDetails,
+            ),
         );
     }
 }

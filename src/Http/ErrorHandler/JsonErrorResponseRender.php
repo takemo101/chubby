@@ -4,52 +4,44 @@ namespace Takemo101\Chubby\Http\ErrorHandler;
 
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Takemo101\Chubby\Http\Renderer\ResponseRenderer;
 use Throwable;
 
-class JsonErrorResponseRender implements ErrorResponseRender
+class JsonErrorResponseRender extends AbstractErrorResponseRender
 {
     /**
-     * Perform response writing process.
-     * Returns null if there is no response.
+     * Determine if the response should be rendered.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param Throwable $exception
-     * @param ErrorSetting $setting
      *
-     * @return ResponseInterface|null
+     * @return bool
      */
-    public function render(
+    protected function shouldRender(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        Throwable $exception,
-        ErrorSetting $setting,
-    ): ?ResponseInterface {
-        return (new JsonRenderer(
-            $this->createJsonContent(
-                $exception,
-                $setting,
-            ),
-        ))->render($request, $response);
+    ): bool {
+        return true;
     }
 
     /**
-     * Create json content.
+     * Create error response renderer.
      *
+     * @param ServerRequestInterface $request
      * @param Throwable $exception
      * @param ErrorSetting $setting
      *
-     * @return mixed
+     * @return ResponseRenderer
      */
-    protected function createJsonContent(
+    protected function createRenderer(
+        ServerRequestInterface $request,
         Throwable $exception,
         ErrorSetting $setting,
-    ): mixed {
-        return [
-            'error' => $this->getErrorDetails($exception, $setting),
-        ];
+    ): ResponseRenderer {
+        return new JsonRenderer(
+            [
+                'error' => $this->getErrorDetails($exception, $setting),
+            ],
+        );
     }
 
     /**
