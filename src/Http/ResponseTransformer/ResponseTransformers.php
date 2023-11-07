@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Http\ResponseTransformer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class ResponseTransformers implements ResponseTransformer
+final class ResponseTransformers
 {
     /**
      * @var ResponseTransformer[]
@@ -46,13 +46,13 @@ final class ResponseTransformers implements ResponseTransformer
      * @param mixed $data
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @return ResponseInterface|null
+     * @return ResponseInterface
      */
     public function transform(
         mixed $data,
         ServerRequestInterface $request,
         ResponseInterface $response,
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         if ($data instanceof ResponseInterface) {
             return $data;
         }
@@ -63,6 +63,6 @@ final class ResponseTransformers implements ResponseTransformer
             }
         }
 
-        return null;
+        return $response;
     }
 }

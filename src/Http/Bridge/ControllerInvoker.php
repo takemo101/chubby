@@ -57,7 +57,7 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         /** @var ResponseInterface */
         $hookedResponse = $this->hook->filter(
             ResponseInterface::class,
-            $transformedResponse ?? $response,
+            $transformedResponse,
         );
 
         return $hookedResponse;
