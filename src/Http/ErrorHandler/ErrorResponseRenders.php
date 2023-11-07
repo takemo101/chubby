@@ -33,8 +33,8 @@ final class ErrorResponseRenders
     public function addRender(ErrorResponseRender ...$renders): self
     {
         $this->renders = [
-            ...$this->renders,
             ...$renders,
+            ...$this->renders,
         ];
 
         return $this;
