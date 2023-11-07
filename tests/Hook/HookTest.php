@@ -1,5 +1,6 @@
 <?php
 
+use Psr\Container\ContainerInterface;
 use Takemo101\Chubby\Hook\Hook;
 
 describe(
@@ -29,8 +30,8 @@ describe(
 
                 $hook = new Hook();
 
-                $hook->onByType(function (HookTestProcess $object) {
-                    return $object;
+                $hook->onByType(function (HookTestProcess $object, ContainerInterface $container) {
+                    return $container->get(HookTestProcess::class);
                 });
 
                 expect($hook->hasTag(get_class($object)))->toBeTrue();

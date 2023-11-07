@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
+use Psr\Container\ContainerInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Hook\Hook;
@@ -27,7 +28,7 @@ class BootProvider implements Provider
     {
         $definitions->add(
             [
-                Hook::class => fn () => new Hook(),
+                Hook::class => fn (ContainerInterface $container) => new Hook($container),
             ],
         );
     }
