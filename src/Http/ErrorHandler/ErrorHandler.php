@@ -19,16 +19,18 @@ use Throwable;
 class ErrorHandler implements ErrorHandlerInterface
 {
     /**
-     * @var ErrorResponseRender[]
+     * constructor
+     *
+     * @param ResponseFactoryInterface $responseFactory
+     * @param LoggerInterface $logger
+     * @param ErrorResponseRenders $renders
      */
-    private array $renders;
-
     public function __construct(
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
-        ErrorResponseRender ...$renders
+        private ErrorResponseRenders $renders
     ) {
-        $this->setRender(...$renders);
+        //
     }
 
     /**
@@ -39,10 +41,7 @@ class ErrorHandler implements ErrorHandlerInterface
      */
     public function addRender(ErrorResponseRender ...$renders): static
     {
-        $this->renders = [
-            ...$renders,
-            ...$this->renders,
-        ];
+        $this->renders->addRender(...$renders);
 
         return $this;
     }
@@ -55,12 +54,7 @@ class ErrorHandler implements ErrorHandlerInterface
      */
     public function setRender(ErrorResponseRender ...$renders): static
     {
-        $this->renders = empty($renders)
-            ? [
-                new HtmlErrorResponseRender(),
-                new JsonErrorResponseRender(),
-            ]
-            : $renders;
+        $this->renders->setRender(...$renders);
 
         return $this;
     }
@@ -169,18 +163,15 @@ class ErrorHandler implements ErrorHandlerInterface
         Throwable $exception,
         ErrorSetting $setting,
     ): ResponseInterface {
-        foreach ($this->renders as $render) {
-            if ($_response = $render->render(
-                request: $request,
-                response: $response,
-                exception: $exception,
-                setting: $setting
-            )) {
-                $response = $_response;
-                break;
-            }
-        }
+        $response = $this->renders->render(
+            request: $request,
+            response: $response,
+            exception: $exception,
+            setting: $setting,
+        );
 
-        return $response->withStatus($this->getHttpStatusCode($exception));
+        return $response->getStatusCode() !== StatusCodeInterface::STATUS_OK
+            ? $response
+            : $response->withStatus($this->getHttpStatusCode($exception));
     }
 }
