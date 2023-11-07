@@ -6,19 +6,25 @@ use RuntimeException;
 use ReflectionFunction;
 use ReflectionNamedType;
 use Closure;
+use DI\Container;
 use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 
 final class Hook
 {
+    private ContainerInterface $container;
+
     /**
      * constructor
      *
+     * @param ContainerInterface $container
      * @param array<string,HookFilters> $filters
      */
     public function __construct(
+        ContainerInterface $container = new Container(),
         private array $filters = []
     ) {
-        //
+        $this->container = $container;
     }
 
     /**
@@ -72,7 +78,7 @@ final class Hook
         $parameters = (new ReflectionFunction(Closure::fromCallable($function)))
             ->getParameters();
 
-        if (count($parameters) !== 1) {
+        if (!in_array(count($parameters), [1, 2])) {
             throw new RuntimeException('invalid function parameter');
         }
 
@@ -176,7 +182,7 @@ final class Hook
                 $result = call_user_func_array(
                     $action->getCallable(),
                     // Pass initial parameters if filter output is null
-                    [$result ?? $parameter],
+                    [$result ?? $parameter, $this->container],
                 );
             }
         }
@@ -219,7 +225,7 @@ final class Hook
 
                 call_user_func_array(
                     $action->getCallable(),
-                    [$parameter],
+                    [$parameter, $this->container],
                 );
             }
         }
