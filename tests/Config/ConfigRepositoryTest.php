@@ -95,7 +95,57 @@ describe(
         );
 
         test(
-            '',
+            'Settings loaded will overwrite the original settings',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $configKeys = [
+                    'config01.foo',
+                    'config01.bar',
+                    'config01.num',
+                ];
+
+                $exceptedConfigs = [];
+
+                foreach ($configKeys as $key) {
+                    $exceptedConfigs[$key] = $this->repository->get($key);
+                }
+
+                $this->repository->load($this->getAnotherDirectoryPath(), true);
+
+                foreach ($configKeys as $key) {
+                    expect($this->repository->get($key))->not->toEqual($exceptedConfigs[$key]);
+                }
+            },
+        );
+
+        test(
+            'Loaded settings do not overwrite original settings',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $configKeys = [
+                    'config01.foo',
+                    'config01.bar',
+                    'config01.num',
+                ];
+
+                $exceptedConfigs = [];
+
+                foreach ($configKeys as $key) {
+                    $exceptedConfigs[$key] = $this->repository->get($key);
+                }
+
+                $this->repository->load($this->getAnotherDirectoryPath(), false);
+
+                foreach ($configKeys as $key) {
+                    expect($this->repository->get($key))->toEqual($exceptedConfigs[$key]);
+                }
+            },
+        );
+
+        test(
+            'Set the value of config',
             function (array $excepted) {
                 $repository = new ConfigPhpRepository();
 

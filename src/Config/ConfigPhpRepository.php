@@ -71,9 +71,10 @@ class ConfigPhpRepository implements ConfigRepository
      * Load configuration data from specified directory path.
      *
      * @param string $directory
+     * @param boolean $overwrite Overwrite settings with the same file name (key name)?
      * @return void
      */
-    public function load(string $directory): void
+    public function load(string $directory, bool $overwrite = false): void
     {
         $ext = self::ConfigExtension;
 
@@ -87,6 +88,10 @@ class ConfigPhpRepository implements ConfigRepository
 
         foreach ($paths as $path) {
             $key = $this->extractKeyByPath($path);
+
+            if (!$overwrite && array_key_exists($key, $this->config)) {
+                continue;
+            }
 
             $this->config[$key] = $path;
         }

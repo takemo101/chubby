@@ -23,9 +23,10 @@ interface ConfigRepository extends ArrayAccess
      * Load configuration data from specified directory path.
      *
      * @param string $directory
+     * @param boolean $overwrite Overwrite settings with the same file name (key name)?
      * @return void
      */
-    public function load(string $directory): void;
+    public function load(string $directory, bool $overwrite = false): void;
 
     /**
      * Get data for the specified key (specify the key using dot notation)
