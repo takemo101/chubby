@@ -95,6 +95,21 @@ describe(
         );
 
         test(
+            'Retrieve configuration data from a specified path',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $path = dirname(__DIR__, 1) . '/resource/config/config01.php';
+
+                $expected = require $path;
+
+                $actual = ConfigPhpRepository::getConfigByPath($path);
+
+                expect($actual)->toEqual($expected);
+            }
+        );
+
+        test(
             'Settings loaded will overwrite the original settings',
             function () {
                 /** @var ConfigTestCase $this */
@@ -154,6 +169,33 @@ describe(
                 }
 
                 expect($repository->all())->toEqual($excepted);
+            },
+        )->with([
+            fn () => [
+                'hoge' => [
+                    'fuga' => 'piyo',
+                ],
+                'foo' => ['bar'],
+            ],
+            fn () => [
+                'test' => [
+                    'test' => 'test',
+                ],
+                'test01' => ['test'],
+                'test02' => ['test'],
+            ],
+        ]);
+
+        test(
+            'Merge config values',
+            function (array $expected) {
+                $repository = new ConfigPhpRepository();
+
+                foreach ($expected as $key => $value) {
+                    $repository->merge($key, $value);
+                }
+
+                expect($repository->all())->toEqual($expected);
             },
         )->with([
             fn () => [

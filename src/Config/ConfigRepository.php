@@ -47,6 +47,15 @@ interface ConfigRepository extends ArrayAccess
     public function set(string $key, $value): void;
 
     /**
+     * Merge data for the specified key (specify the key using dot notation)
+     *
+     * @param string $key
+     * @param mixed[] $value
+     * @return void
+     */
+    public function merge(string $key, array $value): void;
+
+    /**
      * Does data exist for the specified key?
      *
      * @param string $key

@@ -128,14 +128,7 @@ class ConfigPhpRepository implements ConfigRepository
             return $config;
         }
 
-        $result = require $config;
-
-        //　If it is not an array, it is not config data and an error occurs.
-        if (!is_array($result)) {
-            throw new RuntimeException("config data is not array. path: {$config}");
-        }
-
-        return $result;
+        return self::getConfigByPath($config);
     }
 
     /**
@@ -167,6 +160,27 @@ class ConfigPhpRepository implements ConfigRepository
         $this->loadData($firstKey);
 
         Arr::set($this->config, $key, $value);
+    }
+
+    /**
+     * Merge data for the specified key (specify the key using dot notation)
+     *
+     * @param string $key
+     * @param mixed[] $value
+     * @return void
+     */
+    public function merge(string $key, array $value): void
+    {
+        $firstKey = $this->firstDotKey($key);
+
+        $this->loadData($firstKey);
+
+        $current = Arr::get($this->config, $key, []);
+
+        $this->set($key, [
+            ...$current,
+            ...$value,
+        ]);
     }
 
     /**
@@ -247,5 +261,24 @@ class ConfigPhpRepository implements ConfigRepository
     public function offsetUnset($offset): void
     {
         // not processing
+    }
+
+    /**
+     * Get config data array from the specified path
+     *
+     * @param string $path
+     * @return mixed[]
+     * @throws RuntimeException
+     */
+    public static function getConfigByPath(string $path): array
+    {
+        $result = require $path;
+
+        // If it is not an array, it is not config data and an error occurs.
+        if (!is_array($result)) {
+            throw new RuntimeException("config data is not array. path: {$path}");
+        }
+
+        return $result;
     }
 }
