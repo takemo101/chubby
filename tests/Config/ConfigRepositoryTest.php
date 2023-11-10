@@ -95,7 +95,72 @@ describe(
         );
 
         test(
-            '',
+            'Retrieve configuration data from a specified path',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $path = dirname(__DIR__, 1) . '/resource/config/config01.php';
+
+                $expected = require $path;
+
+                $actual = ConfigPhpRepository::getConfigByPath($path);
+
+                expect($actual)->toEqual($expected);
+            }
+        );
+
+        test(
+            'Settings loaded will overwrite the original settings',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $configKeys = [
+                    'config01.foo',
+                    'config01.bar',
+                    'config01.num',
+                ];
+
+                $exceptedConfigs = [];
+
+                foreach ($configKeys as $key) {
+                    $exceptedConfigs[$key] = $this->repository->get($key);
+                }
+
+                $this->repository->load($this->getAnotherDirectoryPath(), true);
+
+                foreach ($configKeys as $key) {
+                    expect($this->repository->get($key))->not->toEqual($exceptedConfigs[$key]);
+                }
+            },
+        );
+
+        test(
+            'Loaded settings do not overwrite original settings',
+            function () {
+                /** @var ConfigTestCase $this */
+
+                $configKeys = [
+                    'config01.foo',
+                    'config01.bar',
+                    'config01.num',
+                ];
+
+                $exceptedConfigs = [];
+
+                foreach ($configKeys as $key) {
+                    $exceptedConfigs[$key] = $this->repository->get($key);
+                }
+
+                $this->repository->load($this->getAnotherDirectoryPath(), false);
+
+                foreach ($configKeys as $key) {
+                    expect($this->repository->get($key))->toEqual($exceptedConfigs[$key]);
+                }
+            },
+        );
+
+        test(
+            'Set the value of config',
             function (array $excepted) {
                 $repository = new ConfigPhpRepository();
 
@@ -104,6 +169,33 @@ describe(
                 }
 
                 expect($repository->all())->toEqual($excepted);
+            },
+        )->with([
+            fn () => [
+                'hoge' => [
+                    'fuga' => 'piyo',
+                ],
+                'foo' => ['bar'],
+            ],
+            fn () => [
+                'test' => [
+                    'test' => 'test',
+                ],
+                'test01' => ['test'],
+                'test02' => ['test'],
+            ],
+        ]);
+
+        test(
+            'Merge config values',
+            function (array $expected) {
+                $repository = new ConfigPhpRepository();
+
+                foreach ($expected as $key => $value) {
+                    $repository->merge($key, $value);
+                }
+
+                expect($repository->all())->toEqual($expected);
             },
         )->with([
             fn () => [

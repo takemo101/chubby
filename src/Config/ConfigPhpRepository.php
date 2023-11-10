@@ -71,9 +71,10 @@ class ConfigPhpRepository implements ConfigRepository
      * Load configuration data from specified directory path.
      *
      * @param string $directory
+     * @param boolean $overwrite Overwrite settings with the same file name (key name)?
      * @return void
      */
-    public function load(string $directory): void
+    public function load(string $directory, bool $overwrite = false): void
     {
         $ext = self::ConfigExtension;
 
@@ -87,6 +88,10 @@ class ConfigPhpRepository implements ConfigRepository
 
         foreach ($paths as $path) {
             $key = $this->extractKeyByPath($path);
+
+            if (!$overwrite && array_key_exists($key, $this->config)) {
+                continue;
+            }
 
             $this->config[$key] = $path;
         }
@@ -123,14 +128,7 @@ class ConfigPhpRepository implements ConfigRepository
             return $config;
         }
 
-        $result = require $config;
-
-        //　If it is not an array, it is not config data and an error occurs.
-        if (!is_array($result)) {
-            throw new RuntimeException("config data is not array. path: {$config}");
-        }
-
-        return $result;
+        return self::getConfigByPath($config);
     }
 
     /**
@@ -162,6 +160,33 @@ class ConfigPhpRepository implements ConfigRepository
         $this->loadData($firstKey);
 
         Arr::set($this->config, $key, $value);
+    }
+
+    /**
+     * Merge data for the specified key (specify the key using dot notation)
+     *
+     * @param string $key
+     * @param mixed[] $value
+     * @return void
+     */
+    public function merge(string $key, array $value): void
+    {
+        $firstKey = $this->firstDotKey($key);
+
+        $this->loadData($firstKey);
+
+        $current = Arr::get($this->config, $key, []);
+
+        Arr::set(
+            $this->config,
+            $key,
+            is_array($current)
+                ? [
+                    ...$current,
+                    ...$value,
+                ]
+                : $value
+        );
     }
 
     /**
@@ -242,5 +267,24 @@ class ConfigPhpRepository implements ConfigRepository
     public function offsetUnset($offset): void
     {
         // not processing
+    }
+
+    /**
+     * Get config data array from the specified path
+     *
+     * @param string $path
+     * @return mixed[]
+     * @throws RuntimeException
+     */
+    public static function getConfigByPath(string $path): array
+    {
+        $result = require $path;
+
+        // If it is not an array, it is not config data and an error occurs.
+        if (!is_array($result)) {
+            throw new RuntimeException("config data is not array. path: {$path}");
+        }
+
+        return $result;
     }
 }

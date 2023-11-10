@@ -8,7 +8,6 @@ use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
-use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
@@ -36,20 +35,13 @@ class ConfigProvider implements Provider
     {
         $definitions->add(
             [
-                ConfigRepository::class => function (
+                ConfigRepository::class => fn (
                     LocalFilesystem $filesystem,
                     ApplicationPath $path,
-                    Hook $hook,
-                ): ConfigRepository {
-                    $config = new ConfigPhpRepository(
-                        filesystem: $filesystem,
-                        directory: $path->getConfigPath(),
-                    );
-
-                    $hook->do(ConfigRepository::class, $config);
-
-                    return $config;
-                },
+                ) => new ConfigPhpRepository(
+                    filesystem: $filesystem,
+                    directory: $path->getConfigPath(),
+                ),
                 // Inject the value like #[Inject('config.app.name')]
                 self::ConfigPrependKey . '.*' => function (
                     ConfigRepository $config,

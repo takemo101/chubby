@@ -23,9 +23,10 @@ interface ConfigRepository extends ArrayAccess
      * Load configuration data from specified directory path.
      *
      * @param string $directory
+     * @param boolean $overwrite Overwrite settings with the same file name (key name)?
      * @return void
      */
-    public function load(string $directory): void;
+    public function load(string $directory, bool $overwrite = false): void;
 
     /**
      * Get data for the specified key (specify the key using dot notation)
@@ -44,6 +45,15 @@ interface ConfigRepository extends ArrayAccess
      * @return void
      */
     public function set(string $key, $value): void;
+
+    /**
+     * Merge data for the specified key (specify the key using dot notation)
+     *
+     * @param string $key
+     * @param mixed[] $value
+     * @return void
+     */
+    public function merge(string $key, array $value): void;
 
     /**
      * Does data exist for the specified key?
