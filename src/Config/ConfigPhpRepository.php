@@ -177,10 +177,16 @@ class ConfigPhpRepository implements ConfigRepository
 
         $current = Arr::get($this->config, $key, []);
 
-        $this->set($key, [
-            ...$current,
-            ...$value,
-        ]);
+        Arr::set(
+            $this->config,
+            $key,
+            is_array($current)
+                ? [
+                    ...$current,
+                    ...$value,
+                ]
+                : $value
+        );
     }
 
     /**
