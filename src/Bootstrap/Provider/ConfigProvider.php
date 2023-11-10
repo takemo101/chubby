@@ -36,20 +36,13 @@ class ConfigProvider implements Provider
     {
         $definitions->add(
             [
-                ConfigRepository::class => function (
+                ConfigRepository::class => fn (
                     LocalFilesystem $filesystem,
                     ApplicationPath $path,
-                    Hook $hook,
-                ): ConfigRepository {
-                    $config = new ConfigPhpRepository(
-                        filesystem: $filesystem,
-                        directory: $path->getConfigPath(),
-                    );
-
-                    $hook->do(ConfigRepository::class, $config);
-
-                    return $config;
-                },
+                ) => new ConfigPhpRepository(
+                    filesystem: $filesystem,
+                    directory: $path->getConfigPath(),
+                ),
                 // Inject the value like #[Inject('config.app.name')]
                 self::ConfigPrependKey . '.*' => function (
                     ConfigRepository $config,
