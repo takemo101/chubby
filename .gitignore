@@ -3,6 +3,7 @@
 /.php-cs-fixer.php
 /phpunit.xml
 /vendor/
+/.vscode/
 *.swp
 *.swo
 

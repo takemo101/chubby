@@ -6,6 +6,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\ApplicationOption;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Provider\ClosureProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\ContainerInitializationException;
 use Takemo101\Chubby\Support\ApplicationPath;
@@ -48,7 +49,7 @@ describe(
 
         test(
             'Provider is added to Bootstrap via Application',
-            function () {
+            function (Provider $provider) {
                 $bootstrap = new Bootstrap();
 
                 $app = Application::fromOption(
@@ -61,7 +62,18 @@ describe(
 
                 expect($initialProviderCount)->toBeGreaterThan(0);
 
-                $provider = new class () implements Provider {
+                $app->addProvider($provider);
+
+                expect(count($bootstrap->getProviders()))->toEqual($initialProviderCount + 1);
+            },
+        )->with(
+            [
+                new ClosureProvider(
+                    register: fn () => [],
+                    name: 'test',
+                ),
+                new class() implements Provider
+                {
                     public const ProviderName = 'test';
 
                     public function register(Definitions $definitions): void
@@ -73,23 +85,15 @@ describe(
                     {
                         //
                     }
-                };
-
-                // Provider will be overwritten and set if the defined name is duplicated
-                $app->addProvider(
-                    $provider,
-                    $provider,
-                    $provider,
-                );
-
-                expect(count($bootstrap->getProviders()))->toEqual($initialProviderCount + 1);
-            },
+                },
+            ],
         );
 
         test(
             "Run Bootstrap's Provider via Application",
             function () {
-                $provider = new class () implements Provider {
+                $provider = new class() implements Provider
+                {
                     public const ProviderName = 'test';
 
                     public bool $booted = false;
@@ -159,7 +163,8 @@ describe(
                 $app->boot();
 
                 expect(fn () => $app->addProvider(
-                    new class () implements Provider {
+                    new class() implements Provider
+                    {
                         public function register(Definitions $definitions): void
                         {
                             //
@@ -172,6 +177,44 @@ describe(
                     },
                 ))->toThrow(ApplicationAlreadyBootedException::class);
             },
+        );
+
+        test(
+            'Get the provider added to the application',
+            function (Provider $provider) {
+                /** @var ApplicationTestCase $this */
+
+                $app = $this->createApplication();
+
+                $app->addProvider($provider);
+
+                $expected = get_class($provider);
+                $actual = $app->getProvider($expected);
+
+                expect($actual)->not->toBeNull();
+                expect($actual)->toBeInstanceOf($expected);
+            },
+        )->with(
+            [
+                new ClosureProvider(
+                    register: fn () => [],
+                    name: 'test',
+                ),
+                new class() implements Provider
+                {
+                    public const ProviderName = 'test';
+
+                    public function register(Definitions $definitions): void
+                    {
+                        //
+                    }
+
+                    public function boot(ApplicationContainer $container): void
+                    {
+                        //
+                    }
+                },
+            ],
         );
 
         test(
