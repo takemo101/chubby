@@ -17,7 +17,7 @@ use Takemo101\Chubby\Support\Environment;
 /**
  * Environment variable related.
  */
-class EnvironmentProvider implements Provider
+final class EnvironmentProvider implements Provider
 {
     /**
      * @var string Provider name.
@@ -25,14 +25,19 @@ class EnvironmentProvider implements Provider
     public const ProviderName = 'environment';
 
     /**
-     * @var bool Should throw exception on missing dotenv.
-     */
-    public const ShouldThrowsExceptionOnMissingDotenv = false;
-
-    /**
      * @var string
      */
     public const EnvPrependKey = 'env';
+
+    /**
+     * @var string[]
+     */
+    private array $envPaths;
+
+    /**
+     * @var boolean Should throw exception on missing dotenv.
+     */
+    private $shouldThrowsExceptionOnMissingDotenv = false;
 
     /**
      * constructor
@@ -42,7 +47,7 @@ class EnvironmentProvider implements Provider
     public function __construct(
         private ApplicationPath $path,
     ) {
-        //
+        $this->envPaths = [$path->getBasePath()];
     }
 
     /**
@@ -63,7 +68,7 @@ class EnvironmentProvider implements Provider
                         ->immutable()
                         ->make();
 
-                    $paths = $this->getDotenvPaths($this->path);
+                    $paths = $this->envPaths;
                     $names = $this->path->getDotenvNames();
 
                     try {
@@ -79,7 +84,7 @@ class EnvironmentProvider implements Provider
                             'names' => $names,
                         ]);
 
-                        if (static::ShouldThrowsExceptionOnMissingDotenv) {
+                        if ($this->shouldThrowsExceptionOnMissingDotenv) {
                             throw $e;
                         }
                     }
@@ -117,13 +122,29 @@ class EnvironmentProvider implements Provider
     }
 
     /**
-     * Get dotenv path.
+     * Add env path.
      *
-     * @param ApplicationPath $path
-     * @return string|string[];
+     * @param string $path
+     * @return void
      */
-    protected function getDotenvPaths(ApplicationPath $path): string|array
+    public function addEnvPath(string $path): void
     {
-        return $path->getBasePath();
+        $this->envPaths = array_unique([
+            ...$this->envPaths,
+            $path,
+        ]);
+    }
+
+    /**
+     * Set whether to throw an exception if dotenv is missing.
+     *
+     * @param boolean $throw
+     * @return self
+     */
+    public function enableThrowsExceptionOnMissingDotenv(bool $throw = true): self
+    {
+        $this->shouldThrowsExceptionOnMissingDotenv = $throw;
+
+        return $this;
     }
 }

@@ -43,7 +43,7 @@ final class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.9';
+    public const Version = '0.0.10';
 
     /**
      * @var Container|null
@@ -131,6 +131,8 @@ final class Application implements ApplicationContainer
 
     /**
      * Add provider class instance.
+     * Providers with the same name cannot be registered.
+     * If you have been booted, throw an exception.
      *
      * @param Provider ...$Providers
      * @return self
@@ -145,6 +147,26 @@ final class Application implements ApplicationContainer
         $this->bootstrap->addProvider(...$Providers);
 
         return $this;
+    }
+
+    /**
+     * Get provider by class name.
+     *
+     * @template T of Provider
+     *
+     * @param class-string<T> $classOrName
+     * @return T|null
+     */
+    public function getProvider(string $classOrName): ?Provider
+    {
+        if (class_exists($classOrName)) {
+            return $this->bootstrap->getProviderByClass($classOrName);
+        }
+
+        /** @var T|null */
+        $result = $this->bootstrap->getProviderByName($classOrName);
+
+        return $result;
     }
 
     /**

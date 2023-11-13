@@ -10,12 +10,17 @@ use Takemo101\Chubby\Support\ApplicationPath;
 /**
  * Function related.
  */
-class FunctionProvider implements Provider
+final class FunctionProvider implements Provider
 {
     /**
      * @var string Provider name.
      */
     public const ProviderName = 'function';
+
+    /**
+     * @var string function.php relative path
+     */
+    private string $functionPath = 'function.php';
 
     /**
      * Execute Bootstrap providing process.
@@ -42,7 +47,7 @@ class FunctionProvider implements Provider
         /** @var LocalFilesystem */
         $filesystem = $container->get(LocalFilesystem::class);
 
-        $functionPath = $this->getFunctionPath($path);
+        $functionPath = $this->getFunctionSettingPath($path);
 
         if ($filesystem->exists($functionPath)) {
             require $functionPath;
@@ -55,8 +60,19 @@ class FunctionProvider implements Provider
      * @param ApplicationPath $path
      * @return string
      */
-    protected function getFunctionPath(ApplicationPath $path): string
+    private function getFunctionSettingPath(ApplicationPath $path): string
     {
-        return $path->getSettingPath('function.php');
+        return $path->getSettingPath($this->functionPath);
+    }
+
+    /**
+     * Set function path.
+     *
+     * @param string $path
+     * @return void
+     */
+    public function setFunctionPath(string $path): void
+    {
+        $this->functionPath = $path;
     }
 }
