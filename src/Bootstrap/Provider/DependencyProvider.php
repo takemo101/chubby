@@ -11,12 +11,17 @@ use Takemo101\Chubby\Filesystem\LocalFilesystem;
 /**
  * Dependency injection related.
  */
-class DependencyProvider implements Provider
+final class DependencyProvider implements Provider
 {
     /**
      * @var string Provider name.
      */
     public const ProviderName = 'dependency';
+
+    /**
+     * @var string dependency.php relative path
+     */
+    private string $dependencyPath = 'dependency.php';
 
     /**
      * constructor
@@ -25,8 +30,8 @@ class DependencyProvider implements Provider
      * @param LocalFilesystem $filesystem
      */
     public function __construct(
-        protected ApplicationPath $path,
-        protected LocalFilesystem $filesystem,
+        private ApplicationPath $path,
+        private LocalFilesystem $filesystem,
     ) {
         //
     }
@@ -39,7 +44,7 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
-        $dependencyPath = $this->getDependencyPath($this->path);
+        $dependencyPath = $this->getDependencySettingPath($this->path);
 
         /** @var mixed[] */
         $dependency = $this->filesystem->exists($dependencyPath)
@@ -74,9 +79,20 @@ class DependencyProvider implements Provider
      * @param ApplicationPath $path
      * @return string
      */
-    protected function getDependencyPath(
+    private function getDependencySettingPath(
         ApplicationPath $path,
     ): string {
-        return $path->getSettingPath('dependency.php');
+        return $path->getSettingPath($this->dependencyPath);
+    }
+
+    /**
+     * Set dependency definitions path.
+     *
+     * @param string $path
+     * @return void
+     */
+    public function setDependencyPath(string $path): void
+    {
+        $this->dependencyPath = $path;
     }
 }
