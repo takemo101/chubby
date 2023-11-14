@@ -42,7 +42,11 @@ hook()
                     string $path,
                 ) {
 
-                    $filePath = $appPath->getBasePath('/public/assets/' . $path);
+                    $filePath = $appPath->getBasePath(
+                        'public',
+                        'assets',
+                        $path,
+                    );
 
                     if (!$filesystem->exists($filePath)) {
                         throw new HttpNotFoundException(

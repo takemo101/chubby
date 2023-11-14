@@ -77,15 +77,15 @@ if (!function_exists('base_path')) {
     /**
      * Get application base path
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
     function base_path(
-        ?string $path = null,
+        string ...$paths,
     ): string {
         $appPath = ServiceLocator::path();
 
-        return $appPath->getBasePath($path);
+        return $appPath->getBasePath(...$paths);
     }
 }
 
@@ -93,15 +93,15 @@ if (!function_exists('storage_path')) {
     /**
      * Get application storage path
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
     function storage_path(
-        ?string $path = null,
+        string ...$paths,
     ): string {
         $appPath = ServiceLocator::path();
 
-        return $appPath->getStoragePath($path);
+        return $appPath->getStoragePath(...$paths);
     }
 }
 
