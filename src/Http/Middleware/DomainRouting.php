@@ -67,7 +67,7 @@ final class DomainRouting implements MiddlewareInterface
 
         /** @var array{0:ServerRequestInterface,1:DomainRouteResult} */
         $result = [
-            $context->composeRequest($request),
+            $context->withContext($request),
             $routedResult,
         ];
 

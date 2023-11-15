@@ -39,7 +39,7 @@ final readonly class DomainRouteContext
      *
      * @param ServerRequestInterface $request
      */
-    public function composeRequest(ServerRequestInterface $request): ServerRequestInterface
+    public function withContext(ServerRequestInterface $request): ServerRequestInterface
     {
         return $request->withAttribute(self::DomainRouteArguments, $this->arguments);
     }
