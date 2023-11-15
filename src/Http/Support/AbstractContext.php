@@ -35,7 +35,7 @@ abstract class AbstractContext
     public static function fromServerRequest(
         ServerRequestInterface $request,
         ?Closure $factory = null,
-    ): ?static {
+    ): static {
         /** @var static|null */
         $context = $request->getAttribute(static::ContextKey);
 
