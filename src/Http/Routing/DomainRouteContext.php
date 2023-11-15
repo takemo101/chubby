@@ -2,11 +2,12 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Takemo101\Chubby\Http\Support\AbstractContext;
 
-final readonly class DomainRouteContext
+final class DomainRouteContext extends AbstractContext
 {
-    public const DomainRouteArguments = '__domain__';
+    /** @var string */
+    public const ContextKey = '__domain__';
 
     /**
      * @var array<string,string>
@@ -32,29 +33,5 @@ final readonly class DomainRouteContext
     public function getArguments(): array
     {
         return $this->arguments;
-    }
-
-    /**
-     * Get request with contextual data.
-     *
-     * @param ServerRequestInterface $request
-     */
-    public function withContext(ServerRequestInterface $request): ServerRequestInterface
-    {
-        return $request->withAttribute(self::DomainRouteArguments, $this->arguments);
-    }
-
-    /**
-     * Create a context instance from a ServerRequest
-     *
-     * @param ServerRequestInterface $request
-     * @return self
-     */
-    public static function fromRequest(ServerRequestInterface $request): self
-    {
-        /** @var array<string,string> */
-        $arguments = $request->getAttribute(self::DomainRouteArguments, []);
-
-        return new self($arguments);
     }
 }

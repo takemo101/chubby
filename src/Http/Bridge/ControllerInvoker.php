@@ -76,7 +76,10 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
-        $domainRouteContext = DomainRouteContext::fromRequest($request);
+        $domainRouteContext = DomainRouteContext::fromServerRequest(
+            $request,
+            fn () => new DomainRouteContext(),
+        );
 
         $routeArguments = [
             ...$domainRouteContext->getArguments(),
