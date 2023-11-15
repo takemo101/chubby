@@ -33,64 +33,53 @@ final readonly class ApplicationPath
     /**
      * ベースパス取得
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
-    public function getBasePath(?string $path = null): string
+    public function getBasePath(string ...$paths): string
     {
-        return $path
-            ? $this->helper->join($this->basePath, $path)
-            : $this->basePath;
+        return $this->helper->join($this->basePath, ...$paths);
     }
 
     /**
      * Path to application settings
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
-    public function getSettingPath(?string $path = null): string
+    public function getSettingPath(string ...$paths): string
     {
-        $extendPath = $path
-            ? [$this->settingPath, $path]
-            : [$this->settingPath];
-
         return $this->getBasePath(
-            $this->helper->join(...$extendPath),
+            $this->settingPath,
+            ...$paths
         );
     }
 
     /**
      * Path to config directory
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
-    public function getConfigPath(?string $path = null): string
+    public function getConfigPath(string ...$paths): string
     {
-        $extendPath = $path
-            ? [$this->configPath, $path]
-            : [$this->configPath];
-
         return $this->getBasePath(
-            $this->helper->join(...$extendPath),
+            $this->configPath,
+            ...$paths
         );
     }
 
     /**
      * Path to storage directory
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return string
      */
-    public function getStoragePath(?string $path = null): string
+    public function getStoragePath(string ...$paths): string
     {
-        $extendPath = $path
-            ? [$this->storagePath, $path]
-            : [$this->storagePath];
-
         return $this->getBasePath(
-            $this->helper->join(...$extendPath),
+            $this->storagePath,
+            ...$paths
         );
     }
 
