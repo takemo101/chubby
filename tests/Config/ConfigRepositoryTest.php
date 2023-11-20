@@ -4,10 +4,10 @@ use Takemo101\Chubby\Config\ConfigPhpRepository;
 use Tests\Config\ConfigTestCase;
 
 describe(
-    'config',
+    'ConfigPhpRepository',
     function () {
         test(
-            'Load and retrieve settings for target directory',
+            'load and retrieve settings for target directory',
             function (string $configKey, mixed $excepted) {
                 /** @var ConfigTestCase $this */
 
@@ -26,7 +26,7 @@ describe(
         );
 
         test(
-            'Verify existence of configuration key in target directory',
+            'verify existence of configuration key in target directory',
             function (string $configKey) {
                 /** @var ConfigTestCase $this */
 
@@ -45,7 +45,7 @@ describe(
         );
 
         test(
-            'Change the loaded settings of the target directory',
+            'change the loaded settings of the target directory',
             function (string $configKey, mixed $changed) {
                 /** @var ConfigTestCase $this */
 
@@ -79,7 +79,7 @@ describe(
         );
 
         test(
-            'Load settings from another directory',
+            'load settings from another directory',
             function (string $configKey, mixed $excepted) {
                 /** @var ConfigTestCase $this */
 
@@ -95,7 +95,7 @@ describe(
         );
 
         test(
-            'Retrieve configuration data from a specified path',
+            'retrieve configuration data from a specified path',
             function () {
                 /** @var ConfigTestCase $this */
 
@@ -110,7 +110,7 @@ describe(
         );
 
         test(
-            'Settings loaded will overwrite the original settings',
+            'settings loaded will overwrite the original settings',
             function () {
                 /** @var ConfigTestCase $this */
 
@@ -135,7 +135,7 @@ describe(
         );
 
         test(
-            'Loaded settings do not overwrite original settings',
+            'loaded settings do not overwrite original settings',
             function () {
                 /** @var ConfigTestCase $this */
 
@@ -187,7 +187,7 @@ describe(
         ]);
 
         test(
-            'Merge config values',
+            'merge config values',
             function (array $expected) {
                 $repository = new ConfigPhpRepository();
 
@@ -212,5 +212,77 @@ describe(
                 'test02' => ['test'],
             ],
         ]);
+    }
+)->group('config');
+
+describe(
+    'ConfigPhpRepository::merge',
+    function () {
+
+        $config = [
+            'app' => [
+                'name' => 'MyApp',
+                'debug' => true,
+            ],
+            'database' => [
+                'host' => 'localhost',
+                'port' => 3306,
+            ],
+        ];
+
+        test(
+            'should merge data for the specified key',
+            function () use ($config) {
+                $key = 'app';
+                $value = [
+                    'debug' => false,
+                    'timezone' => 'UTC',
+                ];
+
+                $repository = new ConfigPhpRepository();
+                $repository->set($key, $config[$key]);
+
+                $repository->merge($key, $value);
+
+                $expected = [
+                    'name' => 'MyApp',
+                    'debug' => false,
+                    'timezone' => 'UTC',
+                ];
+
+                $actual = $repository->get($key);
+
+                expect($actual)->toBe($expected);
+            }
+        );
+
+        test(
+            'should merge data for the specified key without overwriting existing values',
+            function () use ($config) {
+                $key = 'database';
+                $value = [
+                    'host' => 'test',
+                    'port' => 3308,
+                    'username' => 'root',
+                    'password' => 'password',
+                ];
+
+                $repository = new ConfigPhpRepository();
+                $repository->set($key, $config[$key]);
+
+                $repository->merge($key, $value, false);
+
+                $expected = [
+                    'host' => 'localhost',
+                    'port' => 3306,
+                    'username' => 'root',
+                    'password' => 'password',
+                ];
+
+                $actual = $repository->get($key);
+
+                expect($actual)->toBe($expected);
+            }
+        );
     }
 )->group('config');

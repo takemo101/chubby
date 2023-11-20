@@ -167,9 +167,10 @@ class ConfigPhpRepository implements ConfigRepository
      *
      * @param string $key
      * @param mixed[] $value
+     * @param boolean $overwrite
      * @return void
      */
-    public function merge(string $key, array $value): void
+    public function merge(string $key, array $value, bool $overwrite = true): void
     {
         $firstKey = $this->firstDotKey($key);
 
@@ -181,10 +182,17 @@ class ConfigPhpRepository implements ConfigRepository
             $this->config,
             $key,
             is_array($current)
-                ? [
-                    ...$current,
-                    ...$value,
-                ]
+                ? (
+                    $overwrite
+                    ? [
+                        ...$current,
+                        ...$value,
+                    ]
+                    : [
+                        ...$value,
+                        ...$current,
+                    ]
+                )
                 : $value
         );
     }
