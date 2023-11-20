@@ -63,8 +63,8 @@ final class ErrorResponseRenders
 
         $renders = empty($renders)
             ? [
-                new HtmlErrorResponseRender(),
                 new JsonErrorResponseRender(),
+                new HtmlErrorResponseRender(),
             ]
             : $renders;
 
@@ -121,7 +121,9 @@ final class ErrorResponseRenders
         Throwable $exception,
         ErrorSetting $setting,
     ): ResponseInterface {
-        foreach ($this->order as $class) {
+        $order = array_reverse($this->order);
+
+        foreach ($order as $class) {
 
             /** @var ErrorResponseRender */
             $render = $this->renders[$class];

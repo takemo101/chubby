@@ -5,6 +5,7 @@ use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRender;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorSetting;
+use Tests\AppTestCase;
 
 describe(
     'ErrorResponseRenders',
@@ -58,6 +59,34 @@ describe(
                 expect($actual)->toBe($response);
             }
         );
+
+        test(
+            'returns the original response if no ErrorResponseRender can handle the exception',
+            function (string $contentType) {
+                /** @var AppTestCase $this */
+
+                $renders = new ErrorResponseRenders();
+
+                $request = Mockery::mock(ServerRequestInterface::class);
+
+                $request->shouldReceive('getHeaderLine')->andReturn($contentType);
+
+                $response = $this->createResponse();
+
+                $exception = new Exception();
+                $setting = new ErrorSetting();
+
+                $renders->setRender();
+
+                $actual = $renders->render($request, $response, $exception, $setting);
+
+                expect($actual)->not->toBe($response);
+                expect($actual->getHeaderLine('Content-Type'))->toBe($contentType);
+            }
+        )->with([
+            'text/html',
+            'application/json',
+        ]);
     }
 )->group('error-response-renders', 'error-handler');
 
