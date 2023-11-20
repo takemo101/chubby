@@ -46,8 +46,8 @@ class ParameterKeyTypeHintResolver
 
             $class = $type->getName();
 
-            if ($class === 'self') {
-                $class = $reflection->getDeclaringClass()->getName();
+            if ($class === 'self' && $reflectionSelfClass = $reflection->getDeclaringClass()) {
+                $class = $reflectionSelfClass->getName();
             }
 
             if (isset($result[$class])) {
