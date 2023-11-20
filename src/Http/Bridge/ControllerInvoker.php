@@ -10,6 +10,7 @@ use Slim\Interfaces\InvocationStrategyInterface;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
+use Takemo101\Chubby\Support\ParameterKeyTypeHintResolver;
 
 final readonly class ControllerInvoker implements InvocationStrategyInterface
 {
@@ -42,10 +43,16 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments
     ): ResponseInterface {
+
+        $parameters = $this->getInjectParameters($request, $response, $routeArguments);
+
         /** @var mixed */
         $data = $this->invoker->call(
             $callable,
-            $this->getInjectParameters($request, $response, $routeArguments),
+            (new ParameterKeyTypeHintResolver())->resolve(
+                $callable,
+                $parameters,
+            ),
         );
 
         $transformedResponse = $this->transformers->transform(
@@ -99,9 +106,9 @@ final readonly class ControllerInvoker implements InvocationStrategyInterface
         );
 
         return [
-            'context' => $context,
-            'request'  => $context->getRequest(),
-            'response' => $context->getResponse(),
+            Context::class => $context,
+            ServerRequestInterface::class  => $context->getRequest(),
+            ResponseInterface::class => $context->getResponse(),
             ...$context->getRouteArguments(),
             ...$request->getAttributes(),
         ];
