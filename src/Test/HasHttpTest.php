@@ -124,7 +124,7 @@ trait HasHttpTest
      *
      * @return ResponseInterface
      */
-    protected function createResponse(
+    public function createResponse(
         int $code = 200,
         string $reasonPhrase = '',
     ): ResponseInterface {
