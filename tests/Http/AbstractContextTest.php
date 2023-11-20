@@ -5,7 +5,7 @@ use Takemo101\Chubby\Http\Support\ContextException;
 use Psr\Http\Message\ServerRequestInterface;
 
 describe(
-    'abstract-context',
+    'AbstractContext',
     function () {
 
         test(
@@ -31,64 +31,73 @@ describe(
             }
         );
 
-        test('can create context instance from server request', function () {
-            $context = new class() extends AbstractContext
-            {
-                public function __construct()
+        test(
+            'can create context instance from server request',
+            function () {
+                $context = new class() extends AbstractContext
                 {
-                    // ...
-                }
-            };
-
-            $request = Mockery::mock(ServerRequestInterface::class);
-            $request->shouldReceive('getAttribute')
-                ->once()
-                ->with(AbstractContext::ContextKey)
-                ->andReturn($context);
-
-            $actual = AbstractContext::fromServerRequest($request);
-
-            expect($actual)->toBe($context);
-        });
-
-        test('throws exception when context not found', function () {
-            $request = Mockery::mock(ServerRequestInterface::class);
-            $request->shouldReceive('getAttribute')
-                ->once()
-                ->with(AbstractContext::ContextKey)
-                ->andReturn(null);
-
-            expect(function () use ($request) {
-                AbstractContext::fromServerRequest($request);
-            })->toThrow(ContextException::class);
-        });
-
-        test('throws exception when context is not an instance of the expected class', function () {
-            $context = new class()
-            {
-                public function __construct()
-                {
-                    // ...
-                }
-            };
-
-            $request = Mockery::mock(ServerRequestInterface::class);
-            $request->shouldReceive('getAttribute')
-                ->once()
-                ->with(AbstractContext::ContextKey)
-                ->andReturn($context);
-
-            expect(function () use ($request) {
-                AbstractContext::fromServerRequest($request, function () {
-                    return new class() extends AbstractContext
+                    public function __construct()
                     {
-                        public function __construct()
+                        // ...
+                    }
+                };
+
+                $request = Mockery::mock(ServerRequestInterface::class);
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(AbstractContext::ContextKey)
+                    ->andReturn($context);
+
+                $actual = AbstractContext::fromServerRequest($request);
+
+                expect($actual)->toBe($context);
+            }
+        );
+
+        test(
+            'throws exception when context not found',
+            function () {
+                $request = Mockery::mock(ServerRequestInterface::class);
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(AbstractContext::ContextKey)
+                    ->andReturn(null);
+
+                expect(function () use ($request) {
+                    AbstractContext::fromServerRequest($request);
+                })->toThrow(ContextException::class);
+            }
+        );
+
+        test(
+            'throws exception when context is not an instance of the expected class',
+            function () {
+                $context = new class()
+                {
+                    public function __construct()
+                    {
+                        // ...
+                    }
+                };
+
+                $request = Mockery::mock(ServerRequestInterface::class);
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(AbstractContext::ContextKey)
+                    ->andReturn($context);
+
+                expect(function () use ($request) {
+                    AbstractContext::fromServerRequest($request, function () {
+                        return new class() extends AbstractContext
                         {
-                            // ...
-                        }
-                    };
-                });
-            })->toThrow(ContextException::class);
-        });
+                            public function __construct()
+                            {
+                                // ...
+                            }
+                        };
+                    });
+                })->toThrow(ContextException::class);
+            }
+        );
     }
 )->group('abstract-context', 'http');
