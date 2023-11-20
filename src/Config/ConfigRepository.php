@@ -51,9 +51,10 @@ interface ConfigRepository extends ArrayAccess
      *
      * @param string $key
      * @param mixed[] $value
+     * @param boolean $overwrite Overwrite settings with the same file name (key name)?
      * @return void
      */
-    public function merge(string $key, array $value): void;
+    public function merge(string $key, array $value, bool $overwrite = true): void;
 
     /**
      * Does data exist for the specified key?

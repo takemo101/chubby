@@ -14,11 +14,15 @@ class JsonErrorResponseRender extends AbstractErrorResponseRender
      * Determine if the response should be rendered.
      *
      * @param ServerRequestInterface $request
+     * @param Throwable $exception
+     * @param ErrorSetting $setting
      *
      * @return bool
      */
     protected function shouldRender(
         ServerRequestInterface $request,
+        Throwable $exception,
+        ErrorSetting $setting,
     ): bool {
         return true;
     }

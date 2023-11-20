@@ -9,9 +9,14 @@ use Throwable;
 final class ErrorResponseRenders
 {
     /**
-     * @var ErrorResponseRender[]
+     * @var array<class-string<ErrorResponseRender>,ErrorResponseRender>
      */
     private array $renders;
+
+    /**
+     * @var class-string<ErrorResponseRender>[]
+     */
+    private array $order = [];
 
     /**
      * constructor
@@ -32,10 +37,16 @@ final class ErrorResponseRenders
      */
     public function addRender(ErrorResponseRender ...$renders): self
     {
-        $this->renders = [
-            ...$renders,
-            ...$this->renders,
-        ];
+        foreach ($renders as $render) {
+            $class = get_class($render);
+
+            if (isset($this->renders[$class])) {
+                continue;
+            }
+
+            $this->renders[$class] = $render;
+            $this->order[] = $class;
+        }
 
         return $this;
     }
@@ -48,14 +59,49 @@ final class ErrorResponseRenders
      */
     public function setRender(ErrorResponseRender ...$renders): static
     {
-        $this->renders = empty($renders)
+        $order = [];
+
+        $renders = empty($renders)
             ? [
                 new HtmlErrorResponseRender(),
                 new JsonErrorResponseRender(),
             ]
             : $renders;
 
+        /** @var array<class-string<ErrorResponseRender>,ErrorResponseRender> */
+        $classes = [];
+
+        foreach ($renders as $render) {
+            $class = get_class($render);
+
+            if (isset($classes[$class])) {
+                continue;
+            }
+
+            $classes[$class] = $render;
+            $order[] = $class;
+        }
+
+        $this->renders = $classes;
+        $this->order = $order;
+
         return $this;
+    }
+
+    /**
+     * Get ErrorResponseRender.
+     *
+     * @template T of ErrorResponseRender
+     *
+     * @param class-string<T> $class
+     * @return T|null
+     */
+    public function getRender(string $class): ?ErrorResponseRender
+    {
+        /** @var T|null */
+        $render = $this->renders[$class] ?? null;
+
+        return $render;
     }
 
     /**
@@ -75,8 +121,19 @@ final class ErrorResponseRenders
         Throwable $exception,
         ErrorSetting $setting,
     ): ResponseInterface {
-        foreach ($this->renders as $render) {
-            if ($output = $render->render($request, $response, $exception, $setting)) {
+        foreach ($this->order as $class) {
+
+            /** @var ErrorResponseRender */
+            $render = $this->renders[$class];
+
+            if (
+                $output = $render->render(
+                    $request,
+                    $response,
+                    $exception,
+                    $setting,
+                )
+            ) {
                 return $output;
             }
         }

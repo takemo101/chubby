@@ -27,7 +27,13 @@ abstract class AbstractErrorResponseRender implements ErrorResponseRender
         ErrorSetting $setting,
     ): ?ResponseInterface {
 
-        if (!$this->shouldRender($request)) {
+        if (
+            !$this->shouldRender(
+                $request,
+                $exception,
+                $setting,
+            )
+        ) {
             return null;
         }
 
@@ -45,11 +51,15 @@ abstract class AbstractErrorResponseRender implements ErrorResponseRender
      * Determine if the response should be rendered.
      *
      * @param ServerRequestInterface $request
+     * @param Throwable $exception
+     * @param ErrorSetting $setting
      *
      * @return bool
      */
     abstract protected function shouldRender(
         ServerRequestInterface $request,
+        Throwable $exception,
+        ErrorSetting $setting,
     ): bool;
 
     /**
