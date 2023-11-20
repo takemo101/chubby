@@ -12,9 +12,9 @@ final readonly class ErrorSetting
      * @param bool $logErrorDetails
      */
     public function __construct(
-        public bool $displayErrorDetails,
-        public bool $logErrors,
-        public bool $logErrorDetails
+        public bool $displayErrorDetails = false,
+        public bool $logErrors = true,
+        public bool $logErrorDetails = true,
     ) {
         //
     }

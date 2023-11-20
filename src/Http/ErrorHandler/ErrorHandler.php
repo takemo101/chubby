@@ -60,6 +60,22 @@ class ErrorHandler implements ErrorHandlerInterface
     }
 
     /**
+     * Get error response renderer.
+     *
+     * @template T of ErrorResponseRender
+     *
+     * @param class-string<T> $class
+     * @return T|null
+     */
+    public function getRender(string $class): ?ErrorResponseRender
+    {
+        /** @var T|null */
+        $render = $this->renders->getRender($class);
+
+        return $render;
+    }
+
+    /**
      * Invoke.
      *
      * @param ServerRequestInterface $request The request
