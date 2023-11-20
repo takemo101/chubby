@@ -25,6 +25,8 @@ class ConfigProvider implements Provider
      */
     public const ConfigPrependKey = 'config';
 
+    private ?ConfigRepository $repository = null;
+
     /**
      * Execute Bootstrap providing process.
      *
@@ -38,7 +40,7 @@ class ConfigProvider implements Provider
                 ConfigRepository::class => fn (
                     LocalFilesystem $filesystem,
                     ApplicationPath $path,
-                ) => new ConfigPhpRepository(
+                ) => $this->repository ?? new ConfigPhpRepository(
                     filesystem: $filesystem,
                     directory: $path->getConfigPath(),
                 ),
@@ -85,5 +87,16 @@ class ConfigProvider implements Provider
         $timezone = $config->get('app.timezone', 'UTC');
 
         date_default_timezone_set($timezone);
+    }
+
+    /**
+     * Set config repository.
+     *
+     * @param ConfigRepository $repository
+     * @return void
+     */
+    public function setConfigRepository(ConfigRepository $repository): void
+    {
+        $this->repository = $repository;
     }
 }
