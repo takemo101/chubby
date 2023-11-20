@@ -18,10 +18,26 @@ abstract class AbstractContext
      */
     public function withContext(ServerRequestInterface $request): ServerRequestInterface
     {
-        return $request->withAttribute(
+        $request = $request->withAttribute(
             static::ContextKey,
             $this,
         );
+
+        foreach ($this->getServerRequestAttributes() as $key => $value) {
+            $request = $request->withAttribute($key, $value);
+        }
+
+        return $request;
+    }
+
+    /**
+     * Get contextual data.
+     *
+     * @return array<string,mixed>
+     */
+    protected function getServerRequestAttributes(): array
+    {
+        return [];
     }
 
     /**
