@@ -43,7 +43,7 @@ final class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.12';
+    public const Version = '0.0.13';
 
     /**
      * @var Container|null
