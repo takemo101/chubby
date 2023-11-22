@@ -11,7 +11,7 @@ use Takemo101\Chubby\Support\AbstractRunner;
 /**
  * Execute Console processing by Symfony application.
  */
-final readonly class Console extends AbstractRunner
+class Console extends AbstractRunner
 {
     /**
      * Create an console instance.

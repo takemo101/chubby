@@ -2,7 +2,7 @@
 
 namespace Takemo101\Chubby\Http\ErrorHandler;
 
-final readonly class ErrorSetting
+readonly class ErrorSetting
 {
     /**
      * constructor

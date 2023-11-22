@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Contract\Renderable;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 
-final class RenderableTransformer implements ResponseTransformer
+class RenderableTransformer implements ResponseTransformer
 {
     /**
      * Change the data type and convert it into a response object.

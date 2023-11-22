@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
 
-final class AttatchmentRenderer extends AbstractStreamRenderer
+class AttatchmentRenderer extends AbstractStreamRenderer
 {
     /** @var string */
     public const DefaultName = 'file';

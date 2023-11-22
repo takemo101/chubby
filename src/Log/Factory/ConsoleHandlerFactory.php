@@ -11,7 +11,7 @@ use Monolog\Level;
  * Create a handler to output logs in the stream.
  * Create a StreamHandler.
  */
-final readonly class ConsoleHandlerFactory implements LoggerHandlerFactory
+class ConsoleHandlerFactory implements LoggerHandlerFactory
 {
     public const DefaultStream = 'php://stdout';
 

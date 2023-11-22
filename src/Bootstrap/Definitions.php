@@ -9,7 +9,7 @@ use DI\Definition\Source\DefinitionSource;
 /**
  * PHP-DI definitions.
  */
-final class Definitions
+class Definitions
 {
     /**
      * constructor

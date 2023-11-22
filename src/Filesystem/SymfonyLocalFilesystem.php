@@ -14,7 +14,7 @@ use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
  *
  * reference: https://github.com/illuminate/filesystem
  */
-final readonly class SymfonyLocalFilesystem implements LocalFilesystem
+class SymfonyLocalFilesystem implements LocalFilesystem
 {
     /**
      * @var SymfonyFilesystem

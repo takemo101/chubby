@@ -8,7 +8,7 @@ use Takemo101\Chubby\Support\ClassCollection;
 /**
  * @extends ClassCollection<Command>
  */
-final class CommandCollection extends ClassCollection
+class CommandCollection extends ClassCollection
 {
     //
 }

@@ -15,7 +15,7 @@ use Takemo101\Chubby\Support\ApplicationPath;
 /**
  * Use PHP's built-in web server.
  */
-final class ServeCommand extends Command
+class ServeCommand extends Command
 {
     /**
      * @var LocalFilesystem

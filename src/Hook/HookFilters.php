@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Hook;
 /**
  * collection of filters
  */
-final class HookFilters
+class HookFilters
 {
     /**
      * @var array<integer,HookFilter>

@@ -10,7 +10,7 @@ use Takemo101\Chubby\Support\ApplicationPath;
 /**
  * Function related.
  */
-final class FunctionProvider implements Provider
+class FunctionProvider implements Provider
 {
     /**
      * @var string Provider name.

@@ -6,7 +6,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use SplFileInfo;
 use Takemo101\Chubby\Filesystem\Mime\FinfoMimeTypeGuesser;
 
-final class StaticRenderer extends AbstractStreamRenderer
+class StaticRenderer extends AbstractStreamRenderer
 {
     /**
      * Get content type to be rendered.

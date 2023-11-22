@@ -6,7 +6,7 @@ use DI\Attribute\Inject;
 use Slim\App as Slim;
 use Slim\Middleware\ErrorMiddleware;
 
-final readonly class DefaultSlimConfigurer implements SlimConfigurer
+class DefaultSlimConfigurer implements SlimConfigurer
 {
     /**
      * @var string|null

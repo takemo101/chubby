@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Http\Support;
 
 use Exception;
 
-final class ContextException extends Exception
+class ContextException extends Exception
 {
     /**
      * Creates a new instance of ContextException with a message indicating that the context is not found in the request.

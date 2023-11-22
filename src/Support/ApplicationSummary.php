@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Support;
 /**
  * Application summary data
  */
-final readonly class ApplicationSummary
+readonly class ApplicationSummary
 {
     /**
      * @var string

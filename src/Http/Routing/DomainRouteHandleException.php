@@ -6,7 +6,7 @@ use RuntimeException;
 use Throwable;
 use Closure;
 
-final class DomainRouteHandleException extends RuntimeException
+class DomainRouteHandleException extends RuntimeException
 {
     /**
      * constructor

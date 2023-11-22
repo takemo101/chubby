@@ -33,7 +33,7 @@ use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 use function DI\get;
 
-final class Application implements ApplicationContainer
+class Application implements ApplicationContainer
 {
     /**
      * @var string

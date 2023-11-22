@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Http\Routing;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class DomainRouteCollector
+class DomainRouteCollector
 {
     /**
      * @var array<string,DomainRoute>

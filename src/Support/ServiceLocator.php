@@ -14,7 +14,7 @@ use Takemo101\Chubby\Http\SlimHttpAdapter;
 /**
  * Have global access to your application's services
  */
-final class ServiceLocator
+class ServiceLocator
 {
     /**
      * @var self|null

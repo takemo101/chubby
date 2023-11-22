@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Http\ResponseTransformer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class ResponseTransformers
+class ResponseTransformers
 {
     /**
      * @var ResponseTransformer[]

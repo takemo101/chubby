@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Http\Routing;
 
 use Takemo101\Chubby\Http\Support\AbstractContext;
 
-final class DomainRouteContext extends AbstractContext
+class DomainRouteContext extends AbstractContext
 {
     /** @var string */
     public const ContextKey = '__domain__';

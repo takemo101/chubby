@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-final class ErrorResponseRenders
+class ErrorResponseRenders
 {
     /**
      * @var array<class-string<ErrorResponseRender>,ErrorResponseRender>

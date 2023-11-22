@@ -10,7 +10,7 @@ use DI\Container;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
-final class Hook
+class Hook
 {
     private ContainerInterface $container;
 

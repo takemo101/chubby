@@ -8,7 +8,7 @@ use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 /**
  * LoggerHandlerFactory resolution
  */
-final class LoggerHandlerFactoryResolver
+class LoggerHandlerFactoryResolver
 {
     /**
      * constructor

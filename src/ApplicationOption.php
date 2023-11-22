@@ -8,7 +8,7 @@ use Takemo101\Chubby\Bootstrap\Bootstrap;
 use Takemo101\Chubby\Support\ApplicationPath;
 use InvalidArgumentException;
 
-final readonly class ApplicationOption
+readonly class ApplicationOption
 {
     /** @var string */
     public const DefaultBasePath = '/';

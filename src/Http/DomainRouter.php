@@ -11,7 +11,7 @@ use Slim\ResponseEmitter;
 use Takemo101\Chubby\Http\Routing\DomainRoute;
 use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
 
-final readonly class DomainRouter
+class DomainRouter
 {
     /**
      * constructor

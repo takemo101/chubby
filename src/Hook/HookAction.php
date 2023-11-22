@@ -8,7 +8,7 @@ use InvalidArgumentException;
 /**
  * Action data executed by hook
  */
-final class HookAction
+class HookAction
 {
     /** @var string */
     public const ClassSeparator = '@';

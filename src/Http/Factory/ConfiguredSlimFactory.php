@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Http\Factory;
 use Slim\App as Slim;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 
-final readonly class ConfiguredSlimFactory implements SlimFactory
+class ConfiguredSlimFactory implements SlimFactory
 {
     /**
      * constructor

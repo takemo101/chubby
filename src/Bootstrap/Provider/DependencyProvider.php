@@ -11,7 +11,7 @@ use Takemo101\Chubby\Filesystem\LocalFilesystem;
 /**
  * Dependency injection related.
  */
-final class DependencyProvider implements Provider
+class DependencyProvider implements Provider
 {
     /**
      * @var string Provider name.

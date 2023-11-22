@@ -7,7 +7,7 @@ use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
 
-final readonly class DomainRouteDispatcher
+class DomainRouteDispatcher
 {
     /** @var string */
     public const CommonRequestMethod = 'GET';

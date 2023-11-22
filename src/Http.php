@@ -31,7 +31,7 @@ use Takemo101\Chubby\Support\AbstractRunner;
  * @method RouteGroupInterface group(string $pattern, callable|string $callable)
  * @method RouteInterface redirect(string $from, string|UriInterface $to, int $status = 302)
  */
-final readonly class Http extends AbstractRunner
+class Http extends AbstractRunner
 {
     /**
      * Create an slim instance.

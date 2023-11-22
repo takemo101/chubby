@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Contract\Arrayable;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 
-final class ArrayableTransformer implements ResponseTransformer
+class ArrayableTransformer implements ResponseTransformer
 {
     /**
      * Change the data type and convert it into a response object.

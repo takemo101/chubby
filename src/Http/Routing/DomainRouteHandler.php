@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
 
-final readonly class DomainRouteHandler implements RequestHandlerInterface
+class DomainRouteHandler implements RequestHandlerInterface
 {
     /**
      * constructor

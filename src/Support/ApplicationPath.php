@@ -7,7 +7,7 @@ use Takemo101\Chubby\Filesystem\PathHelper;
 /**
  * Application path setting
  */
-final readonly class ApplicationPath
+readonly class ApplicationPath
 {
     private PathHelper $helper;
 

@@ -14,7 +14,7 @@ use Takemo101\Chubby\Http\Routing\DomainRouteResult;
 /**
  * Handles the next middleware when a domain route is found for the request.
  */
-final class DomainRouting implements MiddlewareInterface
+class DomainRouting implements MiddlewareInterface
 {
     /** @var string */
     public const CommonRequestMethod = '*';

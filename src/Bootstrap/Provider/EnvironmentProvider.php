@@ -17,7 +17,7 @@ use Takemo101\Chubby\Support\Environment;
 /**
  * Environment variable related.
  */
-final class EnvironmentProvider implements Provider
+class EnvironmentProvider implements Provider
 {
     /**
      * @var string Provider name.

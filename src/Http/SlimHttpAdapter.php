@@ -8,7 +8,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App as Slim;
 use Takemo101\Chubby\Http\Concern\HasRouteCollectorProxy;
 
-final class SlimHttpAdapter implements RequestHandlerInterface
+class SlimHttpAdapter implements RequestHandlerInterface
 {
     use HasRouteCollectorProxy;
 
