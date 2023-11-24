@@ -39,17 +39,17 @@ class StaticRenderer extends AbstractStreamRenderer
      * @param string $mime
      * @param int $status
      * @param array<string,string> $headers
-     * @return static
+     * @return self
      */
     public static function fromPath(
         string $path,
         string $mime = '',
         int $status = StatusCodeInterface::STATUS_OK,
         array $headers = []
-    ): static {
+    ): self {
         $finfo = new SplFileInfo($path);
 
-        return new static(
+        return new self(
             $finfo,
             $mime,
             $status,

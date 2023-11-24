@@ -98,7 +98,7 @@ class AttatchmentRenderer extends AbstractStreamRenderer
      * @param string $mime
      * @param int $status
      * @param array<string,string> $headers
-     * @return static
+     * @return self
      */
     public static function fromPath(
         string|SplFileInfo $path,
@@ -106,10 +106,10 @@ class AttatchmentRenderer extends AbstractStreamRenderer
         string $mime = '',
         int $status = StatusCodeInterface::STATUS_OK,
         array $headers = []
-    ): static {
+    ): self {
         $file = new SplFileInfo($path);
 
-        return new static(
+        return new self(
             $file,
             $name,
             $mime,

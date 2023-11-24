@@ -68,7 +68,7 @@ class ClosureCommand extends AbstractCommand implements ContainerInjectable
      * Create a new command from a Closure.
      *
      * @param Closure $closure
-     * @return static
+     * @return self
      */
     public static function from(
         Closure $closure,
