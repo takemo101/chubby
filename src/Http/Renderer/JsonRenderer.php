@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Http\Renderer;
 
 use Takemo101\Chubby\Contract\Arrayable;
 
-final class JsonRenderer extends AbstractRenderer
+class JsonRenderer extends AbstractRenderer
 {
     /** @var string */
     public const ContentType = 'application/json';

@@ -7,7 +7,7 @@ use Dotenv\Repository\RepositoryInterface;
 /**
  * Get environment.
  */
-final readonly class Environment
+class Environment
 {
     /**
      * constructor

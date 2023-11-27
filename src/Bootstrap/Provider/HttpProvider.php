@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -123,7 +124,18 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => get(ErrorHandler::class),
+                ErrorHandlerInterface::class => function (
+                    ContainerInterface $container,
+                    ConfigRepository $config,
+                ) {
+                    /** @var class-string<ErrorHandlerInterface> */
+                    $class = $config->get('slim.error.handler', ErrorHandler::class);
+
+                    /** @var ErrorHandlerInterface */
+                    $handler = $container->get($class);
+
+                    return $handler;
+                },
                 ErrorHandler::class => function (
                     Slim $slim,
                     LoggerInterface $logger,
@@ -148,11 +160,11 @@ class HttpProvider implements Provider
                     Hook $hook,
                 ) {
                     /** @var boolean */
-                    $displayErrorDetails = $config->get('display_error_details', true);
+                    $displayErrorDetails = $config->get('slim.error.setting.display_error_details', true);
                     /** @var boolean */
-                    $logErrors = $config->get('log_errors', true);
+                    $logErrors = $config->get('slim.error.setting.log_errors', true);
                     /** @var boolean */
-                    $logErrorDetails = $config->get('log_error_details', true);
+                    $logErrorDetails = $config->get('slim.error.setting.log_error_details', true);
 
                     $errorMiddleware = new ErrorMiddleware(
                         $slim->getCallableResolver(),

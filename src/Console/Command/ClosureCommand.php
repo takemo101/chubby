@@ -10,7 +10,7 @@ use LogicException;
 /**
  * Command that can be executed by a closure.
  */
-final class ClosureCommand extends AbstractCommand implements ContainerInjectable
+class ClosureCommand extends AbstractCommand implements ContainerInjectable
 {
     /**
      * @var ApplicationContainer|null
@@ -68,7 +68,7 @@ final class ClosureCommand extends AbstractCommand implements ContainerInjectabl
      * Create a new command from a Closure.
      *
      * @param Closure $closure
-     * @return static
+     * @return self
      */
     public static function from(
         Closure $closure,

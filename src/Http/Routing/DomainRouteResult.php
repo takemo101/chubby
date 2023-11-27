@@ -7,7 +7,7 @@ use Closure;
 /**
  * Result of dispatch by DomainRouteDispatcher
  */
-final readonly class DomainRouteResult
+class DomainRouteResult
 {
     /**
      * @var Closure

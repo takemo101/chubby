@@ -11,7 +11,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * Logger factory that outputs to a file/stream.
  */
-final readonly class DefaultLoggerFactory implements LoggerFactory
+class DefaultLoggerFactory implements LoggerFactory
 {
     /**
      * constructor

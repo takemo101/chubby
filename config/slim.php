@@ -2,6 +2,8 @@
 
 // Slim framework related settings
 
+use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
+
 return [
 
     // Base path
@@ -10,10 +12,17 @@ return [
     // Error output settings
     'error' => [
 
-        'display_error_details' => true,
+        // ErrorHandler class
+        'handler' => ErrorHandler::class,
 
-        'log_errors' => true,
+        // Settings for ErrorMiddleware
+        'setting' => [
 
-        'log_error_details' => true,
+            'display_error_details' => true,
+
+            'log_errors' => true,
+
+            'log_error_details' => true,
+        ],
     ],
 ];

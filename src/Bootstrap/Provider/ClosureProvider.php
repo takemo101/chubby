@@ -13,7 +13,7 @@ use Takemo101\Chubby\ApplicationContainer;
 /**
  * Provide processing using Closure can be set.
  */
-final readonly class ClosureProvider implements Provider, ProviderNameable
+class ClosureProvider implements Provider, ProviderNameable
 {
     /** @var string */
     private string $name;

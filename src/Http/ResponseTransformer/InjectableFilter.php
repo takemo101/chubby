@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Takemo101\Chubby\Contract\StreamFactoryInjectable;
 
-final class InjectableFilter implements ResponseTransformer
+class InjectableFilter implements ResponseTransformer
 {
     /**
      * constructor

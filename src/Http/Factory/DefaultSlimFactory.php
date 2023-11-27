@@ -7,7 +7,7 @@ use Slim\App as Slim;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\InvocationStrategyInterface;
 
-final readonly class DefaultSlimFactory implements SlimFactory
+class DefaultSlimFactory implements SlimFactory
 {
     /**
      * constructor

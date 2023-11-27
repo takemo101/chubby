@@ -11,7 +11,7 @@ use Monolog\Level;
  * Create a handler that outputs logs in file format.
  * Create a RotatingFileHandler.
  */
-final readonly class FileHandlerFactory implements LoggerHandlerFactory
+class FileHandlerFactory implements LoggerHandlerFactory
 {
     /**
      * constructor

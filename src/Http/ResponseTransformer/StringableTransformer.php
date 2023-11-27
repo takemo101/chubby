@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Stringable;
 use Takemo101\Chubby\Http\Renderer\StringRenderer;
 
-final class StringableTransformer implements ResponseTransformer
+class StringableTransformer implements ResponseTransformer
 {
     /**
      * Change the data type and convert it into a response object.

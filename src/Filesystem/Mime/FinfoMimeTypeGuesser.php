@@ -12,7 +12,7 @@ use RuntimeException;
  *
  * reference: https://github.com/symfony/http-foundation
  */
-final class FinfoMimeTypeGuesser implements MimeTypeGuesser
+class FinfoMimeTypeGuesser implements MimeTypeGuesser
 {
     /**
      * Guess MimeType.

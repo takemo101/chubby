@@ -8,7 +8,7 @@ namespace Takemo101\Chubby\Hook;
  * hook filter
  * A collection of actions.
  */
-final class HookFilter
+class HookFilter
 {
     /**
      * @var integer

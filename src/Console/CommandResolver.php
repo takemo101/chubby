@@ -9,7 +9,7 @@ use Takemo101\Chubby\Contract\ContainerInjectable;
 /**
  * Command resolution
  */
-final class CommandResolver
+class CommandResolver
 {
     /**
      * constructor

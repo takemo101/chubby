@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Filesystem;
 /**
  * Path processing support class.
  */
-final readonly class PathHelper
+readonly class PathHelper
 {
     /**
      * constructor

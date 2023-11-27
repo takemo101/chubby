@@ -10,7 +10,7 @@ use RuntimeException;
 /**
  * Application bootstrap
  */
-final class Bootstrap implements Provider
+class Bootstrap implements Provider
 {
     /**
      * @var array<string,Provider>

@@ -7,7 +7,7 @@ use Closure;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class DomainRoute
+class DomainRoute
 {
     /**
      * @var Closure

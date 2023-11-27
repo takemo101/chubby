@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpException;
 use Slim\Interfaces\ErrorHandlerInterface;
+use Takemo101\Chubby\Http\Renderer\ResponseRenderer;
 use Throwable;
 
 /**
@@ -18,6 +19,10 @@ use Throwable;
  */
 class ErrorHandler implements ErrorHandlerInterface
 {
+    public const IgnornReportExceptions = [
+        ResponseRenderer::class,
+    ];
+
     /**
      * constructor
      *
@@ -108,7 +113,7 @@ class ErrorHandler implements ErrorHandlerInterface
             );
         }
 
-        $response = $this->responseFactory->createResponse();
+        $response = $this->createResponse();
 
         // Render error
         return $this->render(
@@ -144,6 +149,16 @@ class ErrorHandler implements ErrorHandlerInterface
     }
 
     /**
+     * Create new response.
+     *
+     * @return ResponseInterface The response
+     */
+    protected function createResponse(): ResponseInterface
+    {
+        return $this->responseFactory->createResponse();
+    }
+
+    /**
      * Output log.
      *
      * @param ServerRequestInterface $request
@@ -154,6 +169,12 @@ class ErrorHandler implements ErrorHandlerInterface
         ServerRequestInterface $request,
         Throwable $exception,
     ): void {
+        foreach (self::IgnornReportExceptions as $ignornReportException) {
+            if ($exception instanceof $ignornReportException) {
+                return;
+            }
+        }
+
         $this->logger->error(
             $exception->getMessage(),
             [
@@ -179,6 +200,11 @@ class ErrorHandler implements ErrorHandlerInterface
         Throwable $exception,
         ErrorSetting $setting,
     ): ResponseInterface {
+
+        if ($exception instanceof ResponseRenderer) {
+            return $exception->render($request, $response);
+        }
+
         $response = $this->renders->render(
             request: $request,
             response: $response,

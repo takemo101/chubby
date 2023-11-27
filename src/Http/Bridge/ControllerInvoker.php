@@ -12,7 +12,7 @@ use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Support\ParameterKeyTypeHintResolver;
 
-final readonly class ControllerInvoker implements InvocationStrategyInterface
+class ControllerInvoker implements InvocationStrategyInterface
 {
     /**
      * constructor

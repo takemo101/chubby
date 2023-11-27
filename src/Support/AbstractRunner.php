@@ -8,7 +8,7 @@ use Takemo101\Chubby\Bootstrap\Provider\Provider;
 /**
  * Abstract class for running applications.
  */
-abstract readonly class AbstractRunner
+abstract class AbstractRunner
 {
     /**
      * constructor

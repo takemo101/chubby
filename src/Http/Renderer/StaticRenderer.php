@@ -6,7 +6,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use SplFileInfo;
 use Takemo101\Chubby\Filesystem\Mime\FinfoMimeTypeGuesser;
 
-final class StaticRenderer extends AbstractStreamRenderer
+class StaticRenderer extends AbstractStreamRenderer
 {
     /**
      * Get content type to be rendered.
@@ -39,17 +39,17 @@ final class StaticRenderer extends AbstractStreamRenderer
      * @param string $mime
      * @param int $status
      * @param array<string,string> $headers
-     * @return static
+     * @return self
      */
     public static function fromPath(
         string $path,
         string $mime = '',
         int $status = StatusCodeInterface::STATUS_OK,
         array $headers = []
-    ): static {
+    ): self {
         $finfo = new SplFileInfo($path);
 
-        return new static(
+        return new self(
             $finfo,
             $mime,
             $status,

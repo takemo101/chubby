@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Request and response context.
  */
-final readonly class Context
+class Context
 {
     /**
      * @var array<string,string>

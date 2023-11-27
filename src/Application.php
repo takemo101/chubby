@@ -33,7 +33,7 @@ use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 use function DI\get;
 
-final class Application implements ApplicationContainer
+class Application implements ApplicationContainer
 {
     /**
      * @var string
@@ -43,7 +43,7 @@ final class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.13';
+    public const Version = '0.0.14';
 
     /**
      * @var Container|null

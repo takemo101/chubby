@@ -8,7 +8,7 @@ use Takemo101\Chubby\Application;
 /**
  * Display version.
  */
-final class VersionCommand extends Command
+class VersionCommand extends Command
 {
     /**
      * Configures the current command.
