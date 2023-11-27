@@ -44,8 +44,7 @@ class InterruptRender extends Exception implements ResponseRenderer
     ): self {
         return new self(
             // Create a renderer that returns the response using an unknown class
-            new class($response) implements ResponseRenderer
-            {
+            new class ($response) implements ResponseRenderer {
                 /**
                  * constructor
                  *
