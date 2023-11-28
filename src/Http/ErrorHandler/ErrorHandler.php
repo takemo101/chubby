@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpException;
 use Slim\Interfaces\ErrorHandlerInterface;
 use Takemo101\Chubby\Http\Renderer\ResponseRenderer;
+use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Throwable;
 
 /**
@@ -20,6 +21,7 @@ use Throwable;
 class ErrorHandler implements ErrorHandlerInterface
 {
     public const IgnornReportExceptions = [
+        InterruptRender::class,
         ResponseRenderer::class,
     ];
 
@@ -29,11 +31,13 @@ class ErrorHandler implements ErrorHandlerInterface
      * @param ResponseFactoryInterface $responseFactory
      * @param LoggerInterface $logger
      * @param ErrorResponseRenders $renders
+     * @param ResponseTransformers $transformers
      */
     public function __construct(
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
-        private ErrorResponseRenders $renders
+        private ErrorResponseRenders $renders,
+        private ResponseTransformers $transformers,
     ) {
         //
     }
@@ -201,8 +205,19 @@ class ErrorHandler implements ErrorHandlerInterface
         ErrorSetting $setting,
     ): ResponseInterface {
 
+        if ($exception instanceof InterruptRender) {
+            return $this->transformers->transform(
+                data: $exception->getRenderer(),
+                request: $request,
+                response: $response,
+            );
+        }
+
         if ($exception instanceof ResponseRenderer) {
-            return $exception->render($request, $response);
+            return $exception->render(
+                request: $request,
+                response: $response,
+            );
         }
 
         $response = $this->renders->render(

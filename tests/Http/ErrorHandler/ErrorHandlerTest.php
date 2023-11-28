@@ -8,8 +8,8 @@ use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRender;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
-use Takemo101\Chubby\Http\ErrorHandler\ErrorSetting;
 use Mockery as m;
+use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 
 beforeEach(function () {
     $this->responseFactory = m::mock(ResponseFactoryInterface::class);
@@ -29,6 +29,7 @@ describe(
                     $this->responseFactory,
                     $this->logger,
                     new ErrorResponseRenders(),
+                    new ResponseTransformers(),
                 );
 
                 $errorHandler->addRender($render);
@@ -48,6 +49,7 @@ describe(
                     $this->responseFactory,
                     $this->logger,
                     new ErrorResponseRenders(),
+                    new ResponseTransformers(),
                 );
 
                 $errorHandler->setRender($render);
@@ -67,6 +69,7 @@ describe(
                     $this->responseFactory,
                     $this->logger,
                     new ErrorResponseRenders($render),
+                    new ResponseTransformers(),
                 );
 
                 $actual = $errorHandler->getRender(get_class($render));
