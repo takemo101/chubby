@@ -8,9 +8,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Routing\RouteCollectorProxy;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
+use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\DomainRouter;
-use Takemo101\Chubby\Http\Factory\ConfiguredSlimFactory;
+use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
@@ -129,7 +130,8 @@ hook()
             $router->route(
                 '{domain}.localhost',
                 function (
-                    ConfiguredSlimFactory $factory,
+                    SlimFactory $factory,
+                    SlimConfigurer $configurer,
                 ) {
                     $slim = $factory->create();
 
@@ -147,7 +149,7 @@ hook()
                         },
                     );
 
-                    return $slim;
+                    return $configurer->configure($slim);
                 }
             )->setName('domain');
         },
