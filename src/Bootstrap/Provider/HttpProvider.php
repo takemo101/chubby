@@ -30,7 +30,6 @@ use Takemo101\Chubby\Http\Factory\DefaultSlimFactory;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
-use Takemo101\Chubby\Http\Factory\ConfiguredSlimFactory;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
@@ -65,10 +64,32 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => get(DefaultSlimFactory::class),
-                SlimConfigurer::class => get(DefaultSlimConfigurer::class),
+                SlimFactory::class => function (
+                    ContainerInterface $container,
+                    ConfigRepository $config,
+                ) {
+                    /** @var class-string<SlimFactory> */
+                    $class = $config->get('slim.factory', DefaultSlimFactory::class);
+
+                    /** @var SlimFactory */
+                    $factory = $container->get($class);
+
+                    return $factory;
+                },
+                SlimConfigurer::class => function (
+                    ContainerInterface $container,
+                    ConfigRepository $config,
+                ) {
+                    /** @var class-string<SlimConfigurer> */
+                    $class = $config->get('slim.configurer', DefaultSlimConfigurer::class);
+
+                    /** @var SlimConfigurer */
+                    $configurer = $container->get($class);
+
+                    return $configurer;
+                },
                 Slim::class => function (
-                    ConfiguredSlimFactory $factory,
+                    SlimFactory $factory,
                     Hook $hook,
                 ): Slim {
                     $slim = $factory->create();
@@ -79,20 +100,24 @@ class HttpProvider implements Provider
                 },
                 SlimHttpAdapter::class => function (
                     Slim $slim,
+                    SlimConfigurer $configurer,
                     Hook $hook,
                 ): SlimHttpAdapter {
-                    $adapter = new SlimHttpAdapter($slim);
+                    $adapter = new SlimHttpAdapter(
+                        application: $slim,
+                        configurer: $configurer,
+                    );
 
                     $hook->doByObject($adapter);
 
                     return $adapter;
                 },
                 ResponseTransformers::class => function (
-                    InjectableFilter $injectableFilter,
+                    InjectableFilter $filter,
                     Hook $hook,
                 ) {
                     $transformers = new ResponseTransformers(
-                        $injectableFilter,
+                        $filter,
                         new RendererTransformer(),
                         new ArrayableTransformer(),
                         new RenderableTransformer(),
@@ -140,12 +165,14 @@ class HttpProvider implements Provider
                     Slim $slim,
                     LoggerInterface $logger,
                     ErrorResponseRenders $renders,
+                    ResponseTransformers $transformers,
                     Hook $hook,
                 ) {
                     $errorHandler = new ErrorHandler(
                         $slim->getResponseFactory(),
                         $logger,
                         $renders,
+                        $transformers,
                     );
 
                     $hook->doByObject($errorHandler);

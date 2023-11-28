@@ -7,20 +7,52 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App as Slim;
 use Takemo101\Chubby\Http\Concern\HasRouteCollectorProxy;
+use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 
 class SlimHttpAdapter implements RequestHandlerInterface
 {
     use HasRouteCollectorProxy;
 
     /**
+     * @var boolean
+     */
+    private bool $isConfigured = false;
+
+    /**
      * constructor
      *
      * @param Slim $application
+     * @param SlimConfigurer $configurer
      */
     public function __construct(
         private readonly Slim $application,
+        private readonly SlimConfigurer $configurer,
     ) {
         //
+    }
+
+    /**
+     * Configure slim application.
+     *
+     * @return void
+     */
+    private function configure(): void
+    {
+        if ($this->isConfigured) {
+            return;
+        }
+
+        $this->configurer->configure($this->application);
+
+        $this->isConfigured = true;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isConfigured(): bool
+    {
+        return $this->isConfigured;
     }
 
     /**
@@ -31,6 +63,8 @@ class SlimHttpAdapter implements RequestHandlerInterface
      */
     public function run(?ServerRequestInterface $request = null): void
     {
+        $this->configure();
+
         $this->application->run($request);
     }
 
@@ -44,6 +78,8 @@ class SlimHttpAdapter implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $this->configure();
+
         return $this->application->handle($request);
     }
 }
