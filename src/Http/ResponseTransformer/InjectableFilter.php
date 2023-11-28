@@ -5,6 +5,8 @@ namespace Takemo101\Chubby\Http\ResponseTransformer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Contract\ContainerInjectable;
 use Takemo101\Chubby\Contract\StreamFactoryInjectable;
 
 class InjectableFilter implements ResponseTransformer
@@ -12,9 +14,11 @@ class InjectableFilter implements ResponseTransformer
     /**
      * constructor
      *
+     * @param ApplicationContainer $container
      * @param StreamFactoryInterface $streamFactory
      */
     public function __construct(
+        private ApplicationContainer $container,
         private StreamFactoryInterface $streamFactory,
     ) {
         //
@@ -37,6 +41,10 @@ class InjectableFilter implements ResponseTransformer
 
         if ($data instanceof StreamFactoryInjectable) {
             $data->setStreamFactory($this->streamFactory);
+        }
+
+        if ($data instanceof ContainerInjectable) {
+            $data->setContainer($this->container);
         }
 
         return null;

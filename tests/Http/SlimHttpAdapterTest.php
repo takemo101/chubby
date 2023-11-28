@@ -4,6 +4,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\SlimHttpAdapter;
 use Tests\AppTestCase;
@@ -18,8 +19,9 @@ describe(
 
                 /** @var App */
                 $app = $this->getContainer()->get(App::class);
+                $configurer = $this->getContainer()->get(SlimConfigurer::class);
 
-                $http = new SlimHttpAdapter($app);
+                $http = new SlimHttpAdapter($app, $configurer);
 
                 $request = $this->createRequest('GET', '/');
 
