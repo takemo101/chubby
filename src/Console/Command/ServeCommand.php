@@ -103,12 +103,10 @@ class ServeCommand extends Command
 
         $process->start(
             /**
-             * @param integer|string $type
+             * @param string $type
              * @param string $buffer
              */
-            function ($type, $buffer) use ($output) {
-                $output->write($buffer);
-            }
+            fn ($type, $buffer) => $output->write($buffer),
         );
 
         while ($process->isRunning()) {
