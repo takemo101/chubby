@@ -16,6 +16,7 @@ use Slim\Interfaces\ErrorHandlerInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Middleware\ErrorMiddleware;
 use Slim\MiddlewareDispatcher;
 use Takemo101\Chubby\ApplicationContainer;
@@ -95,9 +96,11 @@ class HttpProvider implements Provider
                     $slim = $factory->create();
 
                     $hook->doByObject($slim);
+                    $hook->do(RouteCollectorProxyInterface::class, $slim);
 
                     return $slim;
                 },
+                RouteCollectorProxyInterface::class => get(Slim::class),
                 SlimHttpAdapter::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
