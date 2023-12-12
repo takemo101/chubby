@@ -6,7 +6,7 @@
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpNotFoundException;
-use Slim\Routing\RouteCollectorProxy;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 use Takemo101\Chubby\Http\Context;
@@ -104,8 +104,8 @@ hook()
 
             $http->group(
                 '/group',
-                function (RouteCollectorProxy $group) {
-                    $group->get('/a', function (
+                function (RouteCollectorProxyInterface $proxy) {
+                    $proxy->get('/a', function (
                         ResponseInterface $response,
                     ) {
                         $response
