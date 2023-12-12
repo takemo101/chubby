@@ -2,10 +2,14 @@
 
 namespace Takemo101\Chubby\Http\Concern;
 
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\App as Slim;
+use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Interfaces\RouteGroupInterface;
 
@@ -16,6 +20,38 @@ use Slim\Interfaces\RouteGroupInterface;
  */
 trait HasRouteCollectorProxy
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getResponseFactory(): ResponseFactoryInterface
+    {
+        return $this->application->getResponseFactory();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCallableResolver(): CallableResolverInterface
+    {
+        return $this->application->getCallableResolver();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->application->getContainer();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRouteCollector(): RouteCollectorInterface
+    {
+        return $this->application->getRouteCollector();
+    }
+
     /**
      * Add the Slim built-in routing middleware to the app middleware stack
      *
