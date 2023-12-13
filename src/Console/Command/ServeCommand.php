@@ -14,6 +14,7 @@ use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
  * Use PHP's built-in web server.
+ * reference: https://github.com/guiwoda/laravel-framework/blob/master/src/Illuminate/Foundation/Console/ServeCommand.php
  */
 class ServeCommand extends Command
 {
