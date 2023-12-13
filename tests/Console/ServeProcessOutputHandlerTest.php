@@ -33,7 +33,7 @@ describe(
 
             $output->shouldReceive('write')->with('127.0.0.1:1234');
             $output->shouldReceive('write')->with(" <fg=green>GET /</>");
-            $output->shouldReceive('writeln')->with(" <fg=gray>{$datetime->format('Y-m-d H:i:s')} ~ 1s</>");
+            $output->shouldReceive('writeln')->with(" {$datetime->format('Y-m-d H:i:s')} ~ <fg=gray>1s</>");
 
             $closedAt = $datetime->modify('+1 second');
 
