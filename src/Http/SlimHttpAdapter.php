@@ -6,12 +6,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App as Slim;
-use Takemo101\Chubby\Http\Concern\HasRouteCollectorProxy;
+use Takemo101\Chubby\Http\Concern\HasRouting;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 
 class SlimHttpAdapter implements RequestHandlerInterface
 {
-    use HasRouteCollectorProxy;
+    use HasRouting;
 
     /**
      * @var boolean

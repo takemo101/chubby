@@ -14,6 +14,7 @@ use Takemo101\Chubby\Support\ApplicationPath;
 
 /**
  * Use PHP's built-in web server.
+ * reference: https://github.com/guiwoda/laravel-framework/blob/master/src/Illuminate/Foundation/Console/ServeCommand.php
  */
 class ServeCommand extends Command
 {
@@ -101,15 +102,13 @@ class ServeCommand extends Command
             $environments,
         );
 
-        $process->start(
-            /**
-             * @param integer|string $type
-             * @param string $buffer
-             */
-            function ($type, $buffer) use ($output) {
-                $output->write($buffer);
-            }
-        );
+        /** @var integer */
+        $workers = env('PHP_CLI_SERVER_WORKERS', 1);
+
+        $process->start(new ServeProcessOutputHandler(
+            $output,
+            $workers > 1,
+        ));
 
         while ($process->isRunning()) {
             usleep(500 * 1000);

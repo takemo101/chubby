@@ -14,7 +14,7 @@ use Slim\Interfaces\RouteGroupInterface;
  *
  * @mixin \Takemo101\Chubby\Http\HttpAdapter
  */
-trait HasRouteCollectorProxy
+trait HasRouting
 {
     /**
      * Add the Slim built-in routing middleware to the app middleware stack
