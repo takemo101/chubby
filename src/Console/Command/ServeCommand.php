@@ -101,13 +101,13 @@ class ServeCommand extends Command
             $environments,
         );
 
-        $process->start(
-            /**
-             * @param string $type
-             * @param string $buffer
-             */
-            fn ($type, $buffer) => $output->write($buffer),
-        );
+        /** @var integer */
+        $workers = env('PHP_CLI_SERVER_WORKERS', 1);
+
+        $process->start(new ServeProcessOutputHandler(
+            $output,
+            $workers > 1,
+        ));
 
         while ($process->isRunning()) {
             usleep(500 * 1000);
