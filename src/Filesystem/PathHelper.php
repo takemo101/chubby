@@ -2,6 +2,8 @@
 
 namespace Takemo101\Chubby\Filesystem;
 
+use InvalidArgumentException;
+
 /**
  * Path processing support class.
  */
@@ -98,7 +100,7 @@ readonly class PathHelper
      * Get the directory name.
      *
      * @param string $path
-     * @param int $levels
+     * @param int<1,max> $levels
      * @return string
      */
     public function dirname(string $path, int $levels = 1): string
