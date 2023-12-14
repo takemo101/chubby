@@ -7,7 +7,7 @@ use InvalidArgumentException;
 /**
  * Path processing support class.
  */
-readonly class PathHelper
+class PathHelper
 {
     /**
      * constructor
@@ -15,7 +15,7 @@ readonly class PathHelper
      * @param string $separator
      */
     public function __construct(
-        public string $separator = DIRECTORY_SEPARATOR,
+        public readonly string $separator = DIRECTORY_SEPARATOR,
     ) {
         //
     }
