@@ -2,8 +2,6 @@
 
 namespace Takemo101\Chubby\Filesystem;
 
-use InvalidArgumentException;
-
 /**
  * Path processing support class.
  */
