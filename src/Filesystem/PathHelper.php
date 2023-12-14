@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Filesystem;
 /**
  * Path processing support class.
  */
-readonly class PathHelper
+class PathHelper
 {
     /**
      * constructor
@@ -13,7 +13,7 @@ readonly class PathHelper
      * @param string $separator
      */
     public function __construct(
-        public string $separator = DIRECTORY_SEPARATOR,
+        public readonly string $separator = DIRECTORY_SEPARATOR,
     ) {
         //
     }
@@ -81,6 +81,51 @@ readonly class PathHelper
     {
         $path = str_replace(' ', '', $path);
         return trim($path, $this->separator);
+    }
+
+    /**
+     * Get the parent path.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function basename(string $path, string $suffix = ''): string
+    {
+        return basename($path, $suffix);
+    }
+
+    /**
+     * Get the directory name.
+     *
+     * @param string $path
+     * @param int<1,max> $levels
+     * @return string
+     */
+    public function dirname(string $path, int $levels = 1): string
+    {
+        return dirname($path, $levels);
+    }
+
+    /**
+     * Get the extension.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function extension(string $path): string
+    {
+        return pathinfo($path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * Get the file name.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function filename(string $path): string
+    {
+        return pathinfo($path, PATHINFO_FILENAME);
     }
 
     /**

@@ -190,15 +190,6 @@ interface LocalFilesystem
     public function isWritable(string $path): bool;
 
     /**
-     * Extract meta-information for a file at a specified path.
-     *
-     * @param string $path
-     * @param integer $option
-     * @return string|array{dirname:string,basename:string,extension:string,filename:string}
-     */
-    public function extract(string $path, int $option = PATHINFO_BASENAME): string|array;
-
-    /**
      * Obtain permissions for files in the specified path.
      *
      * @param string $path
