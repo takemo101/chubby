@@ -358,18 +358,6 @@ class SymfonyLocalFilesystem implements LocalFilesystem
     }
 
     /**
-     * Extract meta-information for a file at a specified path.
-     *
-     * @param string $path
-     * @param integer $option
-     * @return string|array{dirname?:string,basename:string,extension?:string,filename:string}
-     */
-    public function extract(string $path, int $option = PATHINFO_BASENAME): string|array
-    {
-        return pathinfo($path, $option);
-    }
-
-    /**
      * Obtain permissions for files in the specified path.
      *
      * @param string $path

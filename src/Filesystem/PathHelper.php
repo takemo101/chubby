@@ -84,6 +84,51 @@ readonly class PathHelper
     }
 
     /**
+     * Get the parent path.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function basename(string $path, string $suffix = ''): string
+    {
+        return basename($path, $suffix);
+    }
+
+    /**
+     * Get the directory name.
+     *
+     * @param string $path
+     * @param int $levels
+     * @return string
+     */
+    public function dirname(string $path, int $levels = 1): string
+    {
+        return dirname($path, $levels);
+    }
+
+    /**
+     * Get the extension.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function extension(string $path): string
+    {
+        return pathinfo($path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * Get the file name.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function filename(string $path): string
+    {
+        return pathinfo($path, PATHINFO_FILENAME);
+    }
+
+    /**
      * Organize paths into a joinable array.
      *
      * @param string[] $components
