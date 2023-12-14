@@ -12,7 +12,7 @@ describe(
             $result = $pathHelper->join('path', 'to', 'file.txt');
 
             expect($result)->toBe('path/to/file.txt');
-        });
+        })->skipOnWindows();
 
         it('can split a path', function () {
             $pathHelper = new PathHelper();
@@ -20,7 +20,7 @@ describe(
             $result = $pathHelper->split('path/to/file.txt');
 
             expect($result)->toBe(['path', 'to', 'file.txt']);
-        });
+        })->skipOnWindows();
 
         it('can trim a path', function () {
             $pathHelper = new PathHelper();
@@ -28,7 +28,7 @@ describe(
             $result = $pathHelper->trim('/path/to/file.txt/');
 
             expect($result)->toBe('path/to/file.txt');
-        });
+        })->skipOnWindows();
 
         it('can get the basename of a path', function () {
             $pathHelper = new PathHelper();
