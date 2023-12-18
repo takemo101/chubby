@@ -18,9 +18,14 @@ class FunctionProvider implements Provider
     public const ProviderName = 'function';
 
     /**
-     * @var string function.php relative path
+     * @var string Default function.php relative path
      */
-    private string $functionPath = 'function.php';
+    public const DefaultFunctionSettingPath = 'function.php';
+
+    /**
+     * @var string|null function.php relative path
+     */
+    private ?string $functionPath = null;
 
     /**
      * Execute Bootstrap providing process.
@@ -47,7 +52,7 @@ class FunctionProvider implements Provider
         /** @var LocalFilesystem */
         $filesystem = $container->get(LocalFilesystem::class);
 
-        $functionPath = $this->getFunctionSettingPath($path);
+        $functionPath = $this->getFunctionPath($path);
 
         if ($filesystem->exists($functionPath)) {
             require $functionPath;
@@ -60,18 +65,29 @@ class FunctionProvider implements Provider
      * @param ApplicationPath $path
      * @return string
      */
-    private function getFunctionSettingPath(ApplicationPath $path): string
+    private function getFunctionPath(ApplicationPath $path): string
     {
-        return $path->getSettingPath($this->functionPath);
+        return $this->functionPath ?: $this->getDefaultFunctionPath($path);
+    }
+
+    /**
+     * Get default function path.
+     *
+     * @param ApplicationPath $path
+     * @return string
+     */
+    private function getDefaultFunctionPath(ApplicationPath $path): string
+    {
+        return $path->getSettingPath(self::DefaultFunctionSettingPath);
     }
 
     /**
      * Set function path.
      *
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function setFunctionPath(string $path): void
+    public function setFunctionPath(?string $path = null): void
     {
         $this->functionPath = $path;
     }

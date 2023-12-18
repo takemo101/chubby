@@ -19,9 +19,14 @@ class DependencyProvider implements Provider
     public const ProviderName = 'dependency';
 
     /**
-     * @var string dependency.php relative path
+     * @var string Default dependency.php relative path
      */
-    private string $dependencyPath = 'dependency.php';
+    public const DefaultDependencySettingPath = 'dependency.php';
+
+    /**
+     * @var string|null Dependency definitions path.
+     */
+    private ?string $dependencyPath = null;
 
     /**
      * constructor
@@ -44,7 +49,7 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
-        $dependencyPath = $this->getDependencySettingPath($this->path);
+        $dependencyPath = $this->getDependencyPath();
 
         /** @var mixed[] */
         $dependency = $this->filesystem->exists($dependencyPath)
@@ -76,22 +81,30 @@ class DependencyProvider implements Provider
     /**
      * Get dependency definitions path.
      *
-     * @param ApplicationPath $path
      * @return string
      */
-    private function getDependencySettingPath(
-        ApplicationPath $path,
-    ): string {
-        return $path->getSettingPath($this->dependencyPath);
+    private function getDependencyPath(): string
+    {
+        return $this->dependencyPath ?: $this->getDefaultDependencyPath();
+    }
+
+    /**
+     * Get default dependency definitions path.
+     *
+     * @return string
+     */
+    private function getDefaultDependencyPath(): string
+    {
+        return $this->path->getSettingPath(self::DefaultDependencySettingPath);
     }
 
     /**
      * Set dependency definitions path.
      *
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function setDependencyPath(string $path): void
+    public function setDependencyPath(?string $path = null): void
     {
         $this->dependencyPath = $path;
     }
