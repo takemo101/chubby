@@ -28,6 +28,19 @@ class FunctionProvider implements Provider
     private ?string $functionPath = null;
 
     /**
+     * constructor
+     *
+     * @param ApplicationPath $path
+     * @param LocalFilesystem $filesystem
+     */
+    public function __construct(
+        private ApplicationPath $path,
+        private LocalFilesystem $filesystem,
+    ) {
+        //
+    }
+
+    /**
      * Execute Bootstrap providing process.
      *
      * @param Definitions $definitions
@@ -46,39 +59,31 @@ class FunctionProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        /** @var ApplicationPath */
-        $path = $container->get(ApplicationPath::class);
+        $functionPath = $this->getFunctionPath();
 
-        /** @var LocalFilesystem */
-        $filesystem = $container->get(LocalFilesystem::class);
-
-        $functionPath = $this->getFunctionPath($path);
-
-        if ($filesystem->exists($functionPath)) {
-            require $functionPath;
+        if ($this->filesystem->exists($functionPath)) {
+            $this->filesystem->require($functionPath);
         }
     }
 
     /**
      * Get function path.
      *
-     * @param ApplicationPath $path
      * @return string
      */
-    private function getFunctionPath(ApplicationPath $path): string
+    public function getFunctionPath(): string
     {
-        return $this->functionPath ?: $this->getDefaultFunctionPath($path);
+        return $this->functionPath ?: $this->getDefaultFunctionPath();
     }
 
     /**
      * Get default function path.
      *
-     * @param ApplicationPath $path
      * @return string
      */
-    private function getDefaultFunctionPath(ApplicationPath $path): string
+    private function getDefaultFunctionPath(): string
     {
-        return $path->getSettingPath(self::DefaultFunctionSettingPath);
+        return $this->path->getSettingPath(self::DefaultFunctionSettingPath);
     }
 
     /**

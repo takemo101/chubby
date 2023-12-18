@@ -265,4 +265,13 @@ interface LocalFilesystem
      * @return boolean
      */
     public function deleteDirectory(string $path): bool;
+
+    /**
+     * Get the contents of a file.
+     *
+     * @param string $path
+     * @return mixed
+     * @throws LocalFilesystemException
+     */
+    public function require(string $path): mixed;
 }

@@ -53,7 +53,7 @@ class DependencyProvider implements Provider
 
         /** @var mixed[] */
         $dependency = $this->filesystem->exists($dependencyPath)
-            ? require $dependencyPath
+            ? $this->filesystem->require($dependencyPath)
             : [];
 
         if (!is_array($dependency)) {
@@ -83,7 +83,7 @@ class DependencyProvider implements Provider
      *
      * @return string
      */
-    private function getDependencyPath(): string
+    public function getDependencyPath(): string
     {
         return $this->dependencyPath ?: $this->getDefaultDependencyPath();
     }

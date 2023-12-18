@@ -6,7 +6,7 @@ use Takemo101\Chubby\Bootstrap\Provider\ClosureProvider;
 use Tests\ApplicationTestCase;
 
 describe(
-    'closure provider',
+    'ClosureProvider',
     function () {
         test(
             'Set dependencies with ClosureProvider',
@@ -71,7 +71,7 @@ describe(
             },
         )->with('objects');
     }
-)->group('provider');
+)->group('ClosureProvider', 'provider');
 
 dataset(
     'objects',
