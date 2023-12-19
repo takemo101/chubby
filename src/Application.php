@@ -44,7 +44,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.17';
+    public const Version = '0.0.18';
 
     /**
      * @var Container|null
@@ -146,7 +146,7 @@ class Application implements ApplicationContainer
      * Providers with the same name cannot be registered.
      * If you have been booted, throw an exception.
      *
-     * @param Provider|class-string<Provider> ...$providers
+     * @param Provider|class-string<Provider> ...$providers Provider class name or instance.
      * @return self
      * @throws ApplicationAlreadyBootedException
      */
