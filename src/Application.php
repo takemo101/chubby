@@ -27,6 +27,7 @@ use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
+use Takemo101\Chubby\Container\InstantContainer;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
@@ -51,11 +52,6 @@ class Application implements ApplicationContainer
     private ?Container $container = null;
 
     /**
-     * @var LocalFilesystem
-     */
-    private LocalFilesystem $filesystem;
-
-    /**
      * @var bool
      */
     private bool $isBooted = false;
@@ -71,9 +67,9 @@ class Application implements ApplicationContainer
         private readonly ApplicationPath $path,
         private readonly Bootstrap $bootstrap,
         private readonly ContainerBuilder $builder,
+        private readonly LocalFilesystem $filesystem = new SymfonyLocalFilesystem(),
+        private readonly InstantContainer $instantContainer = new InstantContainer(),
     ) {
-        $this->filesystem = new SymfonyLocalFilesystem();
-
         $this->initialize(
             $bootstrap,
             $builder,
@@ -91,6 +87,28 @@ class Application implements ApplicationContainer
         Bootstrap $bootstrap,
         ContainerBuilder $builder,
     ): void {
+        $this->instantContainer
+            ->set(
+                Application::class,
+                $this,
+            )
+            ->set(
+                ApplicationContainer::class,
+                $this,
+            )
+            ->set(
+                Bootstrap::class,
+                $this->bootstrap,
+            )
+            ->set(
+                LocalFilesystem::class,
+                $this->filesystem,
+            )
+            ->set(
+                ApplicationPath::class,
+                $this->path,
+            );
+
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
             new BootProvider(),
@@ -134,17 +152,28 @@ class Application implements ApplicationContainer
      * Providers with the same name cannot be registered.
      * If you have been booted, throw an exception.
      *
-     * @param Provider ...$Providers
+     * @param Provider|class-string<Provider> ...$providers
      * @return self
      * @throws ApplicationAlreadyBootedException
      */
-    public function addProvider(Provider ...$Providers): self
+    public function addProvider(Provider|string ...$providers): self
     {
         if ($this->isBooted()) {
             throw new ApplicationAlreadyBootedException();
         }
 
-        $this->bootstrap->addProvider(...$Providers);
+        $adds = [];
+
+        foreach ($providers as $provider) {
+            /** @var Provider */
+            $instance = is_string($provider)
+                ? $this->instantContainer->create($provider)
+                : $provider;
+
+            $adds[] = $instance;
+        }
+
+        $this->bootstrap->addProvider(...$adds);
 
         return $this;
     }
@@ -177,16 +206,6 @@ class Application implements ApplicationContainer
     public function getPath(): ApplicationPath
     {
         return $this->path;
-    }
-
-    /**
-     * Get filesystem instance.
-     *
-     * @return LocalFilesystem
-     */
-    public function getFilesystem(): LocalFilesystem
-    {
-        return $this->filesystem;
     }
 
     /**
