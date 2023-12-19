@@ -27,23 +27,30 @@ class InstantContainer implements ContainerInterface
         array $dependencies = [],
     ) {
         foreach ($dependencies as $id => $instance) {
-            $this->set($id, $instance);
+            $this->add($instance, $id);
         }
     }
 
     /**
-     * Set instance.
+     * Add instance.
      *
      * @template T of object
      *
-     * @param class-string<T> $id
      * @param T $instance
+     * @param class-string<T>|null $id
      * @return self
      * @throws LogicException
      */
-    public function set(string $id, object $instance)
+    public function add(object $instance, ?string $id = null): self
     {
-        if (!($instance instanceof $id)) {
+        // null is not allowed as id
+        if (is_null($id)) {
+
+            /** @var class-string<T> */
+            $id = get_class($instance);
+        }
+        // if id is not null, check if the instance is an instance of the id
+        elseif (!($instance instanceof $id)) {
 
             $class = get_class($instance);
 

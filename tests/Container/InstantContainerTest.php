@@ -16,7 +16,7 @@ describe(
             $container = new InstantContainer($resolver);
             $instance = new stdClass();
 
-            $container->set(stdClass::class, $instance);
+            $container->add($instance);
 
             expect($container->get(stdClass::class))->toBe($instance);
         });
@@ -28,7 +28,7 @@ describe(
             $container = new InstantContainer($resolver);
             $instance = new stdClass();
 
-            expect(fn () => $container->set(Stringable::class, $instance))
+            expect(fn () => $container->add($instance, Stringable::class))
                 ->toThrow(LogicException::class, '[Stringable] is not instance of [stdClass]');
         });
 
@@ -39,7 +39,7 @@ describe(
             $container = new InstantContainer($resolver);
             $instance = new stdClass();
 
-            $container->set(stdClass::class, $instance);
+            $container->add($instance);
 
             $createdInstance = $container->create(stdClass::class);
 
@@ -63,7 +63,7 @@ describe(
             $container = new InstantContainer($resolver);
             $instance = new stdClass();
 
-            $container->set(stdClass::class, $instance);
+            $container->add($instance);
 
             $retrievedInstance = $container->get(stdClass::class);
 
@@ -87,7 +87,7 @@ describe(
             $container = new InstantContainer($resolver);
             $instance = new stdClass();
 
-            $container->set(stdClass::class, $instance);
+            $container->add($instance);
 
             expect($container->has(stdClass::class))->toBeTrue();
             expect($container->has('NonExistentClass'))->toBeFalse();
@@ -107,8 +107,8 @@ describe(
                 }
             };
 
-            $container->set(stdClass::class, $instance1);
-            $container->set(Stringable::class, $instance2);
+            $container->add($instance1);
+            $container->add($instance2, Stringable::class);
 
             $dependencies = $container->dependencies();
 

@@ -87,27 +87,21 @@ class Application implements ApplicationContainer
         Bootstrap $bootstrap,
         ContainerBuilder $builder,
     ): void {
+        $pathHelper = new PathHelper();
+
         $this->instantContainer
-            ->set(
-                Application::class,
+            ->add($this)
+            ->add(
                 $this,
-            )
-            ->set(
                 ApplicationContainer::class,
-                $this,
             )
-            ->set(
-                Bootstrap::class,
-                $this->bootstrap,
-            )
-            ->set(
-                LocalFilesystem::class,
+            ->add($this->bootstrap)
+            ->add(
                 $this->filesystem,
+                LocalFilesystem::class,
             )
-            ->set(
-                ApplicationPath::class,
-                $this->path,
-            );
+            ->add($this->path)
+            ->add($pathHelper);
 
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
@@ -141,7 +135,7 @@ class Application implements ApplicationContainer
                         debug: $debug,
                     );
                 },
-                PathHelper::class => fn () => new PathHelper(),
+                PathHelper::class => fn () => $pathHelper,
                 LocalFilesystem::class => $this->filesystem,
             ],
         );
