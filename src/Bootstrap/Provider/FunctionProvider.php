@@ -18,9 +18,27 @@ class FunctionProvider implements Provider
     public const ProviderName = 'function';
 
     /**
-     * @var string function.php relative path
+     * @var string Default function.php relative path
      */
-    private string $functionPath = 'function.php';
+    public const DefaultFunctionSettingPath = 'function.php';
+
+    /**
+     * @var string|null function.php relative path
+     */
+    private ?string $functionPath = null;
+
+    /**
+     * constructor
+     *
+     * @param ApplicationPath $path
+     * @param LocalFilesystem $filesystem
+     */
+    public function __construct(
+        private ApplicationPath $path,
+        private LocalFilesystem $filesystem,
+    ) {
+        //
+    }
 
     /**
      * Execute Bootstrap providing process.
@@ -41,37 +59,40 @@ class FunctionProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        /** @var ApplicationPath */
-        $path = $container->get(ApplicationPath::class);
+        $functionPath = $this->getFunctionPath();
 
-        /** @var LocalFilesystem */
-        $filesystem = $container->get(LocalFilesystem::class);
-
-        $functionPath = $this->getFunctionSettingPath($path);
-
-        if ($filesystem->exists($functionPath)) {
-            require $functionPath;
+        if ($this->filesystem->exists($functionPath)) {
+            $this->filesystem->require($functionPath);
         }
     }
 
     /**
      * Get function path.
      *
-     * @param ApplicationPath $path
      * @return string
      */
-    private function getFunctionSettingPath(ApplicationPath $path): string
+    public function getFunctionPath(): string
     {
-        return $path->getSettingPath($this->functionPath);
+        return $this->functionPath ?: $this->getDefaultFunctionPath();
+    }
+
+    /**
+     * Get default function path.
+     *
+     * @return string
+     */
+    private function getDefaultFunctionPath(): string
+    {
+        return $this->path->getSettingPath(self::DefaultFunctionSettingPath);
     }
 
     /**
      * Set function path.
      *
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function setFunctionPath(string $path): void
+    public function setFunctionPath(?string $path = null): void
     {
         $this->functionPath = $path;
     }

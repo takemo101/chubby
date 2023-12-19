@@ -4,10 +4,10 @@ namespace Takemo101\Chubby\Filesystem;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
-use SplFileInfo;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Takemo101\Chubby\Filesystem\Mime\FinfoMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
+use SplFileInfo;
 
 /**
  * Local Filesystem
@@ -483,5 +483,20 @@ class SymfonyLocalFilesystem implements LocalFilesystem
         }
 
         return true;
+    }
+
+    /**
+     * Get the contents of a file.
+     *
+     * @param string $path
+     * @return mixed
+     */
+    public function require(string $path): mixed
+    {
+        if ($this->isFile($path)) {
+            return require($path);
+        }
+
+        throw LocalFilesystemException::notFound($path);
     }
 }

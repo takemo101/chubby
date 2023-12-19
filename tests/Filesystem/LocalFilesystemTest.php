@@ -1,5 +1,6 @@
 <?php
 
+use Takemo101\Chubby\Filesystem\LocalFilesystemException;
 use Tests\Filesystem\FilesystemTestCase;
 
 describe(
@@ -321,5 +322,26 @@ describe(
             'b',
             'c',
         ]);
+
+        test(
+            'can require a file',
+            function () {
+                /** @var FilesystemTestCase $this */
+
+                $path = $this->getTestResourcePath('../config/config01.php');
+
+                $result = $this->filesystem->require($path);
+
+                expect($result)->toBeArray();
+            }
+        );
+
+        test(
+            'throws an exception if the file is not found',
+            function () {
+                expect(fn () => $this->filesystem->require('/path/to/nonexistent.php'))
+                    ->toThrow(LocalFilesystemException::class);
+            }
+        );
     }
-)->group('filesystem');
+)->group('SymfonyLocalFilesystem', 'filesystem');

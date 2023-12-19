@@ -33,12 +33,7 @@ class ApplicationBuilder
      */
     public function addDependencySetting(): static
     {
-        $this->getApplication()->addProvider(
-            new DependencyProvider(
-                $this->getApplication()->getPath(),
-                $this->getApplication()->getFilesystem(),
-            ),
-        );
+        $this->getApplication()->addProvider(DependencyProvider::class);
 
         return $this;
     }
@@ -50,9 +45,7 @@ class ApplicationBuilder
      */
     public function addFunctionSetting(): static
     {
-        $this->getApplication()->addProvider(
-            new FunctionProvider(),
-        );
+        $this->getApplication()->addProvider(FunctionProvider::class);
 
         return $this;
     }
@@ -64,9 +57,7 @@ class ApplicationBuilder
      */
     public function addConsole(): static
     {
-        $this->getApplication()->addProvider(
-            new ConsoleProvider(),
-        );
+        $this->getApplication()->addProvider(ConsoleProvider::class);
 
         return $this;
     }
@@ -80,9 +71,7 @@ class ApplicationBuilder
     {
         $this
             ->getApplication()
-            ->addProvider(
-                new HttpProvider(),
-            );
+            ->addProvider(HttpProvider::class);
 
         return $this;
     }
