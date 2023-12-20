@@ -60,7 +60,7 @@ class ConsoleProvider implements Provider
                         ServeCommand::class,
                     );
 
-                    $hook->doByObject($adapter);
+                    $hook->doByType($adapter);
 
                     return $adapter;
                 },
@@ -69,7 +69,7 @@ class ConsoleProvider implements Provider
                 ): CommandCollection {
                     $commands = CommandCollection::empty();
 
-                    $hook->doByObject($commands);
+                    $hook->doByType($commands);
 
                     return $commands;
                 }

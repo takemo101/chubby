@@ -99,7 +99,7 @@ describe(
 
                 $data = $expected = 1;
 
-                $actual = $hook->filter($tag, $data);
+                $actual = $hook->do($tag, $data);
 
                 foreach (range(0, $count) as $index) {
                     $expected = call_user_func($function, $expected);
@@ -159,7 +159,7 @@ describe(
 
                 $hook->onByType($function);
 
-                $actual = $hook->filterByObject($data);
+                $actual = $hook->doByType($data);
 
                 $expected = call_user_func($function, $expected);
 
@@ -183,7 +183,7 @@ describe(
 
                 $hook->onByType($function);
 
-                $hook->doByObject($data);
+                $hook->doByType($data);
 
                 call_user_func($function, $expected);
 

@@ -95,7 +95,7 @@ class HttpProvider implements Provider
                 ): Slim {
                     $slim = $factory->create();
 
-                    $hook->doByObject($slim);
+                    $hook->doByType($slim);
                     $hook->do(RouteCollectorProxyInterface::class, $slim);
 
                     return $slim;
@@ -111,7 +111,7 @@ class HttpProvider implements Provider
                         configurer: $configurer,
                     );
 
-                    $hook->doByObject($adapter);
+                    $hook->doByType($adapter);
 
                     return $adapter;
                 },
@@ -127,7 +127,7 @@ class HttpProvider implements Provider
                         new StringableTransformer(),
                     );
 
-                    $hook->doByObject($transformers);
+                    $hook->doByType($transformers);
 
                     return $transformers;
                 },
@@ -148,7 +148,7 @@ class HttpProvider implements Provider
                 ) {
                     $renders = new ErrorResponseRenders();
 
-                    $hook->doByObject($renders);
+                    $hook->doByType($renders);
 
                     return $renders;
                 },
@@ -178,7 +178,7 @@ class HttpProvider implements Provider
                         $transformers,
                     );
 
-                    $hook->doByObject($errorHandler);
+                    $hook->doByType($errorHandler);
 
                     return $errorHandler;
                 },
@@ -207,7 +207,7 @@ class HttpProvider implements Provider
 
                     $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
-                    $hook->doByObject($errorMiddleware);
+                    $hook->doByType($errorMiddleware);
 
                     return $errorMiddleware;
                 },
@@ -216,7 +216,7 @@ class HttpProvider implements Provider
                 ) {
                     $routeCollector = new DomainRouteCollector();
 
-                    $hook->doByObject($routeCollector);
+                    $hook->doByType($routeCollector);
 
                     return $routeCollector;
                 },
@@ -238,7 +238,7 @@ class HttpProvider implements Provider
 
                     $router->add(ErrorMiddleware::class);
 
-                    $hook->doByObject($router);
+                    $hook->doByType($router);
 
                     return $router;
                 }
