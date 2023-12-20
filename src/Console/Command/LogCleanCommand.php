@@ -3,7 +3,6 @@
 namespace Takemo101\Chubby\Console\Command;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 
@@ -45,7 +44,9 @@ class LogCleanCommand extends Command
             return self::SUCCESS;
         }
 
-        foreach ($filesystem->glob($directory . '/*') as $file) {
+        $files = $filesystem->glob($directory . '/*') ?? [];
+
+        foreach ($files as $file) {
             $filesystem->delete($file);
         }
 
