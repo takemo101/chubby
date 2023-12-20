@@ -187,7 +187,7 @@ class Hook
             }
         }
 
-        return $result;
+        return $result ?? $parameter;
     }
 
     /**
