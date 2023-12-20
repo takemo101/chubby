@@ -6,6 +6,7 @@ use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Console\Application as SymfonyConsole;
+use Takemo101\Chubby\Console\Command\LogCleanCommand;
 use Takemo101\Chubby\Console\Command\ServeCommand;
 use Takemo101\Chubby\Console\Command\VersionCommand;
 use Takemo101\Chubby\Console\CommandCollection;
@@ -58,9 +59,10 @@ class ConsoleProvider implements Provider
                     $adapter->addCommand(
                         VersionCommand::class,
                         ServeCommand::class,
+                        LogCleanCommand::class,
                     );
 
-                    $hook->doByObject($adapter);
+                    $hook->doByType($adapter);
 
                     return $adapter;
                 },
@@ -69,7 +71,7 @@ class ConsoleProvider implements Provider
                 ): CommandCollection {
                     $commands = CommandCollection::empty();
 
-                    $hook->doByObject($commands);
+                    $hook->doByType($commands);
 
                     return $commands;
                 }

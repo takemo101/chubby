@@ -10,5 +10,5 @@ use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
  */
 class LoggerHandlerFactoryCollection extends ClassCollection
 {
-    //
+    public const Type = LoggerHandlerFactory::class;
 }

@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Console;
 
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Application;
@@ -30,10 +29,10 @@ class SymfonyConsoleAdapter
      * Add Symfony command.
      * Add a class string or instance that implements the command.
      *
-     * @param class-string<Command>|object ...$commands
+     * @param class-string<Command>|Command ...$commands
      * @return static
      */
-    public function addCommand(string|object ...$commands): static
+    public function addCommand(string|Command ...$commands): static
     {
         $this->commands->add(...$commands);
 
@@ -96,26 +95,9 @@ class SymfonyConsoleAdapter
         foreach ($this->commands->classes() as $command) {
             $resolved = $this->resolver->resolve($command);
 
-            if (!$resolved) {
-                $name = $this->getClassName($command);
-
-                throw new RuntimeException("{$name} is not command class");
-            }
-
             $this->application->add($resolved);
         }
 
         $this->commands->clear();
-    }
-
-    /**
-     * Get class name
-     *
-     * @param string|object $class
-     * @return string
-     */
-    private function getClassName(string|object $class): string
-    {
-        return is_object($class) ? get_class($class) : $class;
     }
 }

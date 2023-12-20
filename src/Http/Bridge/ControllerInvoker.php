@@ -62,7 +62,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         /** @var ResponseInterface */
-        $hookedResponse = $this->hook->filter(
+        $hookedResponse = $this->hook->do(
             ResponseInterface::class,
             $transformedResponse,
         );
@@ -94,7 +94,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         ];
 
         /** @var ServerRequestInterface */
-        $hookedRequest = $this->hook->filter(
+        $hookedRequest = $this->hook->do(
             ServerRequestInterface::class,
             $this->injectRouteArguments($request, $routeArguments),
         );

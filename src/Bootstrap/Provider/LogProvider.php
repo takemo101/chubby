@@ -48,7 +48,7 @@ class LogProvider implements Provider
                     );
 
                     /** @var LoggerFactory */
-                    $factory = $hook->filter(LoggerFactory::class, $factory);
+                    $factory = $hook->do(LoggerFactory::class, $factory);
 
                     return $factory;
                 },
@@ -106,7 +106,7 @@ class LogProvider implements Provider
 
                     $factories = new LoggerHandlerFactoryCollection(...$handlerFactories);
 
-                    $hook->doByObject($factories);
+                    $hook->doByType($factories);
 
                     return $factories;
                 }

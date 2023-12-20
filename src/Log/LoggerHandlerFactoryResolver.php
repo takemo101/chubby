@@ -25,30 +25,18 @@ class LoggerHandlerFactoryResolver
      * Resolves to factory object.
      * If unresolvable, return null.
      *
-     * @param class-string<LoggerHandlerFactory>|object $factory
-     * @return LoggerHandlerFactory|null
+     * @param class-string<LoggerHandlerFactory>|LoggerHandlerFactory $factory
+     * @return LoggerHandlerFactory
      */
-    public function resolve(string|object $factory): ?LoggerHandlerFactory
+    public function resolve(string|LoggerHandlerFactory $factory): LoggerHandlerFactory
     {
-        return $this->getFactoryObjectOr(
-            is_string($factory)
-                ? $this->container->make($factory)
-                : $factory
-        );
-    }
-
-    /**
-     * If it is a factory object, return the object as is; if it is not a factory object, return null.
-     *
-     * @param mixed $factory
-     * @return LoggerHandlerFactory|null
-     */
-    private function getFactoryObjectOr(mixed $factory): ?LoggerHandlerFactory
-    {
-        if (is_object($factory) && $factory instanceof LoggerHandlerFactory) {
+        if (!is_string($factory)) {
             return $factory;
         }
 
-        return null;
+        /** @var LoggerHandlerFactory */
+        $factory = $this->container->make($factory);
+
+        return $factory;
     }
 }

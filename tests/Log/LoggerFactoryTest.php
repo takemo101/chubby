@@ -13,7 +13,7 @@ use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Psr\Log\LoggerInterface;
 
 describe(
-    'logger factory',
+    'LoggerFactory',
     function () {
         test(
             'Create a Handler with LoggerHandlerFactory',
@@ -34,8 +34,9 @@ describe(
             'Create Logger with DefaultLoggerFactory',
             function () {
 
-                $mock = Mockery::mock(LoggerHandlerFactory::class)
-                    ->shouldReceive('create')
+                $mock = Mockery::mock(LoggerHandlerFactory::class);
+
+                $mock->shouldReceive('create')
                     ->andReturn(new NullHandler());
 
                 $factory = new DefaultLoggerFactory(
@@ -55,4 +56,4 @@ describe(
             },
         );
     }
-)->group('logger-factory');
+)->group('LoggerFactory', 'log');

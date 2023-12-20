@@ -161,12 +161,13 @@ class Hook
 
     /**
      * Execute hook processing on tags.
+     * This process does not cycle the return value through hook processes.
      *
      * @param string $tag
      * @param mixed $parameter
      * @return mixed
      */
-    public function filter(string $tag, $parameter): mixed
+    public function do(string $tag, $parameter): mixed
     {
         if (!isset($this->filters[$tag])) {
             return $parameter;
@@ -187,62 +188,21 @@ class Hook
             }
         }
 
-        return $result;
+        return $result ?? $parameter;
     }
 
     /**
      * Execute hook processing on tags.
-     * Get the tag from the object.
+     * This process does not cycle the return value through hook processes.
+     * Get the tag from the object type.
      *
      * @param object $object
      * @return mixed
      */
-    public function filterByObject(object $object): mixed
+    public function doByType(object $object): mixed
     {
         $type = get_class($object);
 
-        return $this->filter($type, $object);
-    }
-
-    /**
-     * Execute hook processing on tags.
-     * This process does not cycle the return value through hook processes.
-     *
-     * @param string $tag
-     * @param mixed $parameter
-     * @return void
-     */
-    public function do(string $tag, $parameter): void
-    {
-        if (!isset($this->filters[$tag])) {
-            return;
-        }
-
-        $filters = $this->filters[$tag];
-
-        foreach ($filters->all() as $filter) {
-            foreach ($filter->actions() as $action) {
-
-                call_user_func_array(
-                    $action->getCallable(),
-                    [$parameter, $this->container],
-                );
-            }
-        }
-    }
-
-    /**
-     * Execute hook processing on tags.
-     * This process does not cycle the return value through hook processes.
-     * Get the tag from the object.
-     *
-     * @param object $object
-     * @return void
-     */
-    public function doByObject(object $object): void
-    {
-        $type = get_class($object);
-
-        $this->do($type, $object);
+        return $this->do($type, $object);
     }
 }

@@ -10,5 +10,5 @@ use Takemo101\Chubby\Support\ClassCollection;
  */
 class CommandCollection extends ClassCollection
 {
-    //
+    public const Type = Command::class;
 }

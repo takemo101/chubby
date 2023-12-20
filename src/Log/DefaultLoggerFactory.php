@@ -58,9 +58,10 @@ class DefaultLoggerFactory implements LoggerFactory
         $handlers = [];
 
         foreach ($this->factories->classes() as $factory) {
-            if ($handler = $this->resolver->resolve($factory)) {
-                $handlers[] = $handler->create();
-            }
+
+            $handler = $this->resolver->resolve($factory);
+
+            $handlers[] = $handler->create();
         }
 
         return $handlers;
