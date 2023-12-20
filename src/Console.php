@@ -33,10 +33,10 @@ class Console extends AbstractRunner
     /**
      * Add command class instance.
      *
-     * @param class-string<Command>|object ...$commands
+     * @param class-string<Command>|Command ...$commands
      * @return self
      */
-    public function addCommand(string|object ...$commands): self
+    public function addCommand(string|Command ...$commands): self
     {
         $this->getConsole()->addCommand(...$commands);
 

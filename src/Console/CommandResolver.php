@@ -26,19 +26,16 @@ class CommandResolver
      * Resolves to command object.
      * If unresolvable, return null.
      *
-     * @param class-string<Command>|object|callable $command
-     * @return Command|null
+     * @param class-string<Command>|Command $command
+     * @return Command
      */
-    public function resolve(string|object|callable $command): ?Command
+    public function resolve(string|Command $command): Command
     {
-        $object = $this->getCommandObjectOr(
-            is_string($command)
-                ? $this->container->make($command)
-                : $command
-        );
-
-        if (!$object) {
-            return null;
+        if (is_string($command)) {
+            /** @var Command */
+            $object = $this->container->make($command);
+        } else {
+            $object = $command;
         }
 
         if ($object instanceof ContainerInjectable) {
@@ -46,20 +43,5 @@ class CommandResolver
         }
 
         return $object;
-    }
-
-    /**
-     * If it is a command object, return the object as is; if it is not a command object, return null.
-     *
-     * @param mixed $command
-     * @return Command|null
-     */
-    private function getCommandObjectOr(mixed $command): ?Command
-    {
-        if (is_object($command) && $command instanceof Command) {
-            return $command;
-        }
-
-        return null;
     }
 }
