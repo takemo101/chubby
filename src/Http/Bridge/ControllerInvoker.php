@@ -89,7 +89,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $routeArguments = [
-            ...$domainRouteContext->getArguments(),
+            ...($domainRouteContext?->getArguments() ?? []),
             ...$routeArguments,
         ];
 

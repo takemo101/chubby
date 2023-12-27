@@ -55,7 +55,7 @@ describe(
         );
 
         test(
-            'throws exception when context not found',
+            'return null when context not found',
             function () {
                 $request = Mockery::mock(ServerRequestInterface::class);
                 $request->shouldReceive('getAttribute')
@@ -63,9 +63,8 @@ describe(
                     ->with(AbstractContext::ContextKey)
                     ->andReturn(null);
 
-                expect(function () use ($request) {
-                    AbstractContext::fromRequest($request);
-                })->toThrow(ContextException::class);
+                expect(AbstractContext::fromRequest($request))
+                    ->toBeNull();
             }
         );
 
@@ -100,4 +99,4 @@ describe(
             }
         );
     }
-)->group('abstract-context', 'http');
+)->group('AbstractContext', 'http');
