@@ -30,10 +30,27 @@ abstract class ClassCollection
     }
 
     /**
+     * Set a class name or object of the specified type.
+     * Overwrite all classes.
+     *
+     * @param class-string<T>|T ...$classes
+     * @return static
+     * @throws RuntimeException
+     */
+    public function set(string|object ...$classes): static
+    {
+        $this->clear();
+        $this->add(...$classes);
+
+        return $this;
+    }
+
+    /**
      * Adds a class name or object of the specified type
      *
      * @param class-string<T>|T ...$classes
      * @return static
+     * @throws RuntimeException
      */
     public function add(string|object ...$classes): static
     {
@@ -72,6 +89,38 @@ abstract class ClassCollection
             ...$this->classes,
             ...$_classes,
         ];
+
+        return $this;
+    }
+
+    /**
+     * Remove a class name or object of the specified type
+     *
+     * @param class-string<T> $class
+     * @return static
+     * @throws RuntimeException
+     */
+    public function remove(string $class): static
+    {
+        if (!(
+            class_exists($class)
+            || interface_exists($class)
+        )) {
+            throw new RuntimeException(
+                sprintf(
+                    'Class "%s" does not exist.',
+                    $class,
+                ),
+            );
+        }
+
+        $this->classes = array_filter(
+            $this->classes,
+            fn ($item) => !(
+                is_a($item, $class, true) // @phpstan-ignore-line
+                || is_subclass_of($item, $class, true)
+            ),
+        );
 
         return $this;
     }
