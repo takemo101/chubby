@@ -111,10 +111,14 @@ class ServeProcessOutputHandler
                     $this->output->writeln("<fg=red;options=bold>{$line}</>");
                 }
             }
-            // Thinking as a warning message
+            // Thinking as a warning or normal message
             else {
 
-                $this->output->writeln("<fg=red;options=bold>{$line}</>");
+                $this->output->writeln(
+                    $this->isErrorLine($line)
+                        ? "<fg=red;options=bold>{$line}</>"
+                        : "<fg=yellow>{$line}</>",
+                );
             }
         }
     }
@@ -200,5 +204,34 @@ class ServeProcessOutputHandler
     private function hasRequestHostFromLine(string $line): bool
     {
         return preg_match(self::RequestHostRegex, $line) === 1;
+    }
+
+    /**
+     * Judge whether it is an error
+     *
+     * @param string $line
+     * @return boolean
+     */
+    private function isErrorLine(string $line): bool
+    {
+        $line = strtolower($line);
+
+        $errors = [
+            'error:',
+            'php fatal error:',
+            'php warning:',
+            'php notice:',
+            'php parse error:',
+            'php deprecated:',
+            'php recoverable fatal error:',
+        ];
+
+        foreach ($errors as $error) {
+            if (str_contains($line, $error)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -83,13 +83,13 @@ class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
-        $domainRouteContext = DomainRouteContext::fromServerRequest(
+        $domainRouteContext = DomainRouteContext::fromRequest(
             $request,
             fn () => new DomainRouteContext(),
         );
 
         $routeArguments = [
-            ...$domainRouteContext->getArguments(),
+            ...($domainRouteContext?->getArguments() ?? []),
             ...$routeArguments,
         ];
 

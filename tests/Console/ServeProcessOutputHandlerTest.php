@@ -49,13 +49,13 @@ describe(
 
             $output = m::mock(OutputInterface::class);
 
-            $output->shouldReceive('writeln')->with("<fg=red;options=bold>Invalid line</>");
+            $output->shouldReceive('writeln')->with("<fg=red;options=bold>ERROR: Invalid line</>");
 
             $handler = new ServeProcessOutputHandler(
                 output: $output,
                 requestPool: $requestPool,
             );
-            $handler('out', "Invalid line\n");
+            $handler('out', "ERROR: Invalid line\n");
 
             expect($requestPool->getRequests())->toBe([]);
         });

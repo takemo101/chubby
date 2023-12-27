@@ -45,19 +45,19 @@ abstract class AbstractContext
      *
      * @param ServerRequestInterface $request
      * @param null|Closure():static $factory A factory function that returns a new instance of the context.
-     * @return static
+     * @return static|null
      * @throws ContextException
      */
-    public static function fromServerRequest(
+    public static function fromRequest(
         ServerRequestInterface $request,
         ?Closure $factory = null,
-    ): static {
+    ): ?static {
         /** @var static|null */
         $context = $request->getAttribute(static::ContextKey);
 
         if (is_null($context)) {
             if (is_null($factory)) {
-                throw ContextException::notFound(static::ContextKey);
+                return null;
             }
 
             $context = $factory();

@@ -48,14 +48,14 @@ describe(
                     ->with(AbstractContext::ContextKey)
                     ->andReturn($context);
 
-                $actual = AbstractContext::fromServerRequest($request);
+                $actual = AbstractContext::fromRequest($request);
 
                 expect($actual)->toBe($context);
             }
         );
 
         test(
-            'throws exception when context not found',
+            'return null when context not found',
             function () {
                 $request = Mockery::mock(ServerRequestInterface::class);
                 $request->shouldReceive('getAttribute')
@@ -63,9 +63,8 @@ describe(
                     ->with(AbstractContext::ContextKey)
                     ->andReturn(null);
 
-                expect(function () use ($request) {
-                    AbstractContext::fromServerRequest($request);
-                })->toThrow(ContextException::class);
+                expect(AbstractContext::fromRequest($request))
+                    ->toBeNull();
             }
         );
 
@@ -87,7 +86,7 @@ describe(
                     ->andReturn($context);
 
                 expect(function () use ($request) {
-                    AbstractContext::fromServerRequest($request, function () {
+                    AbstractContext::fromRequest($request, function () {
                         return new class() extends AbstractContext
                         {
                             public function __construct()
@@ -100,4 +99,4 @@ describe(
             }
         );
     }
-)->group('abstract-context', 'http');
+)->group('AbstractContext', 'http');

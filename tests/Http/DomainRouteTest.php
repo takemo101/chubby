@@ -60,7 +60,7 @@ describe(
                     $mock,
                 );
 
-                $context = DomainRouteContext::fromServerRequest($mock?->actualRequest);
+                $context = DomainRouteContext::fromRequest($mock?->actualRequest);
 
                 foreach ($routeArguments as $key => $argument) {
                     expect($context->getArguments()[$key])->toEqual($argument);

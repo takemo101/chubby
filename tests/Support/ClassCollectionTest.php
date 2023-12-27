@@ -67,5 +67,80 @@ describe(
 
             expect($collection->classes())->toEqual([]);
         });
+
+        it('can set classes to the collection', function () {
+            $collection = new class() extends ClassCollection
+            {
+                //
+            };
+
+            $class1 = new class() extends stdClass
+            {
+                //
+            };
+
+            $class2 = new class() extends stdClass
+            {
+                //
+            };
+
+            $collection->set(stdClass::class, $class1, $class2);
+
+            expect($collection->classes())->toEqual([
+                stdClass::class,
+                $class1,
+                $class2,
+            ]);
+        });
+
+        it('can remove a class from the collection', function () {
+            $collection = new class() extends ClassCollection
+            {
+                //
+            };
+
+            $class1 = new class() extends stdClass
+            {
+                //
+            };
+
+            $class2 = new class() extends stdClass implements Stringable
+            {
+                public function __toString(): string
+                {
+                    return 'Class2';
+                }
+            };
+
+            $collection->add(stdClass::class, $class1, $class2);
+
+            $collection->remove(Stringable::class);
+
+            expect($collection->classes())->toEqual([
+                stdClass::class,
+                $class1,
+            ]);
+        });
+
+        it('throws an exception when removing a non-existent class', function () {
+            $collection = new class() extends ClassCollection
+            {
+                //
+            };
+
+            expect(fn () => $collection->remove('NonExistentClass'))
+                ->toThrow(RuntimeException::class, 'Class "NonExistentClass" does not exist.');
+        });
+
+        it('can create an empty collection using the static method', function () {
+            $collection = new class() extends ClassCollection
+            {
+                //
+            };
+
+            $actual = $collection::empty();
+
+            expect($actual->classes())->toBe([]);
+        });
     }
 )->group('ClassCollection', 'support');
