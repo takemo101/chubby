@@ -48,7 +48,7 @@ describe(
                     ->with(AbstractContext::ContextKey)
                     ->andReturn($context);
 
-                $actual = AbstractContext::fromServerRequest($request);
+                $actual = AbstractContext::fromRequest($request);
 
                 expect($actual)->toBe($context);
             }
@@ -64,7 +64,7 @@ describe(
                     ->andReturn(null);
 
                 expect(function () use ($request) {
-                    AbstractContext::fromServerRequest($request);
+                    AbstractContext::fromRequest($request);
                 })->toThrow(ContextException::class);
             }
         );
@@ -87,7 +87,7 @@ describe(
                     ->andReturn($context);
 
                 expect(function () use ($request) {
-                    AbstractContext::fromServerRequest($request, function () {
+                    AbstractContext::fromRequest($request, function () {
                         return new class() extends AbstractContext
                         {
                             public function __construct()

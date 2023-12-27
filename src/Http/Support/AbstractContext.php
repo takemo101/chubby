@@ -48,7 +48,7 @@ abstract class AbstractContext
      * @return static
      * @throws ContextException
      */
-    public static function fromServerRequest(
+    public static function fromRequest(
         ServerRequestInterface $request,
         ?Closure $factory = null,
     ): static {
