@@ -17,7 +17,7 @@ class StaticRenderer extends AbstractStreamRenderer
      */
     private function getMimeTypeGuesser(): MimeTypeGuesser
     {
-        /** @var MimeTypeGuesser */
+        /** @var MimeTypeGuesser<SplFileInfo|string> */
         $guesser = $this->getContainer()->get(MimeTypeGuesser::class);
 
         return $guesser;
