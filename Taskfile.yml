@@ -19,6 +19,13 @@ tasks:
     cmds:
       - docker-compose run --rm composer {{default "--version" .CLI_ARGS}}
 
+  change-ver:
+    requires:
+      vars: [ver, package]
+    cmds:
+      - docker-compose run --rm composer remove {{.package}}
+      - docker-compose run --rm composer require {{.package}}:{{.ver}}
+
   start:
     cmds:
       - docker-compose up -d chubby-app
