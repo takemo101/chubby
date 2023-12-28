@@ -6,7 +6,6 @@ use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Illuminate\Support\Arr;
 use Takemo101\Chubby\Filesystem\PathHelper;
-use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 /**
  * config repository
