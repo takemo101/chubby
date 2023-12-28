@@ -3,11 +3,26 @@
 namespace Takemo101\Chubby\Http\Renderer;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
 use SplFileInfo;
-use Takemo101\Chubby\Filesystem\Mime\FinfoMimeTypeGuesser;
+use LogicException;
 
 class StaticRenderer extends AbstractStreamRenderer
 {
+    /**
+     * Get the MimeTypeGuesser implementation.
+     *
+     * @return MimeTypeGuesser<SplFileInfo|string>
+     * @throws LogicException
+     */
+    private function getMimeTypeGuesser(): MimeTypeGuesser
+    {
+        /** @var MimeTypeGuesser */
+        $guesser = $this->getContainer()->get(MimeTypeGuesser::class);
+
+        return $guesser;
+    }
+
     /**
      * Get content type to be rendered.
      *
@@ -22,10 +37,8 @@ class StaticRenderer extends AbstractStreamRenderer
         $data = $this->getData();
 
         if ($data instanceof SplFileInfo) {
-            $guesser = new FinfoMimeTypeGuesser();
-
-            if ($guessMimeType = $guesser->guess($data)) {
-                return $guessMimeType;
+            if ($mimeType = $this->getMimeTypeGuesser()->guess($data)) {
+                return $mimeType;
             }
         }
 

@@ -2,6 +2,8 @@
 
 namespace Takemo101\Chubby\Filesystem;
 
+use SplFileInfo;
+
 /**
  * Local Filesystem
  */
@@ -208,10 +210,10 @@ interface LocalFilesystem
     /**
      * Get file mimetype
      *
-     * @param string $path
+     * @param SplFileInfo|string $path
      * @return null|string
      */
-    public function mimeType(string $path): ?string;
+    public function mimeType(SplFileInfo|string $path): ?string;
 
     /**
      * Get a hash of the file path.

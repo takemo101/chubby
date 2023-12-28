@@ -3,7 +3,9 @@
 namespace Tests\Filesystem;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Symfony\Component\Mime\MimeTypes;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
+use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
@@ -28,7 +30,11 @@ class FilesystemTestCase extends BaseTestCase
      */
     public function setUpLocalFilesystem(): void
     {
-        $this->filesystem = new SymfonyLocalFilesystem();
+        $this->filesystem = new SymfonyLocalFilesystem(
+            new SymfonyMimeTypeGuesser(
+                MimeTypes::getDefault(),
+            )
+        );
     }
 
     /**

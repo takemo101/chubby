@@ -162,7 +162,9 @@ describe(
         test(
             'Set the value of config',
             function (array $excepted) {
-                $repository = new ConfigPhpRepository();
+                /** @var ConfigTestCase $this */
+
+                $repository = $this->createMockConfigRepository();
 
                 foreach ($excepted as $key => $value) {
                     $repository->set($key, $value);
@@ -189,7 +191,9 @@ describe(
         test(
             'merge config values',
             function (array $expected) {
-                $repository = new ConfigPhpRepository();
+                /** @var ConfigTestCase $this */
+
+                $repository = $this->createMockConfigRepository();
 
                 foreach ($expected as $key => $value) {
                     $repository->merge($key, $value);
@@ -233,13 +237,15 @@ describe(
         test(
             'should merge data for the specified key',
             function () use ($config) {
+                /** @var ConfigTestCase $this */
+
                 $key = 'app';
                 $value = [
                     'debug' => false,
                     'timezone' => 'UTC',
                 ];
 
-                $repository = new ConfigPhpRepository();
+                $repository = $this->createMockConfigRepository();
                 $repository->set($key, $config[$key]);
 
                 $repository->merge($key, $value);
@@ -259,6 +265,8 @@ describe(
         test(
             'should merge data for the specified key without overwriting existing values',
             function () use ($config) {
+                /** @var ConfigTestCase $this */
+
                 $key = 'database';
                 $value = [
                     'host' => 'test',
@@ -267,7 +275,7 @@ describe(
                     'password' => 'password',
                 ];
 
-                $repository = new ConfigPhpRepository();
+                $repository = $this->createMockConfigRepository();
                 $repository->set($key, $config[$key]);
 
                 $repository->merge($key, $value, false);

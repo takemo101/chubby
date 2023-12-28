@@ -74,6 +74,18 @@ hook()
             )->setName('image');
 
             $http->get(
+                '/script',
+                function () {
+                    return new HtmlRenderer(
+                        <<<HTML
+                            <script src="/static/sample.js"></script>
+                            <link rel="stylesheet" href="/static/sample.css" />
+                        HTML
+                    );
+                },
+            )->setName('script');
+
+            $http->get(
                 '/domain',
                 function (ResponseInterface $response, string $domain) {
                     $response
