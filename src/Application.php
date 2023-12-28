@@ -15,6 +15,8 @@ use Invoker\InvokerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Bootstrap\Provider\EnvironmentProvider;
@@ -29,6 +31,8 @@ use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
 use Takemo101\Chubby\Container\InstantContainer;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
+use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
+use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
@@ -44,7 +48,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.20';
+    public const Version = '0.0.21';
 
     /**
      * @var Container|null
@@ -62,12 +66,12 @@ class Application implements ApplicationContainer
      * @param ApplicationPath $path
      * @param Bootstrap $bootstrap
      * @param ContainerBuilder<Container> $builder
+     * @param InstantContainer $instantContainer
      */
     public function __construct(
         private readonly ApplicationPath $path,
         private readonly Bootstrap $bootstrap,
         private readonly ContainerBuilder $builder,
-        private readonly LocalFilesystem $filesystem = new SymfonyLocalFilesystem(),
         private readonly InstantContainer $instantContainer = new InstantContainer(),
     ) {
         $this->initialize(
@@ -88,6 +92,9 @@ class Application implements ApplicationContainer
         ContainerBuilder $builder,
     ): void {
         $pathHelper = new PathHelper();
+        $mimeTypes = MimeTypes::getDefault();
+        $mimeTypeGuesser = new SymfonyMimeTypeGuesser($mimeTypes);
+        $filesystem = new SymfonyLocalFilesystem($mimeTypeGuesser);
 
         $this->instantContainer
             ->add($this)
@@ -97,7 +104,7 @@ class Application implements ApplicationContainer
             )
             ->add($this->bootstrap)
             ->add(
-                $this->filesystem,
+                $filesystem,
                 LocalFilesystem::class,
             )
             ->add($this->path)
@@ -136,7 +143,10 @@ class Application implements ApplicationContainer
                     );
                 },
                 PathHelper::class => fn () => $pathHelper,
-                LocalFilesystem::class => $this->filesystem,
+                LocalFilesystem::class => $filesystem,
+                MimeTypeGuesser::class => $mimeTypeGuesser,
+                MimeTypes::class => $mimeTypes,
+                MimeTypeGuesserInterface::class => get(MimeTypes::class),
             ],
         );
     }

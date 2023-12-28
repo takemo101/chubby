@@ -3,7 +3,10 @@
 namespace Tests\Config;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Symfony\Component\Mime\MimeTypes;
 use Takemo101\Chubby\Config\ConfigPhpRepository;
+use Takemo101\Chubby\Filesystem\Mime\MockMimeTypeGuesser;
+use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 
 class ConfigTestCase extends BaseTestCase
@@ -28,8 +31,26 @@ class ConfigTestCase extends BaseTestCase
     public function setUpConfigRepository(): void
     {
         $this->repository = new ConfigPhpRepository(
-            new SymfonyLocalFilesystem(),
+            new SymfonyLocalFilesystem(
+                new SymfonyMimeTypeGuesser(),
+            ),
             dirname(__DIR__, 1) . '/resource/config',
+        );
+    }
+
+    /**
+     * Create mock config repository.
+     *
+     * @param string|null $directory
+     * @return ConfigPhpRepository
+     */
+    public function createMockConfigRepository(?string $directory = null): ConfigPhpRepository
+    {
+        return new ConfigPhpRepository(
+            new SymfonyLocalFilesystem(
+                new MockMimeTypeGuesser(),
+            ),
+            $directory,
         );
     }
 

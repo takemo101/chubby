@@ -77,6 +77,13 @@ class InstantContainer implements ContainerInterface
             throw new InvalidArgumentException("[{$id}] is not found");
         }
 
+        if (isset($this->dependencies[$id])) {
+            /** @var T */
+            $instance = $this->dependencies[$id];
+
+            return $instance;
+        }
+
         /** @var T */
         $instance = $this->resolver->resolve($id, $this);
 

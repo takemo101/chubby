@@ -7,7 +7,7 @@ use Takemo101\Chubby\Http\Renderer\StaticRenderer;
 use Tests\AppTestCase;
 
 describe(
-    'stream response renderer',
+    'StreamRenderer',
     function () {
         test(
             'Converting file data to response with StaticRenderer',
@@ -18,7 +18,7 @@ describe(
                 $response = $this->createResponse();
 
                 $renderer = new StaticRenderer($file);
-                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+                $renderer->setContainer($this->getContainer());
 
                 $actual = $renderer->render($request, $response);
 
@@ -45,7 +45,7 @@ describe(
                 $response = $this->createResponse();
 
                 $renderer = new AttatchmentRenderer($file);
-                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+                $renderer->setContainer($this->getContainer());
 
                 $actual = $renderer->render($request, $response);
 
@@ -98,7 +98,7 @@ describe(
 
                 $renderer = StaticRenderer::fromPath(dirname(__DIR__, 1) . '/resource/asset/sample.jpeg');
 
-                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+                $renderer->setContainer($this->getContainer());
 
                 $renderer->enableAutoEtag();
 
@@ -120,7 +120,7 @@ describe(
 
                 $renderer = StaticRenderer::fromPath(dirname(__DIR__, 1) . '/resource/asset/sample.jpeg');
 
-                $renderer->setStreamFactory($this->getContainer()->get(StreamFactoryInterface::class));
+                $renderer->setContainer($this->getContainer());
 
                 $renderer->enableAutoLastModified();
 
@@ -131,4 +131,4 @@ describe(
             },
         )->skipOnWindows();
     }
-)->group('stream-renderer');
+)->group('StreamRenderer');

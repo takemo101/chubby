@@ -7,24 +7,25 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
-use Takemo101\Chubby\Contract\StreamFactoryInjectable;
 use SplFileInfo;
 use RuntimeException;
 use DateTime;
 use DateTimeZone;
+use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Contract\ContainerInjectable;
 
 /**
  * reference: https://github.com/symfony/http-foundation
  */
-abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactoryInjectable
+abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInjectable
 {
     /** @var string */
     public const DefaultContentType = 'application/octet-stream';
 
     /**
-     * @var StreamFactoryInterface|null
+     * @var ApplicationContainer|null
      */
-    private ?StreamFactoryInterface $streamFactory = null;
+    private ?ApplicationContainer $container = null;
 
     /**
      * @var boolean
@@ -198,24 +199,37 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, StreamFactory
     }
 
     /**
-     * Set the ssr17 stream factory implementation.
+     * Set the ApplicationContainer implementation.
      *
-     * @param StreamFactoryInterface $factory
+     * @param ApplicationContainer $container
      * @return void
      */
-    public function setStreamFactory(StreamFactoryInterface $factory): void
+    public function setContainer(ApplicationContainer $container): void
     {
-        $this->streamFactory = $factory;
+        $this->container = $container;
     }
 
     /**
-     * Get the ssr17 stream factory implementation.
+     * Get the ApplicationContainer implementation.
+     *
+     * @return ApplicationContainer
+     */
+    protected function getContainer(): ApplicationContainer
+    {
+        return $this->container ?? throw new RuntimeException('ApplicationContainer is not set.');
+    }
+
+    /**
+     * Get the StreamFactoryInterface implementation.
      *
      * @return StreamFactoryInterface
      */
-    public function getStreamFactory(): StreamFactoryInterface
+    private function getStreamFactory(): StreamFactoryInterface
     {
-        return $this->streamFactory ?? throw new RuntimeException('StreamFactoryInterface is not set.');
+        /** @var StreamFactoryInterface */
+        $streamFactory = $this->getContainer()->get(StreamFactoryInterface::class);
+
+        return $streamFactory;
     }
 
     /**

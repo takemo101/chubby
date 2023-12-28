@@ -5,7 +5,6 @@ namespace Takemo101\Chubby\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use Takemo101\Chubby\Filesystem\Mime\FinfoMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
 use SplFileInfo;
 
@@ -22,20 +21,14 @@ class SymfonyLocalFilesystem implements LocalFilesystem
     private SymfonyFilesystem $fs;
 
     /**
-     * @var MimeTypeGuesser<SplFileInfo>
-     */
-    private MimeTypeGuesser $mimeTypeGuesser;
-
-    /**
      * constructor
      *
-     * @param MimeTypeGuesser<SplFileInfo>|null $mimeTypeGuesser
+     * @param MimeTypeGuesser<SplFileInfo|string> $mimeTypeGuesser
      */
     public function __construct(
-        ?MimeTypeGuesser $mimeTypeGuesser = null
+        private MimeTypeGuesser $mimeTypeGuesser
     ) {
         $this->fs = new SymfonyFilesystem();
-        $this->mimeTypeGuesser = $mimeTypeGuesser ?? new FinfoMimeTypeGuesser();
     }
 
     /**
@@ -386,12 +379,12 @@ class SymfonyLocalFilesystem implements LocalFilesystem
     /**
      * Get file mimetype
      *
-     * @param string $path
+     * @param SplFileInfo|string $path
      * @return null|string
      */
-    public function mimeType(string $path): ?string
+    public function mimeType(SplFileInfo|string $path): ?string
     {
-        return $this->mimeTypeGuesser->guess(new SplFileInfo($path));
+        return $this->mimeTypeGuesser->guess($path);
     }
 
     /**
