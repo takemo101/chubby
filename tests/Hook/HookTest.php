@@ -30,7 +30,7 @@ describe(
 
                 $hook = new Hook();
 
-                $hook->onByType(function (HookTestProcess $object, ContainerInterface $container) {
+                $hook->onTyped(function (HookTestProcess $object, ContainerInterface $container) {
                     return $container->get(HookTestProcess::class);
                 });
 
@@ -157,9 +157,9 @@ describe(
                     return $data;
                 };
 
-                $hook->onByType($function);
+                $hook->onTyped($function);
 
-                $actual = $hook->doByType($data);
+                $actual = $hook->doTyped($data);
 
                 $expected = call_user_func($function, $expected);
 
@@ -181,9 +181,9 @@ describe(
                     $data->data = 10;
                 };
 
-                $hook->onByType($function);
+                $hook->onTyped($function);
 
-                $hook->doByType($data);
+                $hook->doTyped($data);
 
                 call_user_func($function, $expected);
 

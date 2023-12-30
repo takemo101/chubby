@@ -106,7 +106,7 @@ class LogProvider implements Provider
 
                     $factories = new LoggerHandlerFactoryCollection(...$handlerFactories);
 
-                    $hook->doByType($factories);
+                    $hook->doTyped($factories);
 
                     return $factories;
                 }

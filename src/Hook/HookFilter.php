@@ -2,11 +2,13 @@
 
 namespace Takemo101\Chubby\Hook;
 
+use Closure;
+
 // https://github.com/voku/php-hooks/blob/master/src/voku/helper/Hooks.php
 
 /**
  * hook filter
- * A collection of actions.
+ * A collection of callbacks.
  */
 class HookFilter
 {
@@ -16,25 +18,25 @@ class HookFilter
     public const DefaultPriority = 50;
 
     /**
-     * @var array<string,HookAction>
+     * @var Closure[]
      */
-    private array $actions = [];
+    private array $callbacks = [];
 
     /**
      * constructor
      *
      * @param integer $priority Filter priority
-     * @param HookAction ...$actions
+     * @param HookAction ...$callbacks
      */
     public function __construct(
         private int $priority = self::DefaultPriority,
-        HookAction ...$actions,
+        Closure ...$callbacks,
     ) {
-        $this->add(...$actions);
+        $this->add(...$callbacks);
     }
 
     /**
-     * Adjust action priority
+     * Adjust callback priority
      * If the array given as an argument contains priorities,
      * Increment the priority to adjust to a priority that is not included.
      *
@@ -56,53 +58,39 @@ class HookFilter
     }
 
     /**
-     * Add action
+     * Add callback
      *
-     * @param HookAction ...$actions
+     * @param Closure ...$callbacks
      * @return self
      */
-    public function add(HookAction ...$actions): self
+    public function add(Closure ...$callbacks): self
     {
-        foreach ($actions as $action) {
-            $this->actions[$action->getUniqueKey()] = $action;
-        }
+        $this->callbacks = [
+            ...$this->callbacks,
+            ...$callbacks,
+        ];
 
         return $this;
     }
 
     /**
-     * Delete target action.
-     *
-     * @param HookAction ...$actions
-     * @return self
-     */
-    public function remove(HookAction ...$actions): self
-    {
-        foreach ($actions as $action) {
-            unset($this->actions[$action->getUniqueKey()]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Check if there are any actions.
+     * Check if there are any callbacks.
      *
      * @return boolean
      */
     public function isEmpty(): bool
     {
-        return empty($this->actions);
+        return empty($this->callbacks);
     }
 
     /**
-     * Clear all actions.
+     * Clear all callbacks.
      *
      * @return self
      */
     public function clear(): self
     {
-        $this->actions = [];
+        $this->callbacks = [];
 
         return $this;
     }
@@ -112,7 +100,7 @@ class HookFilter
      *
      * @return integer
      */
-    public function priority(): int
+    public function getPriority(): int
     {
         return $this->priority;
     }
@@ -120,27 +108,29 @@ class HookFilter
     /**
      * getter
      *
-     * @return array<string,HookAction>
+     * @return Closure[]
      */
-    public function actions(): array
+    public function getCallbacks(): array
     {
-        return $this->actions;
+        return $this->callbacks;
     }
 
     /**
-     * Create filter from callable values.
+     * Create a filter instance from a callable.
      *
      * @param integer $priority
-     * @param string|mixed[]|object $function
+     * @param callable $function
      * @return self
      */
     public static function fromCallable(
-        int $priority,
-        string|array|object $function,
+        int $priority = self::DefaultPriority,
+        callable $function,
     ): self {
         return new self(
             priority: $priority,
-            action: new HookAction($function),
+            function: $function instanceof Closure
+                ? $function
+                : Closure::fromCallable($function),
         );
     }
 }

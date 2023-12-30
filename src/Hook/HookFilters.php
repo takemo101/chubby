@@ -43,28 +43,6 @@ class HookFilters
     }
 
     /**
-     * Remove filter from priority and callable values.
-     *
-     * @param integer ...$priority
-     * @param string|mixed[]|object $function
-     * @return self
-     */
-    public function remove(int $priority, string|array|object $function): self
-    {
-        $filter = $this->get($priority);
-
-        if ($filter = $this->get($priority)) {
-            $filter->remove(new HookAction($function));
-
-            if ($filter->isEmpty()) {
-                unset($this->filters[$priority]);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Check if there are any filters.
      *
      * @return boolean
