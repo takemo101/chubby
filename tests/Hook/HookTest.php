@@ -7,7 +7,7 @@ describe(
     'Hook',
     function () {
         test(
-            'Set filter or action processing for tags',
+            'Set action processing for tags',
             function (string $tag, callable $function) {
                 $hook = new Hook();
 
@@ -39,7 +39,7 @@ describe(
         );
 
         test(
-            'Delete all filters or actions for tags',
+            'Delete all actions for tags',
             function () {
 
                 $tag = 'tag';

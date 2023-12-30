@@ -7,10 +7,10 @@ use Closure;
 // https://github.com/voku/php-hooks/blob/master/src/voku/helper/Hooks.php
 
 /**
- * hook filter
+ * hook action
  * A collection of callbacks.
  */
-class HookFilter
+class HookAction
 {
     /**
      * @var integer
@@ -25,7 +25,7 @@ class HookFilter
     /**
      * constructor
      *
-     * @param integer $priority Filter priority
+     * @param integer $priority Action priority
      * @param HookAction ...$callbacks
      */
     public function __construct(
@@ -116,14 +116,14 @@ class HookFilter
     }
 
     /**
-     * Create a filter instance from a callable.
+     * Create a action instance from a callable.
      *
      * @param integer $priority
      * @param callable $function
      * @return self
      */
     public static function fromCallable(
-        int $priority = self::DefaultPriority,
+        int $priority,
         callable $function,
     ): self {
         return new self(
