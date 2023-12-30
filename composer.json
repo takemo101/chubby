@@ -18,6 +18,7 @@
     "nyholm/psr7-server": "^1.0",
     "php-di/invoker": "^2.3",
     "php-di/php-di": "^7.0",
+    "psr/event-dispatcher": "^1.0",
     "slim/slim": "4.*",
     "symfony/console": "^6.3",
     "symfony/error-handler": "^6.3",

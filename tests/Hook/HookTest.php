@@ -4,7 +4,7 @@ use Psr\Container\ContainerInterface;
 use Takemo101\Chubby\Hook\Hook;
 
 describe(
-    'hook',
+    'Hook',
     function () {
         test(
             'Set filter or action processing for tags',
@@ -39,26 +39,6 @@ describe(
         );
 
         test(
-            'Delete the set filter or action process',
-            function (string $tag, callable $function) {
-                $hook = new Hook();
-
-                $hook->on($tag, $function);
-
-                expect($hook->hasTag($tag))->toBeTrue();
-
-                $hook->remove($tag, $function);
-
-                expect($hook->hasTag($tag))->not->toBeTrue();
-            },
-        )->with([
-            ['tag01', fn (string $data) => $data],
-            ['tag02', new HookTestProcess()],
-            ['tag03', [new HookTestProcess(), '__invoke']],
-            [HookTestProcess::class, fn (HookTestProcess $data) => $data],
-        ]);
-
-        test(
             'Delete all filters or actions for tags',
             function () {
 
@@ -79,7 +59,7 @@ describe(
 
                 expect($hook->hasTag($tag))->toBeTrue();
 
-                $hook->removeAllByTag($tag);
+                $hook->remove($tag);
 
                 expect($hook->hasTag($tag))->not->toBeTrue();
             },

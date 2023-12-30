@@ -103,7 +103,7 @@ class Hook
      * @param string $tag
      * @return self
      */
-    public function removeTagged(string $tag): self
+    public function remove(string $tag): self
     {
         if (isset($this->filters[$tag])) {
             unset($this->filters[$tag]);
