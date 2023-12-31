@@ -3,7 +3,6 @@
 namespace Takemo101\Chubby\Http\Bridge;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Event\StoppableEvent;
 
 /**

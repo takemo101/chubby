@@ -4,7 +4,9 @@ namespace Takemo101\Chubby\Event;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
 
-use SplPriorityQueue as PriorityQueue;;
+use SplPriorityQueue as PriorityQueue;
+
+;
 
 class EventListenerProvider implements ListenerProviderInterface
 {
