@@ -26,7 +26,7 @@ class HookAction
      * constructor
      *
      * @param integer $priority Action priority
-     * @param HookAction ...$callbacks
+     * @param Closure ...$callbacks
      */
     public function __construct(
         private int $priority = self::DefaultPriority,
