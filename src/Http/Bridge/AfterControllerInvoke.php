@@ -14,7 +14,7 @@ class AfterControllerInvoke extends StoppableEvent
     /**
      * constructor
      *
-     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      */
     public function __construct(
         private ResponseInterface $response,

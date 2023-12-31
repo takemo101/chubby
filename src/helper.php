@@ -140,3 +140,16 @@ if (!function_exists('hook')) {
         return ServiceLocator::hook();
     }
 }
+
+if (!function_exists('event')) {
+    /**
+     * Dispatch event.
+     *
+     * @param object $event
+     * @return object
+     */
+    function event(object $event): object
+    {
+        return ServiceLocator::event()->dispatch($event);
+    }
+}
