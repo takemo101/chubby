@@ -39,13 +39,6 @@ class EventRegister implements Arrayable
         string|callable $classOrCallable,
         int $priority = PrioritizedListener::DefaultPriority,
     ): self {
-
-        if (!class_exists($event)) {
-            throw new InvalidArgumentException(
-                sprintf('Event "%s" does not exist.', $event),
-            );
-        }
-
         /**
          * Existing listener
          *
@@ -113,14 +106,14 @@ class EventRegister implements Arrayable
     /**
      * Create a instance from array
      *
-     * @param array<class-string,class-string<EventListener<object>>|class-string<EventListener<object>>[]> $map
+     * @param array<class-string,class-string<EventListener<object>>|class-string<EventListener<object>>[]> $listen
      * @return self
      */
-    public static function fromArray(array $map): self
+    public static function fromArray(array $listen): self
     {
         $instance = new self();
 
-        foreach ($map as $event => $class) {
+        foreach ($listen as $event => $class) {
             $classes = is_array($class) ? $class : [$class];
 
             foreach ($classes as $i => $c) {
