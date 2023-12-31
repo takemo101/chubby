@@ -6,6 +6,7 @@ use Invoker\InvokerInterface;
 use Takemo101\Chubby\Http\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
@@ -18,11 +19,15 @@ class ControllerInvoker implements InvocationStrategyInterface
      * constructor
      *
      * @param InvokerInterface $invoker
+     * @param ResponseTransformers $transformers
+     * @param Hook $hook
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         private InvokerInterface $invoker,
         private ResponseTransformers $transformers,
         private Hook $hook,
+        private EventDispatcherInterface $dispatcher,
     ) {
         //
     }
@@ -67,6 +72,10 @@ class ControllerInvoker implements InvocationStrategyInterface
             $transformedResponse,
         );
 
+        $this->dispatcher->dispatch(
+            new AfterControllerInvoke($hookedResponse),
+        );
+
         return $hookedResponse;
     }
 
@@ -97,6 +106,10 @@ class ControllerInvoker implements InvocationStrategyInterface
         $hookedRequest = $this->hook->do(
             ServerRequestInterface::class,
             $this->injectRouteArguments($request, $routeArguments),
+        );
+
+        $this->dispatcher->dispatch(
+            new BeforeControllerInvoke($hookedRequest),
         );
 
         $context = new Context(
