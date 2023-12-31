@@ -1,8 +1,7 @@
 <?php
 
-// Application basic settings
+// Event configuration
 
-use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Event\EventListenerProvider;
 

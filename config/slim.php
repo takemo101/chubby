@@ -1,6 +1,6 @@
 <?php
 
-// Slim framework related settings
+// Slim framework configuration
 
 use Takemo101\Chubby\Http\Configurer\DefaultSlimConfigurer;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
