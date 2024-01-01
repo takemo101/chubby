@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby\Console\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
@@ -9,20 +10,12 @@ use Takemo101\Chubby\Filesystem\LocalFilesystem;
 /**
  * Command to delete log files
  */
+#[AsCommand(
+    name: 'log:clean',
+    description: 'Delete log files',
+)]
 class LogCleanCommand extends Command
 {
-    /**
-     * Configures the current command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('log:clean')
-            ->setDescription('Delete log files');
-    }
-
     /**
      * Execute command process.
      *

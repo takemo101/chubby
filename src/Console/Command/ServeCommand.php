@@ -3,6 +3,7 @@
 namespace Takemo101\Chubby\Console\Command;
 
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,6 +17,10 @@ use Takemo101\Chubby\Support\ApplicationPath;
  * Use PHP's built-in web server.
  * reference: https://github.com/guiwoda/laravel-framework/blob/master/src/Illuminate/Foundation/Console/ServeCommand.php
  */
+#[AsCommand(
+    name: 'serve',
+    description: 'Use PHP\'s built-in web server.',
+)]
 class ServeCommand extends Command
 {
     /**
@@ -43,8 +48,6 @@ class ServeCommand extends Command
         $script = $env->get('SERVER_SCRIPT', '/index.php');
 
         $this
-            ->setName('serve')
-            ->setDescription("Use PHP's built-in web server")
             ->addOption(
                 name: 'port',
                 mode: InputOption::VALUE_OPTIONAL,
