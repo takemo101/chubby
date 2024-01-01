@@ -1,6 +1,6 @@
 <?php
 
-// Log basic settings
+// Log basic configuration
 
 use Monolog\Level;
 use Takemo101\Chubby\Log\Factory\ConsoleHandlerFactory;

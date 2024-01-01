@@ -2,26 +2,19 @@
 
 namespace Takemo101\Chubby\Console\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 use Takemo101\Chubby\Application;
 
 /**
  * Display version.
  */
+#[AsCommand(
+    name: 'version',
+    description: 'Display version.',
+)]
 class VersionCommand extends Command
 {
-    /**
-     * Configures the current command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('version')
-            ->setDescription('Display version');
-    }
-
     /**
      * Execute command process.
      *

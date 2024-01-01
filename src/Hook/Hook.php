@@ -7,7 +7,6 @@ use ReflectionFunction;
 use ReflectionNamedType;
 use Closure;
 use DI\Container;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class Hook
@@ -18,11 +17,11 @@ class Hook
      * constructor
      *
      * @param ContainerInterface $container
-     * @param array<string,HookFilters> $filters
+     * @param array<string,HookActions> $actions
      */
     public function __construct(
         ContainerInterface $container = new Container(),
-        private array $filters = []
+        private array $actions = []
     ) {
         $this->container = $container;
     }
@@ -31,25 +30,25 @@ class Hook
      * Added hook processing.
      *
      * @param string $tag
-     * @param string|mixed[]|object $function
+     * @param callable $function
      * @param integer $priority
      * @return self
      */
     public function on(
         string $tag,
-        string|array|object $function,
-        int $priority = HookFilter::DefaultPriority,
+        callable $function,
+        int $priority = HookAction::DefaultPriority,
     ): self {
-        if (isset($this->filters[$tag])) {
-            $this->filters[$tag]->add(
-                HookFilter::fromCallable(
+        if (isset($this->actions[$tag])) {
+            $this->actions[$tag]->add(
+                HookAction::fromCallable(
                     priority: $priority,
                     function: $function,
                 ),
             );
         } else {
-            $this->filters[$tag] = new HookFilters(
-                HookFilter::fromCallable(
+            $this->actions[$tag] = new HookActions(
+                HookAction::fromCallable(
                     priority: $priority,
                     function: $function,
                 ),
@@ -62,20 +61,18 @@ class Hook
     /**
      * Parse function arguments and add hooks.
      *
-     * @param string|mixed[]|object $function
+     * @param callable $function
      * @param integer $priority
      * @return self
      * @throws RuntimeException
      */
-    public function onByType(
-        string|array|object $function,
-        int $priority = HookFilter::DefaultPriority,
+    public function onTyped(
+        callable $function,
+        int $priority = HookAction::DefaultPriority,
     ): self {
-        if (!is_callable($function)) {
-            throw new InvalidArgumentException('The given value is not callable');
-        }
+        $callback = Closure::fromCallable($function);
 
-        $parameters = (new ReflectionFunction(Closure::fromCallable($function)))
+        $parameters = (new ReflectionFunction($callback))
             ->getParameters();
 
         if (!in_array(count($parameters), [1, 2])) {
@@ -95,41 +92,9 @@ class Hook
                 $type->isBuiltin() => $parameter->getName(),
                 default => $type->getName(),
             },
-            function: $function,
+            function: $callback,
             priority: $priority,
         );
-    }
-
-
-    /**
-     * Remove hook processing.
-     * Can be deleted by specifying tag, callable value and priority.
-     *
-     * @param string $tag
-     * @param string|mixed[]|object $function
-     * @param integer $priority
-     * @return self
-     */
-    public function remove(
-        string $tag,
-        string|array|object $function,
-        int $priority = HookFilter::DefaultPriority,
-    ): self {
-        if (isset($this->filters[$tag])) {
-
-            $filters = $this->filters[$tag];
-
-            $filters->remove(
-                priority: $priority,
-                function: $function,
-            );
-
-            if ($filters->isEmpty()) {
-                unset($this->filters[$tag]);
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -138,10 +103,10 @@ class Hook
      * @param string $tag
      * @return self
      */
-    public function removeAllByTag(string $tag): self
+    public function remove(string $tag): self
     {
-        if (isset($this->filters[$tag])) {
-            unset($this->filters[$tag]);
+        if (isset($this->actions[$tag])) {
+            unset($this->actions[$tag]);
         }
 
         return $this;
@@ -156,7 +121,7 @@ class Hook
      */
     public function hasTag(string $tag): bool
     {
-        return isset($this->filters[$tag]);
+        return isset($this->actions[$tag]);
     }
 
     /**
@@ -169,19 +134,19 @@ class Hook
      */
     public function do(string $tag, $parameter): mixed
     {
-        if (!isset($this->filters[$tag])) {
+        if (!isset($this->actions[$tag])) {
             return $parameter;
         }
 
         $result = $parameter;
 
-        $filters = $this->filters[$tag];
+        $actions = $this->actions[$tag];
 
-        foreach ($filters->all() as $filter) {
-            foreach ($filter->actions() as $action) {
+        foreach ($actions->all() as $filter) {
+            foreach ($filter->getCallbacks() as $callback) {
 
                 $result = call_user_func_array(
-                    $action->getCallable(),
+                    $callback,
                     // Pass initial parameters if filter output is null
                     [$result ?? $parameter, $this->container],
                 );
@@ -199,7 +164,7 @@ class Hook
      * @param object $object
      * @return mixed
      */
-    public function doByType(object $object): mixed
+    public function doTyped(object $object): mixed
     {
         $type = get_class($object);
 

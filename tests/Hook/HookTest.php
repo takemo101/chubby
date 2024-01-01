@@ -4,10 +4,10 @@ use Psr\Container\ContainerInterface;
 use Takemo101\Chubby\Hook\Hook;
 
 describe(
-    'hook',
+    'Hook',
     function () {
         test(
-            'Set filter or action processing for tags',
+            'Set action processing for tags',
             function (string $tag, callable $function) {
                 $hook = new Hook();
 
@@ -30,7 +30,7 @@ describe(
 
                 $hook = new Hook();
 
-                $hook->onByType(function (HookTestProcess $object, ContainerInterface $container) {
+                $hook->onTyped(function (HookTestProcess $object, ContainerInterface $container) {
                     return $container->get(HookTestProcess::class);
                 });
 
@@ -39,27 +39,7 @@ describe(
         );
 
         test(
-            'Delete the set filter or action process',
-            function (string $tag, callable $function) {
-                $hook = new Hook();
-
-                $hook->on($tag, $function);
-
-                expect($hook->hasTag($tag))->toBeTrue();
-
-                $hook->remove($tag, $function);
-
-                expect($hook->hasTag($tag))->not->toBeTrue();
-            },
-        )->with([
-            ['tag01', fn (string $data) => $data],
-            ['tag02', new HookTestProcess()],
-            ['tag03', [new HookTestProcess(), '__invoke']],
-            [HookTestProcess::class, fn (HookTestProcess $data) => $data],
-        ]);
-
-        test(
-            'Delete all filters or actions for tags',
+            'Delete all actions for tags',
             function () {
 
                 $tag = 'tag';
@@ -79,7 +59,7 @@ describe(
 
                 expect($hook->hasTag($tag))->toBeTrue();
 
-                $hook->removeAllByTag($tag);
+                $hook->remove($tag);
 
                 expect($hook->hasTag($tag))->not->toBeTrue();
             },
@@ -157,9 +137,9 @@ describe(
                     return $data;
                 };
 
-                $hook->onByType($function);
+                $hook->onTyped($function);
 
-                $actual = $hook->doByType($data);
+                $actual = $hook->doTyped($data);
 
                 $expected = call_user_func($function, $expected);
 
@@ -181,9 +161,9 @@ describe(
                     $data->data = 10;
                 };
 
-                $hook->onByType($function);
+                $hook->onTyped($function);
 
-                $hook->doByType($data);
+                $hook->doTyped($data);
 
                 call_user_func($function, $expected);
 

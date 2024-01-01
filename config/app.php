@@ -1,6 +1,6 @@
 <?php
 
-// Application basic settings
+// Application basic configuration
 
 use Takemo101\Chubby\Application;
 

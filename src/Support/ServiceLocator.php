@@ -2,9 +2,9 @@
 
 namespace Takemo101\Chubby\Support;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
@@ -153,5 +153,18 @@ class ServiceLocator
         $hook = self::container()->get(Hook::class);
 
         return $hook;
+    }
+
+    /**
+     * Get event dispatcher.
+     *
+     * @return EventDispatcherInterface
+     */
+    public static function event(): EventDispatcherInterface
+    {
+        /** @var EventDispatcherInterface */
+        $event = self::container()->get(EventDispatcherInterface::class);
+
+        return $event;
     }
 }

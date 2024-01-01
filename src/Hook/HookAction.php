@@ -3,73 +3,134 @@
 namespace Takemo101\Chubby\Hook;
 
 use Closure;
-use InvalidArgumentException;
+
+// https://github.com/voku/php-hooks/blob/master/src/voku/helper/Hooks.php
 
 /**
- * Action data executed by hook
+ * hook action
+ * A collection of callbacks.
  */
 class HookAction
 {
-    /** @var string */
-    public const ClassSeparator = '@';
+    /**
+     * @var integer
+     */
+    public const DefaultPriority = 50;
 
     /**
-     * construct
+     * @var Closure[]
+     */
+    private array $callbacks = [];
+
+    /**
+     * constructor
      *
-     * @param string|mixed[]|object $function
-     * @throws InvalidArgumentException
+     * @param integer $priority Action priority
+     * @param Closure ...$callbacks
      */
     public function __construct(
-        private string|array|object $function,
+        private int $priority = self::DefaultPriority,
+        Closure ...$callbacks,
     ) {
-        if (!is_callable($function)) {
-            throw new InvalidArgumentException('The given value is not callable');
-        }
+        $this->add(...$callbacks);
     }
 
     /**
-     * Get keys from callable values
+     * Adjust callback priority
+     * If the array given as an argument contains priorities,
+     * Increment the priority to adjust to a priority that is not included.
      *
-     * @return string
+     * @param array<integer,mixed> $array Base array
+     * @return integer
      */
-    public function getUniqueKey(): string
+    public function adjustPriority(array $array): int
     {
-        $function = $this->function;
+        $priority = $this->priority;
 
-        if (is_string($function)) {
-            return $function;
+        while (true) {
+            if (!isset($array[$priority])) {
+                break;
+            }
+            $priority++;
         }
 
-        if (is_object($function)) {
-            return spl_object_hash($function);
-        }
-
-        return (is_object($function[0])
-            ? spl_object_hash($function[0])
-            : $function[0]
-        ) . self::ClassSeparator . $function[1];
+        return $this->priority = $priority;
     }
 
     /**
-     * Get callable
+     * Add callback
      *
-     * @return callable
+     * @param Closure ...$callbacks
+     * @return self
      */
-    public function getCallable(): callable
+    public function add(Closure ...$callbacks): self
     {
-        /** @var callable */
-        $callable = $this->function;
+        $this->callbacks = [
+            ...$this->callbacks,
+            ...$callbacks,
+        ];
 
-        return Closure::fromCallable($callable);
+        return $this;
     }
 
     /**
-     * Get original value.
+     * Check if there are any callbacks.
      *
-     * @return string|mixed[]|object
+     * @return boolean
      */
-    public function original(): string|array|object
+    public function isEmpty(): bool
     {
-        return $this->function;
+        return empty($this->callbacks);
+    }
+
+    /**
+     * Clear all callbacks.
+     *
+     * @return self
+     */
+    public function clear(): self
+    {
+        $this->callbacks = [];
+
+        return $this;
+    }
+
+    /**
+     * getter
+     *
+     * @return integer
+     */
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    /**
+     * getter
+     *
+     * @return Closure[]
+     */
+    public function getCallbacks(): array
+    {
+        return $this->callbacks;
+    }
+
+    /**
+     * Create a action instance from a callable.
+     *
+     * @param integer $priority
+     * @param callable $function
+     * @return self
+     */
+    public static function fromCallable(
+        int $priority,
+        callable $function,
+    ): self {
+        return new self(
+            priority: $priority,
+            function: $function instanceof Closure
+                ? $function
+                : Closure::fromCallable($function),
+        );
     }
 }

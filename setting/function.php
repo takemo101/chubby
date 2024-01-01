@@ -20,7 +20,7 @@ use Takemo101\Chubby\Http\SlimHttpAdapter;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 hook()
-    ->onByType(
+    ->onTyped(
         function (SlimHttpAdapter $http) {
 
             $http->get(
@@ -130,7 +130,7 @@ hook()
             );
         },
     )
-    ->onByType(
+    ->onTyped(
         function (DomainRouter $router) {
             $router->route(
                 'localhost',
