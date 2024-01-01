@@ -9,7 +9,6 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Event\EventDispatcher;
-use Takemo101\Chubby\Event\EventListener;
 use Takemo101\Chubby\Event\EventListenerProvider;
 use Takemo101\Chubby\Event\EventRegister;
 use Takemo101\Chubby\Hook\Hook;
@@ -38,7 +37,7 @@ class EventProvider implements Provider
                     ConfigRepository $config,
                     Hook $hook,
                 ) {
-                    /** @var array<class-string,class-string<EventListener<object>>|class-string<EventListener<object>>[]> */
+                    /** @var class-string[] */
                     $listen = $config->get('event.listen', []);
 
                     $register = EventRegister::fromArray($listen);

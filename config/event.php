@@ -12,9 +12,8 @@ return [
     // ListenerProviderInterface implementation class name
     'provider' => EventListenerProvider::class,
 
-    // Events and listeners mapping
-    // Event class name => [Listner class name, ...] or listener class name
+    // Event listing class name array
     'listen' => [
-        // class-string => class-string<EventListener>
+        // class-string<object&callable>
     ]
 ];

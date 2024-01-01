@@ -1,174 +1,175 @@
 <?php
 
-use Takemo101\Chubby\Event\ClosureListener;
-use Takemo101\Chubby\Event\EventListener;
 use Takemo101\Chubby\Event\EventRegister;
+use Takemo101\Chubby\Event\EventMapExtractor;
 use Takemo101\Chubby\Event\PrioritizedListener;
-use Takemo101\Chubby\Event\StoppableEvent;
+use Mockery as m;
 
 describe(
     'EventRegister',
     function () {
-        it(
-            'should register a listener for the event',
-            function (
-                $event,
-                $listener,
-                $priority,
-            ) {
-
-                $listener = is_callable($listener)
-                    ? ClosureListener::from($listener)
-                    : $listener;
-
-                $register = new EventRegister();
-
-                $register->on($event, $listener, $priority);
-
-                $listeners = $register->get($event);
-
-                expect($listeners)->toBeArray();
-                expect(count($listeners))->toBe(1);
-
-                $prioritizedListener = $listeners[0];
-                expect($prioritizedListener)->toBeInstanceOf(PrioritizedListener::class);
-                expect($prioritizedListener->listener)->toBe($listener);
-                expect($prioritizedListener->priority)->toBe($priority);
-            }
-        )->with([
-            [
-                stdClass::class,
-                new class implements EventListener
-                {
-                    public function __invoke(object $event): void
-                    {
-                        //
-                    }
-                },
-                10
-            ],
-            [
-                stdClass::class,
-                TestEventListener::class,
-                20
-            ],
-            [
-                stdClass::class,
-                fn () => fn (object $event) => null,
-                30
-            ],
-        ]);
-
-        it('should check if the event has a listener', function () {
-
-            $register = new EventRegister();
-
-            $event =  stdClass::class;
-            $listener = TestEventListener::class;
-            $priority = 10;
-
-            $register->on($event, $listener, $priority);
-
-            expect($register->has($event))->toBeTrue();
-            expect($register->has('nonexistent_event'))->toBeFalse();
+        beforeEach(function () {
+            $this->extractor = m::mock(EventMapExtractor::class);
+            $this->eventRegister = new EventRegister($this->extractor);
         });
 
-        it('should remove a listener for the event', function () {
+        it('should register a listener for the event', function () {
+            $listener = EventRegisterTestListener::class;
 
-            $register = new EventRegister();
+            $map = [
+                'event1' => [
+                    new PrioritizedListener(
+                        classOrObject: $listener,
+                        priority: 0,
+                    ),
+                ],
+                'event2' => [
+                    new PrioritizedListener(
+                        classOrObject: $listener,
+                        priority: 1,
+                    ),
+                ],
+            ];
 
-            $event =  stdClass::class;
-            $listener = TestEventListener::class;
-            $priority = 10;
+            $this->extractor->shouldReceive('extract')
+                ->with($listener)
+                ->andReturn($map);
 
-            $register->on($event, $listener, $priority);
+            $this->eventRegister->on($listener);
 
-            expect($register->has($event))->toBeTrue();
-
-            $register->remove($event);
-
-            expect($register->has($event))->toBeFalse();
+            expect($this->eventRegister->get('event1'))->toBe($map['event1']);
+            expect($this->eventRegister->get('event2'))->toBe($map['event2']);
         });
 
-        it('should convert to an array', function () {
+        it('should throw an exception if the listener is invalid', function () {
+            $listener = 'Invalid\Listener';
 
-            $register = new EventRegister();
+            $eventRegister = new EventRegister();
 
-            $event1 =  stdClass::class;
-            $listener1 = TestEventListener::class;
-            $priority1 = 10;
+            expect(fn () => $eventRegister->on($listener))
+                ->toThrow(InvalidArgumentException::class);
+        });
 
-            $event2 =  TestEvent::class;
-            $listener2 = fn (object $event) => null;
-            $priority2 = 10;
+        it('should register a listener for the event with priority', function () {
+            $event = 'event1';
+            $listener1 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+            $listener2 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 1,
+            );
 
-            $register->on($event1, $listener1, $priority1);
-            $register->on($event2, $listener2, $priority2);
+            $this->eventRegister->listen($event, $listener1, $listener2);
 
-            $array = $register->toArray();
+            expect($this->eventRegister->get($event))->toEqual([$listener1, $listener2]);
+        });
 
-            expect($array)->toBeArray();
-            expect(count($array))->toBe(2);
-            expect($array[$event1])->toBeArray();
-            expect($array[$event2])->toBeArray();
-            expect(count($array[$event1]))->toBe(1);
-            expect(count($array[$event2]))->toBe(1);
+        it('should return the listeners for the event', function () {
+            $event = 'event1';
+            $listener1 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+            $listener2 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 1,
+            );
 
-            $prioritizedListener1 = $array[$event1][0];
-            expect($prioritizedListener1)->toBeInstanceOf(PrioritizedListener::class);
-            expect($prioritizedListener1->listener)->toBe($listener1);
-            expect($prioritizedListener1->priority)->toBe($priority1);
+            $this->eventRegister->listen($event, $listener1, $listener2);
 
-            $prioritizedListener2 = $array[$event2][0];
-            expect($prioritizedListener2)->toBeInstanceOf(PrioritizedListener::class);
-            expect($prioritizedListener2->listener)->toBeInstanceOf(ClosureListener::class);
-            expect($prioritizedListener2->priority)->toBe($priority2);
+            expect($this->eventRegister->get($event))->toEqual([$listener1, $listener2]);
+        });
+
+        it('should return an empty array if the event has no listeners', function () {
+            $event = 'event1';
+
+            expect($this->eventRegister->get($event))->toEqual([]);
+        });
+
+        it('should return true if the event has listeners', function () {
+            $event = 'event1';
+            $listener = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+
+            $this->eventRegister->listen($event, $listener);
+
+            expect($this->eventRegister->has($event))->toBeTrue();
+        });
+
+        it('should return false if the event has no listeners', function () {
+            $event = 'event1';
+
+            expect($this->eventRegister->has($event))->toBeFalse();
+        });
+
+        it('should remove the listeners for the event', function () {
+            $event = 'event1';
+            $listener = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+
+            $this->eventRegister->listen($event, $listener);
+
+            expect($this->eventRegister->has($event))->toBeTrue();
+
+            $this->eventRegister->remove($event);
+
+            expect($this->eventRegister->has($event))->toBeFalse();
+        });
+
+        it('should return the listeners as an array', function () {
+            $event1 = 'event1';
+            $listener1 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+            $listener2 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 1,
+            );
+
+            $event2 = 'event2';
+            $listener3 = new PrioritizedListener(
+                classOrObject: EventRegisterTestListener::class,
+                priority: 0,
+            );
+
+            $this->eventRegister->listen($event1, $listener1, $listener2);
+            $this->eventRegister->listen($event2, $listener3);
+
+            $expected = [
+                $event1 => [$listener1, $listener2],
+                $event2 => [$listener3],
+            ];
+
+            expect($this->eventRegister->toArray())->toEqual($expected);
         });
 
         it('should create an instance from an array', function () {
-            $event1 =  stdClass::class;
-            $listener1 = TestEventListener::class;
+            $event1 = 'event1';
+            $event2 = 'event2';
 
-            $event2 =  TestEvent::class;
-            $listener2 = fn (object $event) => null;
+            $listen = [EventRegisterTestListener::class];
 
-            $array = [
-                $event1 => $listener1,
-                $event2 => $listener2,
-            ];
+            $instance = EventRegister::fromArray($listen);
 
-            $register = EventRegister::fromArray($array);
-
-            expect($register)->toBeInstanceOf(EventRegister::class);
-
-            $listeners1 = $register->get($event1);
-            expect($listeners1)->toBeArray();
-            expect(count($listeners1))->toBe(1);
-
-            $prioritizedListener1 = $listeners1[0];
-            expect($prioritizedListener1)->toBeInstanceOf(PrioritizedListener::class);
-            expect($prioritizedListener1->listener)->toBe($listener1);
-
-            $listeners2 = $register->get($event2);
-            expect($listeners2)->toBeArray();
-            expect(count($listeners2))->toBe(1);
-
-            $prioritizedListener2 = $listeners2[0];
-            expect($prioritizedListener2)->toBeInstanceOf(PrioritizedListener::class);
-            expect($prioritizedListener2->listener)->toBeInstanceOf(ClosureListener::class);
+            expect($instance)->toBeInstanceOf(EventRegister::class);
+            expect($instance->get($event1))->toEqual([]);
+            expect($instance->get($event2))->toEqual([]);
         });
     }
 )->group('EventRegister', 'event');
 
-class TestEventListener implements EventListener
+
+class EventRegisterTestListener
 {
-    public function __invoke(object $event): void
+    public function __invoke(stdClass $event)
     {
         //
     }
-}
-
-class TestEvent extends StoppableEvent
-{
-    //
 }

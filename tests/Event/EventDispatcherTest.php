@@ -1,9 +1,8 @@
 <?php
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\EventDispatcher\StoppableEventInterface;
 use Takemo101\Chubby\Event\EventDispatcher;
+use Takemo101\Chubby\Event\StoppableEvent;
 use Mockery as m;
 
 describe(
@@ -18,51 +17,64 @@ describe(
         it('should dispatch event to listeners', function () {
             $event = new stdClass();
 
-            $listener1 = m::mock(TestEventListener::class);
-            $listener2 = m::mock(TestEventListener::class);
+            $listener1 = new class
+            {
+                public function __invoke(stdClass $event)
+                {
+                    //
+                }
+            };
+            $listener2 = new class
+            {
+                public function __invoke(stdClass $event)
+                {
+                    //
+                }
+            };
 
             $this->provider->shouldReceive('getListenersForEvent')
                 ->once()
                 ->with($event)
                 ->andReturn([$listener1, $listener2]);
 
-            $listener1->shouldReceive('__invoke')
-                ->once()
-                ->with($event);
+            $actual = $this->dispatcher->dispatch($event);
 
-            $listener2->shouldReceive('__invoke')
-                ->once()
-                ->with($event);
-
-            $result = $this->dispatcher->dispatch($event);
-
-            expect($result)->toBe($event);
+            expect($actual)->toBe($event);
         });
 
         it('should stop propagation if event is stoppable', function () {
-            $event = m::mock(StoppableEventInterface::class);
+            $event = new class() extends StoppableEvent
+            {
+                //
+            };
 
-            $listener1 = m::mock(TestEventListener::class);
-            $listener2 = m::mock(TestEventListener::class);
+            $listener1 = new class
+            {
+                public function __invoke(StoppableEvent $event)
+                {
+                    $event->stopPropagation();
+                }
+            };
+            $listener2 =  m::mock(EventDispatcherTestListener::class);
 
             $this->provider->shouldReceive('getListenersForEvent')
                 ->once()
                 ->with($event)
                 ->andReturn([$listener1, $listener2]);
 
-            $listener1->shouldReceive('__invoke')
-                ->once()
-                ->with($event);
-
-            $event->shouldReceive('isPropagationStopped')
-                ->once()
-                ->andReturn(true);
-
             $listener2->shouldNotReceive('__invoke');
 
-            $result = $this->dispatcher->dispatch($event);
+            $actual = $this->dispatcher->dispatch($event);
 
-            expect($result)->toBe($event);
+            expect($actual)->toBe($event);
         });
     }
 )->group('EventDispatcher', 'event');
+
+class EventDispatcherTestListener
+{
+    public function __invoke(StoppableEvent $event)
+    {
+        //
+    }
+}

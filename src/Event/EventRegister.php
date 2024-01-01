@@ -2,8 +2,8 @@
 
 namespace Takemo101\Chubby\Event;
 
-use InvalidArgumentException;
 use Takemo101\Chubby\Contract\Arrayable;
+use InvalidArgumentException;
 
 /**
  * Event register
@@ -15,9 +15,11 @@ class EventRegister implements Arrayable
     /**
      * constructor
      *
+     * @param EventMapExtractor $extractor
      * @param array<class-string,PrioritizedListener[]> $map
      */
     public function __construct(
+        private EventMapExtractor $extractor = new EventMapExtractor(),
         private array $map = [],
     ) {
         //
@@ -25,35 +27,44 @@ class EventRegister implements Arrayable
 
     /**
      * Register a listener for the event
+     * Give the names of classes and their instances that implement Closure and __invoke as a listener.
+     * It is not possible to specify an array or function name as a Callable value.
      *
-     * @template T of object
-     *
-     * @param class-string<T> $event
-     * @param class-string<EventListener<T>>|callable(T):void $classOrCallable
-     * @param int $priority
+     * @param class-string|object $listener
      * @return self
      * @throws InvalidArgumentException
      */
     public function on(
-        string $event,
-        string|callable $classOrCallable,
-        int $priority = PrioritizedListener::DefaultPriority,
+        string|object $listener,
     ): self {
-        /**
-         * Existing listener
-         *
-         * @var PrioritizedListener[]
-         */
-        $existing = $this->map[$event] ?? [];
+        $map = $this->extractor->extract($listener);
 
-        $prioritized = PrioritizedListener::from(
-            $classOrCallable, // @phpstan-ignore-line
-            $priority,
-        );
+        foreach ($map as $event => $prioritized) {
 
-        $existing[] = $prioritized;
+            $this->listen($event, ...$prioritized);
+        }
 
-        $this->map[$event] = $existing;
+        return $this;
+    }
+
+    /**
+     * Register a listener for the event with priority
+     *
+     * @param class-string $event
+     * @param PrioritizedListener ...$listeners
+     * @return self
+     */
+    public function listen(
+        string $event,
+        PrioritizedListener ...$listeners,
+    ): self {
+
+        $exists = $this->map[$event] ?? [];
+
+        $this->map[$event] = [
+            ...$exists,
+            ...$listeners,
+        ];
 
         return $this;
     }
@@ -106,23 +117,15 @@ class EventRegister implements Arrayable
     /**
      * Create a instance from array
      *
-     * @param array<class-string,class-string<EventListener<object>>|class-string<EventListener<object>>[]> $listen
+     * @param class-string[] $listen
      * @return self
      */
     public static function fromArray(array $listen): self
     {
         $instance = new self();
 
-        foreach ($listen as $event => $class) {
-            $classes = is_array($class) ? $class : [$class];
-
-            foreach ($classes as $i => $c) {
-                $instance->on(
-                    event: $event,
-                    classOrCallable: $c,
-                    priority: PrioritizedListener::DefaultPriority + $i,
-                );
-            }
+        foreach ($listen as $listener) {
+            $instance->on($listener);
         }
 
         return $instance;

@@ -3,10 +3,12 @@
 namespace Takemo101\Chubby\Event;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
-
+use Takemo101\Chubby\Event\Attribute\AsEvent;
+use Closure;
+use ReflectionAttribute;
+use ReflectionClass;
+use RuntimeException;
 use SplPriorityQueue as PriorityQueue;
-
-;
 
 class EventListenerProvider implements ListenerProviderInterface
 {
@@ -20,32 +22,68 @@ class EventListenerProvider implements ListenerProviderInterface
     /**
      * {@inheritDoc}
      *
-     * @template T of object
-     *
-     * @param T $event
-     * @return iterable<callable(T):void>
+     * @return iterable<callable(object):void>
      */
     public function getListenersForEvent(object $event): iterable
     {
-        $class = $event instanceof AliasableEvent
-            ? $event->getAlias()
-            : get_class($event);
+        $attributes = (new ReflectionClass($event))
+            ->getAttributes(AsEvent::class);
 
-        $priorities = $this->register->get($class);
+        /** @var class-string[] */
+        $eventClasses = empty($attributes)
+            ? [get_class($event)]
+            : array_map(
+                fn (ReflectionAttribute $attribute) => $attribute->newInstance()->getAlias(),
+                $attributes,
+            );
 
-        /** @var PriorityQueue<integer,callable(T):void> */
+        return $this->createListenerQueue($eventClasses);
+    }
+
+    /**
+     * Create a queue of listeners.
+     *
+     * @param class-string[] $eventClasses
+     * @return iterable<callable(object):void>
+     */
+    private function createListenerQueue(
+        array $eventClasses,
+    ): iterable {
+
+        /** @var PriorityQueue<integer,Closure(object):void> */
         $queue = new PriorityQueue();
 
-        foreach ($priorities as $prioritized) {
+        foreach ($eventClasses as $eventClass) {
+            $priorities = $this->register->get($eventClass);
 
-            $listener = $prioritized->listener;
+            foreach ($priorities as $prioritized) {
 
-            /** @var callable(T):void */
-            $callable = is_string($listener)
-                ? $this->resolver->resolve($listener)
-                : $listener;
+                $listener = $prioritized->getListenerClassOrObject();
 
-            $queue->insert($callable, $prioritized->priority);
+                $object = is_object($listener)
+                    ? $listener
+                    : $this->resolver->resolve($listener);
+
+                /** @var callable(object):void */
+                $callable = [
+                    $object,
+                    $prioritized->getListenerMethod(),
+                ];
+
+                if (!is_callable($callable)) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'The listener %s is not a callable or object.',
+                            $prioritized->getListenerClass(),
+                        ),
+                    );
+                }
+
+                $queue->insert(
+                    Closure::fromCallable($callable),
+                    $prioritized->getPriority(),
+                );
+            }
         }
 
         return $queue;
