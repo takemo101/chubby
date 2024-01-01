@@ -91,18 +91,15 @@ class EventTypeInferencer
         /** @var class-string[] */
         $classes = [];
 
-        foreach ($type->getTypes() as $type) {
-            if ($type instanceof ReflectionNamedType) {
-                $classes[] = $this->getClassFromNamedType($type);
+        foreach ($type->getTypes() as $t) {
+            if ($t instanceof ReflectionNamedType) {
+                $classes[] = $this->getClassFromNamedType($t);
             }
         }
 
         if (empty($classes)) {
             throw new RuntimeException(
-                sprintf(
-                    'The type %s is not a class.',
-                    $type->getName(),
-                ),
+                'Failed to resolve union type.',
             );
         }
 
