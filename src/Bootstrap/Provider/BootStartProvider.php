@@ -10,9 +10,9 @@ use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Support\ServiceLocator;
 
 /**
- * Boot related.
+ * Bootstrap start related.
  */
-class BootProvider implements Provider
+class BootStartProvider implements Provider
 {
     /**
      * @var string Provider name.
