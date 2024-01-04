@@ -2,10 +2,10 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Event\EventDispatcher;
@@ -46,37 +46,16 @@ class EventProvider implements Provider
 
                     return $register;
                 },
-                EventDispatcherInterface::class => function (
-                    ConfigRepository $config,
-                    ContainerInterface $container,
-                ) {
-                    /** @var class-string<EventDispatcherInterface> */
-                    $class = $config->get(
-                        'event.dispatcher',
-                        EventDispatcher::class,
-                    );
-
-                    /** @var EventDispatcherInterface */
-                    $dispatcher = $container->get($class);
-
-                    return $dispatcher;
-                },
-                ListenerProviderInterface::class =>
-                function (
-                    ConfigRepository $config,
-                    ContainerInterface $container,
-                ) {
-                    /** @var class-string<ListenerProviderInterface> */
-                    $class = $config->get(
-                        'event.provider',
-                        EventListenerProvider::class,
-                    );
-
-                    /** @var ListenerProviderInterface */
-                    $provider = $container->get($class);
-
-                    return $provider;
-                },
+                EventDispatcherInterface::class => DefinitionHelper::createReplaceableDefinition(
+                    entry: EventDispatcherInterface::class,
+                    configKey: 'event.dispatcher',
+                    defaultClass: EventDispatcher::class,
+                ),
+                ListenerProviderInterface::class => DefinitionHelper::createReplaceableDefinition(
+                    entry: ListenerProviderInterface::class,
+                    configKey: 'event.provider',
+                    defaultClass: EventListenerProvider::class,
+                ),
             ],
         );
     }

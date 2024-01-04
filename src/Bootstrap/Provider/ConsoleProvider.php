@@ -6,6 +6,8 @@ use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Console\Application as SymfonyConsole;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\Command\LogCleanCommand;
 use Takemo101\Chubby\Console\Command\ServeCommand;
 use Takemo101\Chubby\Console\Command\VersionCommand;
@@ -67,9 +69,14 @@ class ConsoleProvider implements Provider
                     return $adapter;
                 },
                 CommandCollection::class => function (
+                    ConfigRepository $config,
                     Hook $hook,
                 ): CommandCollection {
-                    $commands = CommandCollection::empty();
+
+                    /** @var class-string<SymfonyCommand>[] */
+                    $classes = $config->get('console.commands', []);
+
+                    $commands = new CommandCollection(...$classes);
 
                     $hook->doTyped($commands);
 

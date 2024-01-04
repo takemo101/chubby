@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -20,6 +19,7 @@ use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Middleware\ErrorMiddleware;
 use Slim\MiddlewareDispatcher;
 use Takemo101\Chubby\ApplicationContainer;
+use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
@@ -65,30 +65,16 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => function (
-                    ContainerInterface $container,
-                    ConfigRepository $config,
-                ) {
-                    /** @var class-string<SlimFactory> */
-                    $class = $config->get('slim.factory', DefaultSlimFactory::class);
-
-                    /** @var SlimFactory */
-                    $factory = $container->get($class);
-
-                    return $factory;
-                },
-                SlimConfigurer::class => function (
-                    ContainerInterface $container,
-                    ConfigRepository $config,
-                ) {
-                    /** @var class-string<SlimConfigurer> */
-                    $class = $config->get('slim.configurer', DefaultSlimConfigurer::class);
-
-                    /** @var SlimConfigurer */
-                    $configurer = $container->get($class);
-
-                    return $configurer;
-                },
+                SlimFactory::class => DefinitionHelper::createReplaceableDefinition(
+                    entry: SlimFactory::class,
+                    configKey: 'slim.factory',
+                    defaultClass: DefaultSlimFactory::class,
+                ),
+                SlimConfigurer::class => DefinitionHelper::createReplaceableDefinition(
+                    entry: SlimConfigurer::class,
+                    configKey: 'slim.configurer',
+                    defaultClass: DefaultSlimConfigurer::class,
+                ),
                 Slim::class => function (
                     SlimFactory $factory,
                     Hook $hook,
@@ -152,18 +138,11 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => function (
-                    ContainerInterface $container,
-                    ConfigRepository $config,
-                ) {
-                    /** @var class-string<ErrorHandlerInterface> */
-                    $class = $config->get('slim.error.handler', ErrorHandler::class);
-
-                    /** @var ErrorHandlerInterface */
-                    $handler = $container->get($class);
-
-                    return $handler;
-                },
+                ErrorHandlerInterface::class => DefinitionHelper::createReplaceableDefinition(
+                    entry: ErrorHandlerInterface::class,
+                    configKey: 'slim.error.handler',
+                    defaultClass: ErrorHandler::class,
+                ),
                 ErrorHandler::class => function (
                     Slim $slim,
                     LoggerInterface $logger,

@@ -24,7 +24,7 @@ use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Support\ApplicationSummary;
-use Takemo101\Chubby\Bootstrap\Provider\BootProvider;
+use Takemo101\Chubby\Bootstrap\Provider\BootStartProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
 use Takemo101\Chubby\Bootstrap\Provider\EventProvider;
@@ -49,7 +49,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.22';
+    public const Version = '0.0.23';
 
     /**
      * @var Container|null
@@ -113,7 +113,7 @@ class Application implements ApplicationContainer
 
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
-            new BootProvider(),
+            new BootStartProvider(),
             new EnvironmentProvider($this->path),
             new ErrorProvider(),
             new EventProvider(),
