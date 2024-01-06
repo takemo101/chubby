@@ -1,0 +1,30 @@
+name: Create a pull request for develop.
+
+on:
+    push:
+        branches:
+            - feat/**
+            - fix/**
+
+# https://zenn.dev/kshida/articles/auto-generate-release-pr-with-github-actions
+
+jobs:
+    create-develop-pr:
+        runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: Check if pr exists
+              id: check_pr
+              run: |
+                  title=${{ (startsWith(github.ref, 'refs/heads/feat') && 'Feature') || 'Fix' }}
+                  branch=$(echo ${{ github.ref }} | sed -e 's/refs\/heads\///g')
+                  echo "current_branch = ${branch}"
+                  echo "pull_requests = $(gh pr list --head ${branch} | wc -l)"
+                  echo "count=$(gh pr list --head ${branch} | wc -l)" >> $GITHUB_OUTPUT
+                  echo "title=${title}" >> $GITHUB_OUTPUT
+            - name: Create pr
+              if: ${{ steps.check_pr.outputs.count == 0 }}
+              run: |
+                  gh pr create -B develop --title ${{ steps.check_pr.outputs.title }} --body-file ./.github/pull_request_template.md
