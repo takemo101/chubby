@@ -65,12 +65,12 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => DefinitionHelper::createReplaceableDefinition(
+                SlimFactory::class => DefinitionHelper::createReplaceable(
                     entry: SlimFactory::class,
                     configKey: 'slim.factory',
                     defaultClass: DefaultSlimFactory::class,
                 ),
-                SlimConfigurer::class => DefinitionHelper::createReplaceableDefinition(
+                SlimConfigurer::class => DefinitionHelper::createReplaceable(
                     entry: SlimConfigurer::class,
                     configKey: 'slim.configurer',
                     defaultClass: DefaultSlimConfigurer::class,
@@ -138,7 +138,7 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => DefinitionHelper::createReplaceableDefinition(
+                ErrorHandlerInterface::class => DefinitionHelper::createReplaceable(
                     entry: ErrorHandlerInterface::class,
                     configKey: 'slim.error.handler',
                     defaultClass: ErrorHandler::class,
