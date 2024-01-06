@@ -48,7 +48,8 @@ class DefinitionHelper
                 /** @var Hook */
                 $hook = $container->get(Hook::class);
 
-                $hook->do($entry, $instance);
+                /** @var T */
+                $instance = $hook->do($entry, $instance);
             }
 
             return $instance;
