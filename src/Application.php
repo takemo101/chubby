@@ -49,7 +49,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.23';
+    public const Version = '0.0.24';
 
     /**
      * @var Container|null
