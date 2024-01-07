@@ -7,7 +7,7 @@ use Takemo101\Chubby\Http\Support\AbstractContext;
 class DomainRouteContext extends AbstractContext
 {
     /** @var string */
-    public const ContextKey = '__domain__';
+    public const ContextKey = self::class;
 
     /**
      * @var array<string,string>

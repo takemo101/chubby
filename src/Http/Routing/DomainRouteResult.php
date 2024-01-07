@@ -2,7 +2,8 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Closure;
+use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Result of dispatch by DomainRouteDispatcher
@@ -10,25 +11,21 @@ use Closure;
 class DomainRouteResult
 {
     /**
-     * @var Closure
-     */
-    private Closure $handler;
-
-    /**
      * constructor
      *
      * @param boolean $found
-     * @param callable $handler
+     * @param DomainRoute|null $route
      * @param array<string,string> $arguments
+     * @throws InvalidArgumentException
      */
     public function __construct(
         private bool $found,
-        callable $handler,
+        private ?DomainRoute $route = null,
         private array $arguments = []
     ) {
-        $this->handler = $handler instanceof Closure
-            ? $handler
-            : Closure::fromCallable($handler);
+        if ($found && !$route) {
+            throw new InvalidArgumentException('route is required');
+        }
     }
 
     /**
@@ -56,12 +53,18 @@ class DomainRouteResult
     }
 
     /**
-     * Get the handler of the found route.
+     * Get the found route.
+     * If the route is not found, an exception will be thrown.
      *
-     * @return Closure
+     * @return DomainRoute
+     * @throws RuntimeException
      */
-    public function getHandler(): Closure
+    public function getRoute(): DomainRoute
     {
-        return $this->handler;
+        if (!$this->route) {
+            throw new RuntimeException('route is not found');
+        }
+
+        return $this->route;
     }
 }

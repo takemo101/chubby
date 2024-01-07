@@ -5,13 +5,14 @@ namespace Takemo101\Chubby\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Interfaces\MiddlewareDispatcherInterface;
 use Slim\ResponseEmitter;
 use Takemo101\Chubby\Http\Routing\DomainRoute;
 use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
 
-class DomainRouter
+class DomainRouter implements RequestHandlerInterface
 {
     /**
      * constructor
@@ -42,13 +43,13 @@ class DomainRouter
     }
 
     /**
-     * Add a route
+     * Add a route from a request handler
      *
      * @param string $pattern
-     * @param callable $handler
+     * @param RequestHandlerInterface $handler
      * @return DomainRoute
      */
-    public function route(string $pattern, callable $handler): DomainRoute
+    public function mount(string $pattern, RequestHandlerInterface $handler): DomainRoute
     {
         return $this->routeCollector->addRoute($pattern, $handler);
     }
@@ -73,10 +74,7 @@ class DomainRouter
     }
 
     /**
-     * Handle a request
-     *
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
+     * {@inheritDoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

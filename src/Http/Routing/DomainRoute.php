@@ -3,35 +3,25 @@
 namespace Takemo101\Chubby\Http\Routing;
 
 use InvalidArgumentException;
-use Closure;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class DomainRoute
 {
     /**
-     * @var Closure
-     */
-    private readonly Closure $handler;
-
-    /**
      * constructor
      *
      * @param string $pattern
-     * @param callable(ServerRequestInterface):RequestHandlerInterface $handler
+     * @param RequestHandlerInterface $handler
+     * @param string|null $name
      */
     public function __construct(
         private readonly string $pattern,
-        callable $handler,
+        private readonly RequestHandlerInterface $handler,
         private ?string $name = null,
     ) {
         if (empty($pattern)) {
             throw new InvalidArgumentException('pattern is empty');
         }
-
-        $this->handler = $handler instanceof Closure
-            ? $handler
-            : Closure::fromCallable($handler);
     }
 
     /**
@@ -45,11 +35,11 @@ class DomainRoute
     }
 
     /**
-     * Get route handler
+     * Get route request handler
      *
-     * @return Closure
+     * @return RequestHandlerInterface
      */
-    public function getHandler(): Closure
+    public function getRequestHandler(): RequestHandlerInterface
     {
         return $this->handler;
     }
