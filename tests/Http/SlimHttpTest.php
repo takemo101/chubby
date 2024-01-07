@@ -6,14 +6,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use Tests\AppTestCase;
 
 describe(
     'http',
     function () {
         test(
-            'Create an instance of SlimHttpAdapter to handle requests',
+            'Create an instance of SlimHttp to handle requests',
             function () {
                 /** @var AppTestCase $this */
 
@@ -21,7 +21,7 @@ describe(
                 $app = $this->getContainer()->get(App::class);
                 $configurer = $this->getContainer()->get(SlimConfigurer::class);
 
-                $http = new SlimHttpAdapter($app, $configurer);
+                $http = new SlimHttp($app, $configurer);
 
                 $request = $this->createRequest('GET', '/');
 
@@ -34,7 +34,7 @@ describe(
         );
 
         test(
-            'Handle requests with SlimHttpAdapter',
+            'Handle requests with SlimHttp',
             function (string $method) {
                 /** @var AppTestCase $this */
 
@@ -64,7 +64,7 @@ describe(
         ]);
 
         test(
-            'Handle form requests with SlimHttpAdapter',
+            'Handle form requests with SlimHttp',
             function (string $method) {
                 /** @var AppTestCase $this */
 
@@ -102,7 +102,7 @@ describe(
         ]);
 
         test(
-            'Handle json requests with SlimHttpAdapter',
+            'Handle json requests with SlimHttp',
             function (string $method) {
                 /** @var AppTestCase $this */
 

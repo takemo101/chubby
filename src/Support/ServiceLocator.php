@@ -9,7 +9,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 
 /**
  * Have global access to your application's services
@@ -119,12 +119,12 @@ class ServiceLocator
     /**
      * Get http application.
      *
-     * @return SlimHttpAdapter
+     * @return SlimHttp
      */
-    public static function http(): SlimHttpAdapter
+    public static function http(): SlimHttp
     {
-        /** @var SlimHttpAdapter */
-        $http = self::container()->get(SlimHttpAdapter::class);
+        /** @var SlimHttp */
+        $http = self::container()->get(SlimHttp::class);
 
         return $http;
     }

@@ -39,7 +39,7 @@ use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
 use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
 use Takemo101\Chubby\Http\Routing\DomainRouteHandler;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 
 use function DI\get;
 use function DI\create;
@@ -87,12 +87,12 @@ class HttpProvider implements Provider
                     return $slim;
                 },
                 RouteCollectorProxyInterface::class => get(Slim::class),
-                SlimHttpAdapter::class => function (
+                SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
                     Hook $hook,
-                ): SlimHttpAdapter {
-                    $adapter = new SlimHttpAdapter(
+                ): SlimHttp {
+                    $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
                     );

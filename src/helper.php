@@ -6,7 +6,7 @@ use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 use Takemo101\Chubby\Hook\Hook;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use Takemo101\Chubby\Support\ServiceLocator;
 
 if (!function_exists('container')) {
@@ -109,9 +109,9 @@ if (!function_exists('http')) {
     /**
      * Get http application.
      *
-     * @return SlimHttpAdapter
+     * @return SlimHttp
      */
-    function http(): SlimHttpAdapter
+    function http(): SlimHttp
     {
         return ServiceLocator::http();
     }

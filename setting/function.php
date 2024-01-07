@@ -16,12 +16,12 @@ use Takemo101\Chubby\Http\Middleware\DomainRouting;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\Renderer\StaticRenderer;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 hook()
     ->onTyped(
-        function (SlimHttpAdapter $http) {
+        function (SlimHttp $http) {
 
             $http->get(
                 '/',
@@ -136,8 +136,8 @@ hook()
             /** @var SlimFactory */
             $factory = $container->get(SlimFactory::class);
 
-            /** @var SlimHttpAdapter */
-            $http = $container->get(SlimHttpAdapter::class);
+            /** @var SlimHttp */
+            $http = $container->get(SlimHttp::class);
 
             $slim = $factory->create();
 

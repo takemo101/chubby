@@ -10,7 +10,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**
@@ -36,14 +36,14 @@ class Http extends AbstractRunner
     /**
      * Create an slim instance.
      *
-     * @return SlimHttpAdapter
+     * @return SlimHttp
      */
-    private function getHttp(): SlimHttpAdapter
+    private function getHttp(): SlimHttp
     {
         $this->getApp()->boot();
 
-        /** @var SlimHttpAdapter */
-        $slim = $this->getApp()->get(SlimHttpAdapter::class);
+        /** @var SlimHttp */
+        $slim = $this->getApp()->get(SlimHttp::class);
 
         return $slim;
     }
@@ -71,7 +71,7 @@ class Http extends AbstractRunner
     }
 
     /**
-     * Call method from SlimHttpAdapter.
+     * Call method from SlimHttp.
      *
      * @param string $name
      * @param mixed[] $arguments
