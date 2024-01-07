@@ -20,7 +20,7 @@ class DefinitionHelper
      * @param boolean $hook Whether to hook the replacement process
      * @return Closure
      */
-    public static function createReplaceableDefinition(
+    public static function createReplaceable(
         string $entry,
         string $configKey,
         string $defaultClass,
@@ -48,7 +48,8 @@ class DefinitionHelper
                 /** @var Hook */
                 $hook = $container->get(Hook::class);
 
-                $hook->do($entry, $instance);
+                /** @var T */
+                $instance = $hook->do($entry, $instance);
             }
 
             return $instance;

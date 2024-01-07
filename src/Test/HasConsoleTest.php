@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Takemo101\Chubby\ApplicationContainer;
 use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
-use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
+use Takemo101\Chubby\Console\SymfonyConsole;
 
 /**
  * @method ApplicationContainer getContainer()
@@ -16,9 +16,9 @@ use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
 trait HasConsoleTest
 {
     /**
-     * @var SymfonyConsoleAdapter
+     * @var SymfonyConsole
      */
-    private SymfonyConsoleAdapter $console;
+    private SymfonyConsole $console;
 
     /**
      * Set slim http adapter.
@@ -27,15 +27,15 @@ trait HasConsoleTest
      */
     protected function setUpConsole(): void
     {
-        $this->console = $this->getContainer()->get(SymfonyConsoleAdapter::class);
+        $this->console = $this->getContainer()->get(SymfonyConsole::class);
     }
 
     /**
      * Get symfony console adapter.
      *
-     * @return SymfonyConsoleAdapter
+     * @return SymfonyConsole
      */
-    protected function getConsole(): SymfonyConsoleAdapter
+    protected function getConsole(): SymfonyConsole
     {
         return isset($this->console)
             ? $this->console

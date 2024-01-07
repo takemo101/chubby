@@ -9,7 +9,7 @@ use Slim\App as Slim;
 use Takemo101\Chubby\Http\Concern\HasRouting;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 
-class SlimHttpAdapter implements RequestHandlerInterface
+class SlimHttp implements RequestHandlerInterface
 {
     use HasRouting;
 

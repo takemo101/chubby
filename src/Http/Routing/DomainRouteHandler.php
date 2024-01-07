@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Invoker\InvokerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -14,11 +13,9 @@ class DomainRouteHandler implements RequestHandlerInterface
      * constructor
      *
      * @param DomainRouteDispatcher $dispatcher
-     * @param InvokerInterface $invoker
      */
     public function __construct(
         private DomainRouteDispatcher $dispatcher,
-        private InvokerInterface $invoker,
     ) {
         //
     }
@@ -40,33 +37,10 @@ class DomainRouteHandler implements RequestHandlerInterface
         /** @var DomainRouteResult */
         $routedResult = $results[1];
 
-        $handler = $this->invokeRoute(
-            $routedResult,
-            $routedRequest,
+        $route = $routedResult->getRoute();
+
+        return $route->getRequestHandler()->handle(
+            $routedRequest
         );
-
-        return $handler->handle($routedRequest);
-    }
-
-    /**
-     * Invoke routed result.
-     *
-     * @param DomainRouteResult $routedResult
-     * @param ServerRequestInterface $routedRequest
-     * @return RequestHandlerInterface
-     */
-    private function invokeRoute(
-        DomainRouteResult $routedResult,
-        ServerRequestInterface $routedRequest,
-    ): RequestHandlerInterface {
-        /** @var RequestHandlerInterface */
-        $handler = $this->invoker->call(
-            $routedResult->getHandler(),
-            [
-                'request' => $routedRequest,
-            ],
-        );
-
-        return $handler;
     }
 }

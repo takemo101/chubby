@@ -3,12 +3,12 @@
 // Executed after DI container dependency settings are completed.
 // Here, mainly configure routing and middleware.
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
-use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
 use Takemo101\Chubby\Http\Context;
 use Takemo101\Chubby\Http\DomainRouter;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
@@ -16,12 +16,12 @@ use Takemo101\Chubby\Http\Middleware\DomainRouting;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\Renderer\StaticRenderer;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use Takemo101\Chubby\Support\ApplicationPath;
 
 hook()
     ->onTyped(
-        function (SlimHttpAdapter $http) {
+        function (SlimHttp $http) {
 
             $http->get(
                 '/',
@@ -131,38 +131,28 @@ hook()
         },
     )
     ->onTyped(
-        function (DomainRouter $router) {
-            $router->route(
-                'localhost',
-                fn (
-                    SlimHttpAdapter $http,
-                ) => $http,
-            )->setName('base');
+        function (DomainRouter $router, ContainerInterface $container) {
 
-            $router->route(
-                '{domain}.localhost',
-                function (
-                    SlimFactory $factory,
-                    SlimConfigurer $configurer,
-                ) {
-                    $slim = $factory->create();
+            /** @var SlimFactory */
+            $factory = $container->get(SlimFactory::class);
 
-                    $slim->get(
-                        '/',
-                        function (
-                            ResponseInterface $response,
-                            string $domain,
-                        ) {
-                            $response
-                                ->getBody()
-                                ->write("Hello {$domain}!");
+            /** @var SlimHttp */
+            $http = $container->get(SlimHttp::class);
 
-                            return $response;
-                        },
-                    );
+            $slim = $factory->create();
 
-                    return $configurer->configure($slim);
-                }
-            )->setName('domain');
+            $slim->get(
+                '/',
+                function (ResponseInterface $response, string $domain) {
+                    $response
+                        ->getBody()
+                        ->write("Hello {$domain}!");
+
+                    return $response;
+                },
+            );
+
+            $router->mount('localhost', $http)->setName('base');
+            $router->mount('{domain}.localhost', $slim)->setName('domain');
         },
     );

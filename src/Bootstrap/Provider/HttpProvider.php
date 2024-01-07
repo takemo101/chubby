@@ -39,7 +39,7 @@ use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
 use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
 use Takemo101\Chubby\Http\Routing\DomainRouteHandler;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 
 use function DI\get;
 use function DI\create;
@@ -65,12 +65,12 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => DefinitionHelper::createReplaceableDefinition(
+                SlimFactory::class => DefinitionHelper::createReplaceable(
                     entry: SlimFactory::class,
                     configKey: 'slim.factory',
                     defaultClass: DefaultSlimFactory::class,
                 ),
-                SlimConfigurer::class => DefinitionHelper::createReplaceableDefinition(
+                SlimConfigurer::class => DefinitionHelper::createReplaceable(
                     entry: SlimConfigurer::class,
                     configKey: 'slim.configurer',
                     defaultClass: DefaultSlimConfigurer::class,
@@ -87,12 +87,12 @@ class HttpProvider implements Provider
                     return $slim;
                 },
                 RouteCollectorProxyInterface::class => get(Slim::class),
-                SlimHttpAdapter::class => function (
+                SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
                     Hook $hook,
-                ): SlimHttpAdapter {
-                    $adapter = new SlimHttpAdapter(
+                ): SlimHttp {
+                    $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
                     );
@@ -138,7 +138,7 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => DefinitionHelper::createReplaceableDefinition(
+                ErrorHandlerInterface::class => DefinitionHelper::createReplaceable(
                     entry: ErrorHandlerInterface::class,
                     configKey: 'slim.error.handler',
                     defaultClass: ErrorHandler::class,

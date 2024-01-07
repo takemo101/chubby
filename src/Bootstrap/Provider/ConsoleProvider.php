@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
-use Symfony\Component\Console\Application as SymfonyConsole;
+use Symfony\Component\Console\Application as Console;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\Command\LogCleanCommand;
@@ -13,7 +13,7 @@ use Takemo101\Chubby\Console\Command\ServeCommand;
 use Takemo101\Chubby\Console\Command\VersionCommand;
 use Takemo101\Chubby\Console\CommandCollection;
 use Takemo101\Chubby\Console\CommandResolver;
-use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
+use Takemo101\Chubby\Console\SymfonyConsole;
 use Takemo101\Chubby\Hook\Hook;
 
 /**
@@ -36,8 +36,8 @@ class ConsoleProvider implements Provider
     {
         $definitions->add(
             [
-                SymfonyConsole::class => function (): SymfonyConsole {
-                    $console = new SymfonyConsole(
+                Console::class => function (): Console {
+                    $console = new Console(
                         Application::Name,
                         Application::Version,
                     );
@@ -46,13 +46,13 @@ class ConsoleProvider implements Provider
 
                     return $console;
                 },
-                SymfonyConsoleAdapter::class => function (
-                    SymfonyConsole $console,
+                SymfonyConsole::class => function (
+                    Console $console,
                     CommandCollection $commands,
                     CommandResolver $resolver,
                     Hook $hook,
-                ): SymfonyConsoleAdapter {
-                    $adapter = new SymfonyConsoleAdapter(
+                ): SymfonyConsole {
+                    $adapter = new SymfonyConsole(
                         application: $console,
                         commands: $commands,
                         resolver: $resolver,

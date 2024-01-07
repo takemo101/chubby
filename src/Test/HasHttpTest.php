@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\ApplicationContainer;
-use Takemo101\Chubby\Http\SlimHttpAdapter;
+use Takemo101\Chubby\Http\SlimHttp;
 use RuntimeException;
 
 /**
@@ -19,9 +19,9 @@ use RuntimeException;
 trait HasHttpTest
 {
     /**
-     * @var SlimHttpAdapter
+     * @var SlimHttp
      */
-    private SlimHttpAdapter $http;
+    private SlimHttp $http;
 
     /**
      * Set slim http adapter.
@@ -30,15 +30,15 @@ trait HasHttpTest
      */
     protected function setUpHttp(): void
     {
-        $this->http = $this->getContainer()->get(SlimHttpAdapter::class);
+        $this->http = $this->getContainer()->get(SlimHttp::class);
     }
 
     /**
      * Get slim http adapter.
      *
-     * @return SlimHttpAdapter
+     * @return SlimHttp
      */
-    protected function getHttp(): SlimHttpAdapter
+    protected function getHttp(): SlimHttp
     {
         return isset($this->http)
             ? $this->http
