@@ -74,15 +74,35 @@ describe(
                 string $pattern,
                 string $name,
             ) {
+                /** @var AppTestCase $this */
+
                 $collector = new DomainRouteCollector();
 
-                $collector->addRoute($pattern, fn () => 'test')->setName($name);
+                $collector->addRoute($pattern, new class($this->createResponse()) implements RequestHandlerInterface
+                {
+                    public function __construct(
+                        public ResponseInterface $response,
+                    ) {
+                        //
+                    }
+
+                    public function handle(ServerRequestInterface $request): ResponseInterface
+                    {
+                        $this->response->getBody()->write('test');
+
+                        return $this->response;
+                    }
+                })->setName($name);
 
                 $route = $collector->getNamedRoute($name);
 
                 expect($route)->not->toBeNull($name);
                 expect($route->getPattern())->toEqual($pattern);
-                expect($route->getHandler()())->toEqual('test');
+                expect(
+                    $route->getRequestHandler()
+                        ->handle($this->createRequest())
+                        ->getBody()
+                )->toEqual('test');
             }
         )->with([
             ['localhost', 'home'],
@@ -98,7 +118,7 @@ describe(
 
                 $dispatcher = new DomainRouteDispatcher(
                     new DomainRouteCollector([
-                        $pattern => fn () => new class($this->createResponse(), $expectMessage) implements RequestHandlerInterface
+                        $pattern => new class($this->createResponse(), $expectMessage) implements RequestHandlerInterface
                         {
                             public function __construct(
                                 public ResponseInterface $response,
@@ -144,7 +164,7 @@ describe(
                 /** @var DomainRouter */
                 $router = $this->getContainer()->get(DomainRouter::class);
 
-                $router->route($pattern, fn () => new class($this->createResponse()) implements RequestHandlerInterface
+                $router->mount($pattern, new class($this->createResponse()) implements RequestHandlerInterface
                 {
                     public function __construct(
                         public ResponseInterface $response,
