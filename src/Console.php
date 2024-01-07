@@ -5,7 +5,7 @@ namespace Takemo101\Chubby;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
+use Takemo101\Chubby\Console\SymfonyConsole;
 use Takemo101\Chubby\Support\AbstractRunner;
 
 /**
@@ -16,15 +16,15 @@ class Console extends AbstractRunner
     /**
      * Create an console instance.
      *
-     * @return SymfonyConsoleAdapter
+     * @return SymfonyConsole
      */
-    private function getConsole(): SymfonyConsoleAdapter
+    private function getConsole(): SymfonyConsole
     {
         $this->getApp()->boot();
 
-        /** @var SymfonyConsoleAdapter */
+        /** @var SymfonyConsole */
         $console = $this->getApp()->get(
-            SymfonyConsoleAdapter::class,
+            SymfonyConsole::class,
         );
 
         return $console;

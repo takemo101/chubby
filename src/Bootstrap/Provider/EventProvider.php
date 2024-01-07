@@ -46,12 +46,12 @@ class EventProvider implements Provider
 
                     return $register;
                 },
-                EventDispatcherInterface::class => DefinitionHelper::createReplaceableDefinition(
+                EventDispatcherInterface::class => DefinitionHelper::createReplaceable(
                     entry: EventDispatcherInterface::class,
                     configKey: 'event.dispatcher',
                     defaultClass: EventDispatcher::class,
                 ),
-                ListenerProviderInterface::class => DefinitionHelper::createReplaceableDefinition(
+                ListenerProviderInterface::class => DefinitionHelper::createReplaceable(
                     entry: ListenerProviderInterface::class,
                     configKey: 'event.provider',
                     defaultClass: EventListenerProvider::class,

@@ -34,11 +34,12 @@ class DomainRouteDispatcher
         $dispatcher = simpleDispatcher(
             function (RouteCollector $r) {
                 $routes = $this->routeCollector->getRoutes();
+
                 foreach ($routes as $route) {
                     $r->addRoute(
                         self::CommonRequestMethod,
                         $route->getPattern(),
-                        $route->getHandler(),
+                        $route,
                     );
                 }
             },
@@ -47,18 +48,18 @@ class DomainRouteDispatcher
         $info = $dispatcher->dispatch(self::CommonRequestMethod, $domain);
 
         /** @var integer */
-        $routeStatus = $info[0] ?? Dispatcher::NOT_FOUND;
+        $status = $info[0] ?? Dispatcher::NOT_FOUND;
 
-        /** @var callable */
-        $routeHandler = $info[1] ?? DomainRouteHandleException::createThrowHandler();
+        /** @var DomainRoute|null */
+        $route = $info[1] ?? null;
 
         /** @var array<string,string> */
-        $routeArguments = $info[2] ?? [];
+        $arguments = $info[2] ?? [];
 
         return new DomainRouteResult(
-            found: $routeStatus === Dispatcher::FOUND,
-            handler: $routeHandler,
-            arguments: $routeArguments,
+            found: $status === Dispatcher::FOUND,
+            route: $route,
+            arguments: $arguments,
         );
     }
 
@@ -73,7 +74,7 @@ class DomainRouteDispatcher
         return new self(
             new DomainRouteCollector(
                 routes: [
-                    $domain => fn () => DomainRouteHandleException::createThrowHandler(),
+                    $domain => DomainRouteHandleException::createNeverRequestHandler(),
                 ],
             ),
         );

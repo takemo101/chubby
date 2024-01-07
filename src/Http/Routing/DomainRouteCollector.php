@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class DomainRouteCollector
@@ -15,7 +14,7 @@ class DomainRouteCollector
     /**
      * constructor
      *
-     * @param array<string,callable> $routes
+     * @param array<string,RequestHandlerInterface> $routes
      */
     public function __construct(
         array $routes = [],
@@ -29,10 +28,10 @@ class DomainRouteCollector
      * Add a route
      *
      * @param string $pattern
-     * @param callable(ServerRequestInterface):RequestHandlerInterface $handler
+     * @param RequestHandlerInterface $handler
      * @return DomainRoute
      */
-    public function addRoute(string $pattern, callable $handler): DomainRoute
+    public function addRoute(string $pattern, RequestHandlerInterface $handler): DomainRoute
     {
         $route = new DomainRoute($pattern, $handler);
 

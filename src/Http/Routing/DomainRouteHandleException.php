@@ -4,7 +4,9 @@ namespace Takemo101\Chubby\Http\Routing;
 
 use RuntimeException;
 use Throwable;
-use Closure;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class DomainRouteHandleException extends RuntimeException
 {
@@ -24,12 +26,21 @@ class DomainRouteHandleException extends RuntimeException
     }
 
     /**
-     * Create a closure that throws an exception.
+     * Create a throw exception request handler.
+     * This is used when a route is not found.
      *
-     * @return Closure
+     * @return RequestHandlerInterface
      */
-    public static function createThrowHandler(): Closure
+    public static function createNeverRequestHandler(): RequestHandlerInterface
     {
-        return fn () => throw new self();
+        return new class () implements RequestHandlerInterface {
+            /**
+             * {@inheritDoc}
+             */
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                throw new DomainRouteHandleException();
+            }
+        };
     }
 }

@@ -23,7 +23,7 @@ describe(
             $defaultClass = 'DefaultClass';
             $hook = false;
 
-            $closure = DefinitionHelper::createReplaceableDefinition(
+            $closure = DefinitionHelper::createReplaceable(
                 $entry,
                 $configKey,
                 $defaultClass,
@@ -52,7 +52,7 @@ describe(
                 ->with($class)
                 ->andReturn($instance);
 
-            $closure = DefinitionHelper::createReplaceableDefinition(
+            $closure = DefinitionHelper::createReplaceable(
                 $entry,
                 $configKey,
                 $defaultClass,
@@ -94,7 +94,7 @@ describe(
                 ->with($entry, $instance)
                 ->andReturn($hookedInstance);
 
-            $closure = DefinitionHelper::createReplaceableDefinition(
+            $closure = DefinitionHelper::createReplaceable(
                 $entry,
                 $configKey,
                 $defaultClass,

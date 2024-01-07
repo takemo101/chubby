@@ -7,14 +7,14 @@ use Takemo101\Chubby\Application as ChubbyApplication;
 use Takemo101\Chubby\Console\Command\ClosureCommand;
 use Takemo101\Chubby\Console\CommandCollection;
 use Takemo101\Chubby\Console\CommandResolver;
-use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
+use Takemo101\Chubby\Console\SymfonyConsole;
 use Tests\AppTestCase;
 
 describe(
     'console',
     function () {
         test(
-            'Create an instance of SymfonyConsoleAdapter and execute a command',
+            'Create an instance of SymfonyConsole and execute a command',
             function () {
                 /** @var AppTestCase $this */
 
@@ -22,7 +22,7 @@ describe(
 
                 $name = 'test';
 
-                $console = new SymfonyConsoleAdapter(
+                $console = new SymfonyConsole(
                     $app,
                     new CommandCollection(
                         ClosureCommand::from(fn () => ClosureCommand::SUCCESS)
@@ -57,7 +57,7 @@ describe(
         );
 
         test(
-            'Add commands to SymfonyConsoleAdapter and execute them',
+            'Add commands to SymfonyConsole and execute them',
             function (Command $command) {
                 /** @var AppTestCase $this */
 
