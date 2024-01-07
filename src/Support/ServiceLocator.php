@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Config\ConfigRepository;
-use Takemo101\Chubby\Console\SymfonyConsoleAdapter;
+use Takemo101\Chubby\Console\SymfonyConsole;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\SlimHttp;
 
@@ -132,12 +132,12 @@ class ServiceLocator
     /**
      * Get console application.
      *
-     * @return SymfonyConsoleAdapter
+     * @return SymfonyConsole
      */
-    public static function console(): SymfonyConsoleAdapter
+    public static function console(): SymfonyConsole
     {
-        /** @var SymfonyConsoleAdapter */
-        $console = self::container()->get(SymfonyConsoleAdapter::class);
+        /** @var SymfonyConsole */
+        $console = self::container()->get(SymfonyConsole::class);
 
         return $console;
     }

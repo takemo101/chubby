@@ -8,7 +8,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 
-class SymfonyConsoleAdapter
+class SymfonyConsole
 {
     /**
      * constructor
