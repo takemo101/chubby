@@ -3,6 +3,7 @@
 // Application basic configuration
 
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\Console\Command\ServeCommand;
 
 return [
     // Application name
@@ -16,4 +17,7 @@ return [
 
     // Timezone
     'timezone' => 'Asia/Tokyo',
+
+    // Built-in server flag
+    'built_in_server' => (bool) env(ServeCommand::BuiltInServerEnvironment, false),
 ];
