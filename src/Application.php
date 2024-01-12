@@ -130,20 +130,6 @@ class Application implements ApplicationContainer
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                ApplicationSummary::class => function (
-                    ConfigRepository $config,
-                ): ApplicationSummary {
-                    /** @var string */
-                    $env = $config->get('app.env', 'local');
-
-                    /** @var boolean */
-                    $debug = (bool) $config->get('app.debug', true);
-
-                    return new ApplicationSummary(
-                        env: $env,
-                        debug: $debug,
-                    );
-                },
                 PathHelper::class => fn () => $pathHelper,
                 LocalFilesystem::class => $filesystem,
                 MimeTypeGuesser::class => $mimeTypeGuesser,
