@@ -20,10 +20,8 @@ use Symfony\Component\Mime\MimeTypes;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Bootstrap\Provider\EnvironmentProvider;
-use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Support\ApplicationPath;
-use Takemo101\Chubby\Support\ApplicationSummary;
 use Takemo101\Chubby\Bootstrap\Provider\BootStartProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
@@ -130,20 +128,6 @@ class Application implements ApplicationContainer
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                ApplicationSummary::class => function (
-                    ConfigRepository $config,
-                ): ApplicationSummary {
-                    /** @var string */
-                    $env = $config->get('app.env', 'local');
-
-                    /** @var boolean */
-                    $debug = (bool) $config->get('app.debug', true);
-
-                    return new ApplicationSummary(
-                        env: $env,
-                        debug: $debug,
-                    );
-                },
                 PathHelper::class => fn () => $pathHelper,
                 LocalFilesystem::class => $filesystem,
                 MimeTypeGuesser::class => $mimeTypeGuesser,

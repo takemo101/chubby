@@ -2,6 +2,9 @@
 
 namespace Takemo101\Chubby\Support;
 
+use DI\Attribute\Inject;
+use Takemo101\Chubby\Application;
+
 /**
  * Application summary data
  */
@@ -15,14 +18,32 @@ readonly class ApplicationSummary
     /**
      * constructor
      *
+     * @param string $name
      * @param string $env local | development | production
      * @param boolean $debug
+     * @param boolean $builtInServer
      */
     public function __construct(
+        #[Inject('config.app.name')]
+        public string $name = Application::Name,
+        #[Inject('config.app.env')]
         string $env = 'local',
+        #[Inject('config.app.debug')]
         public bool $debug = true,
+        #[Inject('config.app.built_in_server')]
+        public bool $builtInServer = false,
     ) {
         $this->env = strtolower($env);
+    }
+
+    /**
+     * Get application name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**
@@ -33,6 +54,16 @@ readonly class ApplicationSummary
     public function isDebugMode(): bool
     {
         return $this->debug;
+    }
+
+    /**
+     * Get built-in server flag.
+     *
+     * @return boolean
+     */
+    public function isBuiltInServer(): bool
+    {
+        return $this->builtInServer;
     }
 
     /**
