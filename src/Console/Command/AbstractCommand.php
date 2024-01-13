@@ -30,7 +30,7 @@ abstract class AbstractCommand extends BaseCommand
      * @param OutputInterface $output
      * @return int 0 if everything went fine, or an exit code
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (method_exists($this, 'handle')) {
             $this->input = $input;
