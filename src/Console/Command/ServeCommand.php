@@ -24,6 +24,11 @@ use Takemo101\Chubby\Support\ApplicationPath;
 class ServeCommand extends Command
 {
     /**
+     * @var string Built-in server environment name.
+     */
+    public const BuiltInServerEnvironment = 'BUILT_IN_SERVER';
+
+    /**
      * @var LocalFilesystem
      */
     private LocalFilesystem $filesystem;
@@ -88,6 +93,7 @@ class ServeCommand extends Command
         $scriptOrDocumentRoot = $input->getOption('script');
 
         $environments = [
+            self::BuiltInServerEnvironment => true,
             'APP_BASE_PATH' => $path->getBasePath(),
             ...collect($_ENV)->mapWithKeys(
                 fn ($value, $key) => [$key => $value],
