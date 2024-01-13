@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Support;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\SymfonyConsole;
@@ -46,12 +45,13 @@ class ServiceLocator
      * Get a singleton instance.
      *
      * @return self
+     * @throws ServiceLocatorException
      */
     private static function instance(): self
     {
         $instance = self::$instance;
 
-        return $instance ?? throw new RuntimeException('ServiceLocator is not initialized');
+        return $instance ?? throw ServiceLocatorException::notInitializedError();
     }
 
     /**

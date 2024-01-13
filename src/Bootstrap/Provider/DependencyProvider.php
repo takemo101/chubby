@@ -2,10 +2,10 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
+use LogicException;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Support\ApplicationPath;
-use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 
 /**
@@ -57,7 +57,7 @@ class DependencyProvider implements Provider
             : [];
 
         if (!is_array($dependency)) {
-            throw new RuntimeException('Dependency definition must be array.');
+            throw new LogicException('Dependency definition must be array.');
         }
 
         if (!empty($dependency)) {

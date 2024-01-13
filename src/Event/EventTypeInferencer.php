@@ -5,7 +5,7 @@ namespace Takemo101\Chubby\Event;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionUnionType;
-use RuntimeException;
+use Takemo101\Chubby\Event\Exception\EventTypeInferenceException;
 
 class EventTypeInferencer
 {
@@ -13,30 +13,18 @@ class EventTypeInferencer
      * @param ReflectionClass<object> $class
      * @param string $methodName Listener method name
      * @return class-string[] Event class names
-     * @throws RuntimeException
+     * @throws EventTypeInferenceException
      */
     public function inference(ReflectionClass $class, string $methodName): array
     {
         if (!$class->hasMethod($methodName)) {
-            throw new RuntimeException(
-                sprintf(
-                    'The method %s::%s() does not exist.',
-                    $class->getName(),
-                    $methodName,
-                ),
-            );
+            throw EventTypeInferenceException::notExistsMethodError($class->getName(), $methodName);
         }
 
         $method = $class->getMethod($methodName);
 
         $parameter = $method->getParameters()[0]
-            ?? throw new RuntimeException(
-                sprintf(
-                    'The method %s::%s() must have at least one parameter.',
-                    $class->getName(),
-                    $methodName,
-                ),
-            );
+            ?? throw EventTypeInferenceException::notExistsParameterError($class->getName(), $methodName);
 
         $type = $parameter->getType();
 
@@ -48,13 +36,7 @@ class EventTypeInferencer
             return $this->getClassFromUnionType($type);
         }
 
-        throw new RuntimeException(
-            sprintf(
-                'The method %s::%s() must have a type.',
-                $class->getName(),
-                $methodName,
-            ),
-        );
+        throw EventTypeInferenceException::notExistsTypeError($class->getName(), $methodName);
     }
 
     /**
@@ -62,16 +44,12 @@ class EventTypeInferencer
      *
      * @param ReflectionNamedType $type
      * @return class-string
+     * @throws EventTypeInferenceException
      */
     private function getClassFromNamedType(ReflectionNamedType $type): string
     {
         if ($type->isBuiltin()) {
-            throw new RuntimeException(
-                sprintf(
-                    'The type %s is not a class.',
-                    $type->getName(),
-                ),
-            );
+            throw EventTypeInferenceException::notClassTypeError($type->getName());
         }
 
         /** @var class-string */
@@ -85,6 +63,7 @@ class EventTypeInferencer
      *
      * @param ReflectionUnionType $type
      * @return class-string[]
+     * @throws EventTypeInferenceException
      */
     private function getClassFromUnionType(ReflectionUnionType $type): array
     {
@@ -98,9 +77,7 @@ class EventTypeInferencer
         }
 
         if (empty($classes)) {
-            throw new RuntimeException(
-                'Failed to resolve union type.',
-            );
+            EventTypeInferenceException::failedToResolveUnionTypeError();
         }
 
         return $classes;

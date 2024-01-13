@@ -3,7 +3,7 @@
 namespace Takemo101\Chubby\Event;
 
 use Psr\Container\ContainerInterface;
-use RuntimeException;
+use Takemo101\Chubby\Event\Exception\EventListenerResolveException;
 
 class EventListenerResolver
 {
@@ -23,6 +23,7 @@ class EventListenerResolver
      *
      * @param class-string $class
      * @return object
+     * @throws EventListenerResolveException
      */
     public function resolve(string $class): object
     {
@@ -30,12 +31,7 @@ class EventListenerResolver
         $listener = $this->container->get($class);
 
         if (!is_object($listener)) {
-            throw new RuntimeException(
-                sprintf(
-                    'The listener %s is not a callable or object.',
-                    $class,
-                ),
-            );
+            throw EventListenerResolveException::notCallableOrObjectError($class);
         }
 
         return $listener;

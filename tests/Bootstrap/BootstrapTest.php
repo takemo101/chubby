@@ -3,6 +3,7 @@
 use DI\ContainerBuilder;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Bootstrap;
+use Takemo101\Chubby\Bootstrap\BootstrapException;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Bootstrap\Provider\ClosureProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
@@ -91,7 +92,7 @@ describe(
                         new ClosureProvider(register: fn () => [], name: 'test'),
                         new ClosureProvider(register: fn () => [], name: 'test'),
                     ),
-                )->toThrow(RuntimeException::class);
+                )->toThrow(BootstrapException::class);
             },
         );
 
