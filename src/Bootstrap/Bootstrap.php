@@ -5,7 +5,6 @@ namespace Takemo101\Chubby\Bootstrap;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Bootstrap\Provider\ProviderNameable;
-use RuntimeException;
 
 /**
  * Application bootstrap
@@ -38,7 +37,7 @@ class Bootstrap implements Provider
      *
      * @param Provider ...$providers
      * @return self
-     * @throws RuntimeException
+     * @throws BootstrapException
      */
     public function addProvider(Provider ...$providers): self
     {
@@ -49,12 +48,7 @@ class Bootstrap implements Provider
                 : $provider::ProviderName;
 
             if (isset($this->providers[$name])) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Provider name "%s" is already registered.',
-                        $name,
-                    ),
-                );
+                throw BootstrapException::alreadyRegisteredError($name);
             }
 
             $this->providers[$name] = $provider;
