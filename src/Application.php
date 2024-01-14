@@ -28,12 +28,14 @@ use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
 use Takemo101\Chubby\Bootstrap\Provider\EventProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
 use Takemo101\Chubby\Bootstrap\Provider\LogProvider;
+use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Container\InstantContainer;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
+use Takemo101\Chubby\Support\ApplicationSummary;
 
 use function DI\get;
 
@@ -124,6 +126,25 @@ class Application implements ApplicationContainer
             [
                 Application::class => $this,
                 ApplicationPath::class => $this->path,
+                ApplicationSummary::class => function (
+                    ConfigRepository $config,
+                ) {
+                    /** @var string */
+                    $name = $config->get('app.name', self::Name);
+                    /** @var string */
+                    $env = $config->get('app.env', 'local');
+                    /** @var bool */
+                    $debug = $config->get('app.debug', true);
+                    /** @var bool */
+                    $builtInServer = $config->get('app.built_in_server', false);
+
+                    return new ApplicationSummary(
+                        name: $name,
+                        env: $env,
+                        debug: $debug,
+                        builtInServer: $builtInServer,
+                    );
+                },
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
