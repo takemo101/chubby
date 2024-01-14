@@ -4,8 +4,8 @@ namespace Takemo101\Chubby\Test;
 
 use PHPUnit\Framework\TestCase;
 use Takemo101\Chubby\ApplicationContainer;
-use RuntimeException;
 use Takemo101\Chubby\Application;
+use LogicException;
 
 /**
  * @mixin TestCase
@@ -41,6 +41,6 @@ trait HasContainerTest
     {
         return isset($this->container)
             ? $this->container
-            : throw new RuntimeException('Container is not set.');
+            : throw new LogicException('Container is not set.');
     }
 }

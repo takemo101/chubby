@@ -6,11 +6,14 @@ use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
+use Closure;
 
 class AttatchmentRenderer extends AbstractStreamRenderer
 {
     /** @var string */
     public const DefaultName = 'file';
+
+    private ?Closure $finally;
 
     /**
      * constructor
@@ -25,9 +28,18 @@ class AttatchmentRenderer extends AbstractStreamRenderer
         mixed $data,
         private string $name = '',
         string $mime = '',
+        ?callable $finally = null,
         int $status = StatusCodeInterface::STATUS_OK,
         array $headers = []
     ) {
+        $this->finally = is_null($finally)
+            ? null
+            : (
+                $finally instanceof Closure
+                ? $finally
+                : Closure::fromCallable($finally)
+            );
+
         parent::__construct($data, $mime, $status, $headers);
     }
 
@@ -91,11 +103,22 @@ class AttatchmentRenderer extends AbstractStreamRenderer
     }
 
     /**
+     * destructor
+     */
+    public function __destruct()
+    {
+        if ($finally = $this->finally) {
+            call_user_func($finally, $this);
+        }
+    }
+
+    /**
      * Create a renderer instance from a file path.
      *
      * @param string $path
      * @param string $name
      * @param string $mime
+     * @param callable|null $finally
      * @param int $status
      * @param array<string,string> $headers
      * @return self
@@ -104,6 +127,7 @@ class AttatchmentRenderer extends AbstractStreamRenderer
         string|SplFileInfo $path,
         string $name = '',
         string $mime = '',
+        ?callable $finally = null,
         int $status = StatusCodeInterface::STATUS_OK,
         array $headers = []
     ): self {
@@ -113,6 +137,7 @@ class AttatchmentRenderer extends AbstractStreamRenderer
             $file,
             $name,
             $mime,
+            $finally,
             $status,
             $headers
         );

@@ -40,4 +40,4 @@ it(
 
         expect($result)->toBe($response);
     }
-)->group('route-redirect-renderer', 'renderer');
+)->group('RouteRedirectRenderer', 'renderer');

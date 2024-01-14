@@ -120,7 +120,7 @@ class RouteRedirectRenderer implements ResponseRenderer, ContainerInjectable
      */
     protected function getContainer(): ApplicationContainer
     {
-        return $this->container ?? throw new LogicException('container is not set!');
+        return $this->container ?? throw new LogicException('ApplicationContainer is not set!');
     }
 
     /**

@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Http\SlimHttp;
-use RuntimeException;
+use LogicException;
 
 /**
  * @method ApplicationContainer getContainer()
@@ -42,7 +42,7 @@ trait HasHttpTest
     {
         return isset($this->http)
             ? $this->http
-            : throw new RuntimeException('Http is not set.');
+            : throw new LogicException('Http is not set.');
     }
 
     /**
