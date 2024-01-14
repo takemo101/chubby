@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Support;
 
-use DI\Attribute\Inject;
 use Takemo101\Chubby\Application;
 
 /**
@@ -24,13 +23,9 @@ readonly class ApplicationSummary
      * @param boolean $builtInServer
      */
     public function __construct(
-        #[Inject('config.app.name')]
         public string $name = Application::Name,
-        #[Inject('config.app.env')]
         string $env = 'local',
-        #[Inject('config.app.debug')]
         public bool $debug = true,
-        #[Inject('config.app.built_in_server')]
         public bool $builtInServer = false,
     ) {
         $this->env = strtolower($env);
