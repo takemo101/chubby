@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
+use LogicException;
 use RuntimeException;
 use DateTime;
 use DateTimeZone;
@@ -114,6 +115,16 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInje
     }
 
     /**
+     * Get status code to be rendered.
+     *
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    /**
      * Set headers to be rendered.
      *
      * @param array<string,string> $headers
@@ -124,6 +135,16 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInje
         $this->headers = $headers;
 
         return $this;
+    }
+
+    /**
+     * Get headers to be rendered.
+     *
+     * @return array<string,string>
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 
     /**
@@ -216,7 +237,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInje
      */
     protected function getContainer(): ApplicationContainer
     {
-        return $this->container ?? throw new RuntimeException('ApplicationContainer is not set.');
+        return $this->container ?? throw new LogicException('ApplicationContainer is not set.');
     }
 
     /**
@@ -243,7 +264,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInje
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        foreach ($this->headers as $key => $value) {
+        foreach ($this->getHeaders() as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
 
@@ -251,7 +272,7 @@ abstract class AbstractStreamRenderer implements ResponseRenderer, ContainerInje
 
         $response = $this->configureResponse(
             $response
-                ->withStatus($this->status)
+                ->withStatus($this->getStatus())
                 ->withHeader('Content-Type', $this->getContentType())
                 ->withHeader('Content-Length', (string)$stream->getSize())
         );
