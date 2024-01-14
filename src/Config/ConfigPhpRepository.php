@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Config;
 
-use RuntimeException;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Illuminate\Support\Arr;
 use Takemo101\Chubby\Filesystem\PathHelper;
@@ -112,7 +111,7 @@ class ConfigPhpRepository implements ConfigRepository
      *
      * @param string|mixed[] $config
      * @return mixed[]
-     * @throws RuntimeException
+     * @throws ConfigException
      */
     private function resolve(string|array $config = []): array
     {
@@ -274,7 +273,7 @@ class ConfigPhpRepository implements ConfigRepository
      *
      * @param string $path
      * @return mixed[]
-     * @throws RuntimeException
+     * @throws ConfigException
      */
     public static function getConfigByPath(string $path): array
     {
@@ -282,7 +281,7 @@ class ConfigPhpRepository implements ConfigRepository
 
         // If it is not an array, it is not config data and an error occurs.
         if (!is_array($result)) {
-            throw new RuntimeException("config data is not array. path: {$path}");
+            throw ConfigException::invalidDataTypeError();
         }
 
         return $result;

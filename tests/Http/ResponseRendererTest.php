@@ -3,7 +3,6 @@
 use Fig\Http\Message\StatusCodeInterface;
 use Takemo101\Chubby\Contract\Arrayable;
 use Takemo101\Chubby\Contract\Renderable;
-use Takemo101\Chubby\Http\Renderer\AttatchmentRenderer;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
 use Takemo101\Chubby\Http\Renderer\RedirectRenderer;

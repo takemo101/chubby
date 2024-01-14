@@ -6,7 +6,7 @@ use Takemo101\Chubby\Event\Attribute\AsEventListener;
 use ReflectionClass;
 use ReflectionAttribute;
 use InvalidArgumentException;
-use RuntimeException;
+use Takemo101\Chubby\Event\Exception\EventTypeInferenceException;
 
 class EventMapExtractor
 {
@@ -56,7 +56,7 @@ class EventMapExtractor
      * @param ReflectionClass<object> $class
      * @param class-string|object $listener
      * @return array<class-string,PrioritizedListener[]>
-     * @throws RuntimeException
+     * @throws EventTypeInferenceException
      */
     private function extractDefaultEventMap(ReflectionClass $class, string|object $listener): array
     {
@@ -86,7 +86,8 @@ class EventMapExtractor
      * @param ReflectionAttribute<AsEventListener>[] $attributes
      * @param class-string|object $listener
      * @return array<class-string,PrioritizedListener[]>
-     * @throws RuntimeException
+     * @throws EventTypeInferenceException
+
      */
     private function extractEventMapFromAttributes(
         ReflectionClass $class,

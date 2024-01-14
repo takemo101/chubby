@@ -7,8 +7,8 @@ use Takemo101\Chubby\Event\Attribute\AsEvent;
 use Closure;
 use ReflectionAttribute;
 use ReflectionClass;
-use RuntimeException;
 use SplPriorityQueue as PriorityQueue;
+use Takemo101\Chubby\Event\Exception\EventListenerResolveException;
 
 class EventListenerProvider implements ListenerProviderInterface
 {
@@ -23,6 +23,7 @@ class EventListenerProvider implements ListenerProviderInterface
      * {@inheritDoc}
      *
      * @return iterable<callable(object):void>
+     * @throws EventListenerResolveException
      */
     public function getListenersForEvent(object $event): iterable
     {
@@ -45,6 +46,7 @@ class EventListenerProvider implements ListenerProviderInterface
      *
      * @param class-string[] $eventClasses
      * @return iterable<callable(object):void>
+     * @throws EventListenerResolveException
      */
     private function createListenerQueue(
         array $eventClasses,
@@ -71,12 +73,7 @@ class EventListenerProvider implements ListenerProviderInterface
                 ];
 
                 if (!is_callable($callable)) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'The listener %s is not a callable or object.',
-                            $prioritized->getListenerClass(),
-                        ),
-                    );
+                    throw EventListenerResolveException::notCallableOrObjectError($prioritized->getListenerClass());
                 }
 
                 $queue->insert(

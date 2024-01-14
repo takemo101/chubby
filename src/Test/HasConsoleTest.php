@@ -3,10 +3,10 @@
 namespace Takemo101\Chubby\Test;
 
 use PHPUnit\Framework\TestCase;
-use Takemo101\Chubby\ApplicationContainer;
-use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
+use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Console\SymfonyConsole;
+use LogicException;
 
 /**
  * @method ApplicationContainer getContainer()
@@ -39,7 +39,7 @@ trait HasConsoleTest
     {
         return isset($this->console)
             ? $this->console
-            : throw new RuntimeException('Console is not set.');
+            : throw new LogicException('Console is not set.');
     }
 
     /**

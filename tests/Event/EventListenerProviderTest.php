@@ -6,6 +6,7 @@ use Takemo101\Chubby\Event\EventListenerResolver;
 use Takemo101\Chubby\Event\Attribute\AsEvent;
 use Takemo101\Chubby\Event\PrioritizedListener;
 use Mockery as m;
+use Takemo101\Chubby\Event\Exception\EventListenerResolveException;
 
 describe(
     'EventListenerProvider',
@@ -71,7 +72,7 @@ describe(
                 ->andReturn(new EventListenerProviderTestListener());
 
             expect(fn () => $provider->getListenersForEvent($event))
-                ->toThrow(RuntimeException::class);
+                ->toThrow(EventListenerResolveException::class);
         });
     },
 )->group('EventListenerProvider', 'event');

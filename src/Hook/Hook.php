@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Hook;
 
-use RuntimeException;
 use ReflectionFunction;
 use ReflectionNamedType;
 use Closure;
@@ -64,7 +63,7 @@ class Hook
      * @param callable $function
      * @param integer $priority
      * @return self
-     * @throws RuntimeException
+     * @throws HookException
      */
     public function onTyped(
         callable $function,
@@ -76,7 +75,7 @@ class Hook
             ->getParameters();
 
         if (!in_array(count($parameters), [1, 2])) {
-            throw new RuntimeException('invalid function parameter');
+            throw HookException::invalidFunctionParameterCount();
         }
 
         $parameter = $parameters[0];
@@ -84,7 +83,7 @@ class Hook
         $type = $parameter->getType();
 
         if (!($type instanceof ReflectionNamedType)) {
-            throw new RuntimeException('invalid function parameter type');
+            throw HookException::invalidFunctionParameterType();
         }
 
         return $this->on(

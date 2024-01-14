@@ -2,8 +2,8 @@
 
 namespace Takemo101\Chubby\Support;
 
+use InvalidArgumentException;
 use stdClass;
-use RuntimeException;
 
 /**
  * Class or object collection.
@@ -35,7 +35,7 @@ abstract class ClassCollection
      *
      * @param class-string<T>|T ...$classes
      * @return static
-     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function set(string|object ...$classes): static
     {
@@ -50,7 +50,7 @@ abstract class ClassCollection
      *
      * @param class-string<T>|T ...$classes
      * @return static
-     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function add(string|object ...$classes): static
     {
@@ -59,7 +59,7 @@ abstract class ClassCollection
 
         foreach ($classes as $class) {
             if (is_string($class) && !class_exists($class)) {
-                throw new RuntimeException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'Class "%s" does not exist.',
                         $class,
@@ -71,7 +71,7 @@ abstract class ClassCollection
                 is_a($class, static::Type, true) // @phpstan-ignore-line
                 || is_subclass_of($class, static::Type, true)
             )) {
-                throw new RuntimeException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'Class "%s" is not a subclass of "%s".',
                         is_string($class)
@@ -98,7 +98,7 @@ abstract class ClassCollection
      *
      * @param class-string<T> $class
      * @return static
-     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function remove(string $class): static
     {
@@ -106,7 +106,7 @@ abstract class ClassCollection
             class_exists($class)
             || interface_exists($class)
         )) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Class "%s" does not exist.',
                     $class,

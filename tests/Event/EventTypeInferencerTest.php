@@ -1,6 +1,7 @@
 <?php
 
 use Takemo101\Chubby\Event\EventTypeInferencer;
+use Takemo101\Chubby\Event\Exception\EventTypeInferenceException;
 
 describe(
     'EventTypeInferencer',
@@ -43,7 +44,7 @@ describe(
             $methodName = 'nonExistentMethod';
 
             expect(fn () => $inferencer->inference($class, $methodName))
-                ->toThrow(RuntimeException::class);
+                ->toThrow(EventTypeInferenceException::class);
         });
 
         it('should throw an exception if method has no parameters', function () {
@@ -54,7 +55,7 @@ describe(
             $methodName = 'methodWithNoParameters';
 
             expect(fn () => $inferencer->inference($class, $methodName))
-                ->toThrow(RuntimeException::class);
+                ->toThrow(EventTypeInferenceException::class);
         });
 
         it('should throw an exception if method has no type', function () {
@@ -65,7 +66,7 @@ describe(
             $methodName = 'methodWithNoType';
 
             expect(fn () => $inferencer->inference($class, $methodName))
-                ->toThrow(RuntimeException::class);
+                ->toThrow(EventTypeInferenceException::class);
         });
     }
 )->group('EventTypeInferencer', 'event');

@@ -32,7 +32,7 @@ describe(
             };
 
             expect(fn () => $collection->add('NonExistentClass'))
-                ->toThrow(RuntimeException::class, 'Class "NonExistentClass" does not exist.');
+                ->toThrow(InvalidArgumentException::class, 'Class "NonExistentClass" does not exist.');
         });
 
         it('throws an exception when adding a class that is not a subclass', function () {
@@ -42,7 +42,7 @@ describe(
             };
 
             expect(fn () => $collection->add(DateTimeZone::class))
-                ->toThrow(RuntimeException::class, 'Class "DateTimeZone" is not a subclass of "stdClass".');
+                ->toThrow(InvalidArgumentException::class, 'Class "DateTimeZone" is not a subclass of "stdClass".');
         });
 
         it('can clear the collection', function () {
@@ -129,7 +129,7 @@ describe(
             };
 
             expect(fn () => $collection->remove('NonExistentClass'))
-                ->toThrow(RuntimeException::class, 'Class "NonExistentClass" does not exist.');
+                ->toThrow(InvalidArgumentException::class, 'Class "NonExistentClass" does not exist.');
         });
 
         it('can create an empty collection using the static method', function () {

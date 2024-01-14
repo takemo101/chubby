@@ -9,13 +9,16 @@ use RuntimeException;
  */
 class LocalFilesystemException extends RuntimeException
 {
+    public const CodeNotFound = 1;
+    public const CodeIOError = 2;
+
     /**
      * @param string $path
      * @return self
      */
     public static function notFound(string $path): self
     {
-        return new self("File not found at path [{$path}].");
+        return new self("File not found at path [{$path}].", self::CodeNotFound);
     }
 
     /**
@@ -24,6 +27,6 @@ class LocalFilesystemException extends RuntimeException
      */
     public static function ioError(string $path): self
     {
-        return new self("IO error occurred at path [{$path}].");
+        return new self("IO error occurred at path [{$path}].", self::CodeIOError);
     }
 }
