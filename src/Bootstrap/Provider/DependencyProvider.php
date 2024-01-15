@@ -24,9 +24,9 @@ class DependencyProvider implements Provider
     public const DefaultDependencySettingPath = 'dependency.php';
 
     /**
-     * @var string|null Dependency definitions path.
+     * @var string[] Dependency definitions paths.
      */
-    private ?string $dependencyPath = null;
+    private array $dependencyPaths = [];
 
     /**
      * constructor
@@ -49,20 +49,30 @@ class DependencyProvider implements Provider
      */
     public function register(Definitions $definitions): void
     {
-        $dependencyPath = $this->getDependencyPath();
+        $dependencyPaths = $this->getDependencyPaths();
 
         /** @var mixed[] */
-        $dependency = $this->filesystem->exists($dependencyPath)
-            ? $this->filesystem->require($dependencyPath)
-            : [];
+        $dependencies = [];
 
-        if (!is_array($dependency)) {
-            throw new LogicException('Dependency definition must be array.');
+        foreach ($dependencyPaths as $dependencyPath) {
+            /** @var mixed[] */
+            $dependency = $this->filesystem->exists($dependencyPath)
+                ? $this->filesystem->require($dependencyPath)
+                : [];
+
+            if (!is_array($dependency)) {
+                throw new LogicException("Dependency definition must be array. ({$dependencyPath})");
+            }
+
+            $dependencies = [
+                ...$dependencies,
+                ...$dependency,
+            ];
         }
 
-        if (!empty($dependency)) {
+        if (!empty($dependencies)) {
             $definitions->add(
-                $dependency,
+                $dependencies,
             );
         }
     }
@@ -79,13 +89,13 @@ class DependencyProvider implements Provider
     }
 
     /**
-     * Get dependency definitions path.
+     * Get dependency definitions paths.
      *
-     * @return string
+     * @return string[]
      */
-    public function getDependencyPath(): string
+    public function getDependencyPaths(): array
     {
-        return $this->dependencyPath ?: $this->getDefaultDependencyPath();
+        return $this->dependencyPaths ?: [$this->getDefaultDependencyPath()];
     }
 
     /**
@@ -99,13 +109,13 @@ class DependencyProvider implements Provider
     }
 
     /**
-     * Set dependency definitions path.
+     * Set dependency definitions paths.
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return void
      */
-    public function setDependencyPath(?string $path = null): void
+    public function setDependencyPath(string ...$paths): void
     {
-        $this->dependencyPath = $path;
+        $this->dependencyPaths = $paths;
     }
 }
