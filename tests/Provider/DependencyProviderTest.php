@@ -33,7 +33,7 @@ it('should register dependency definitions', function () {
         ->with($dependencyPath2)
         ->andReturn(['key2' => 'value2']);
 
-    $this->provider->setDependencyPaths($dependencyPath1, $dependencyPath2);
+    $this->provider->setDependencyPath($dependencyPath1, $dependencyPath2);
 
     expect($this->provider->getDependencyPaths())
         ->toBe([$dependencyPath1, $dependencyPath2]);

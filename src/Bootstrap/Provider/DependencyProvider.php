@@ -109,12 +109,12 @@ class DependencyProvider implements Provider
     }
 
     /**
-     * Set dependency definitions path.
+     * Set dependency definitions paths.
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return void
      */
-    public function setDependencyPaths(string ...$paths): void
+    public function setDependencyPath(string ...$paths): void
     {
         $this->dependencyPaths = $paths;
     }
