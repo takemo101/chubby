@@ -23,9 +23,9 @@ class FunctionProvider implements Provider
     public const DefaultFunctionSettingPath = 'function.php';
 
     /**
-     * @var string|null function.php relative path
+     * @var string[] function.php relative paths
      */
-    private ?string $functionPath = null;
+    private array $functionPaths = [];
 
     /**
      * constructor
@@ -59,21 +59,23 @@ class FunctionProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        $functionPath = $this->getFunctionPath();
+        $functionPaths = $this->getFunctionPaths();
 
-        if ($this->filesystem->exists($functionPath)) {
-            $this->filesystem->require($functionPath);
+        foreach ($functionPaths as $functionPath) {
+            if ($this->filesystem->exists($functionPath)) {
+                $this->filesystem->require($functionPath);
+            }
         }
     }
 
     /**
      * Get function path.
      *
-     * @return string
+     * @return string[]
      */
-    public function getFunctionPath(): string
+    public function getFunctionPaths(): array
     {
-        return $this->functionPath ?: $this->getDefaultFunctionPath();
+        return $this->functionPaths ?: [$this->getDefaultFunctionPath()];
     }
 
     /**
@@ -87,13 +89,13 @@ class FunctionProvider implements Provider
     }
 
     /**
-     * Set function path.
+     * Set function paths.
      *
-     * @param string|null $path
+     * @param string ...$paths
      * @return void
      */
-    public function setFunctionPath(?string $path = null): void
+    public function setFunctionPath(string ...$paths): void
     {
-        $this->functionPath = $path;
+        $this->functionPaths = $paths;
     }
 }
