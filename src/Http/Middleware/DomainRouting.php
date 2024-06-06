@@ -54,7 +54,7 @@ class DomainRouting implements MiddlewareInterface
     /**
      * Create a new instance from the domain route.
      *
-     * @param string $domain
+     * @param string ...$patterns
      */
     public static function pattern(string ...$patterns): self
     {
