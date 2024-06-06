@@ -9,7 +9,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpNotFoundException;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
-use Takemo101\Chubby\Http\Routing\DomainRouteResult;
 
 /**
  * Handles the next middleware when a domain route is found for the request.
@@ -18,6 +17,7 @@ class DomainRouting implements MiddlewareInterface
 {
     /** @var string */
     public const CommonRequestMethod = '*';
+
     /**
      * constructor
      *
@@ -38,51 +38,26 @@ class DomainRouting implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $result = $this->performRouting($request);
-
-        /** @var ServerRequestInterface */
-        $routedRequest = $result[0];
-
-        return $handler->handle($routedRequest);
-    }
-
-    /**
-     * Perform routing
-     *
-     * @param  ServerRequestInterface $request PSR7 Server Request
-     * @return array{0:ServerRequestInterface,1:DomainRouteResult}
-     * @throws HttpNotFoundException
-     */
-    public function performRouting(ServerRequestInterface $request): array
-    {
         $host = $request->getUri()->getHost();
 
-        $routedResult = $this->dispatcher->dispatch($host);
+        $result = $this->dispatcher->dispatch($host);
 
-        if (!$routedResult->isFound()) {
+        if (!$result->isFound()) {
             throw new HttpNotFoundException($request);
         }
 
-        $context = new DomainRouteContext($routedResult->getArguments());
+        $context = new DomainRouteContext($result->getArguments());
 
-        /** @var array{0:ServerRequestInterface,1:DomainRouteResult} */
-        $result = [
-            $context->withContext($request),
-            $routedResult,
-        ];
-
-        return $result;
+        return $handler->handle($context->withContext($request));
     }
 
-
-
     /**
-     * Create a new instance.
+     * Create a new instance from the domain route.
      *
-     * @param string $domain
+     * @param string ...$patterns
      */
-    public static function fromDomain(string $domain): self
+    public static function pattern(string ...$patterns): self
     {
-        return new self(DomainRouteDispatcher::fromDomain($domain));
+        return new self(DomainRouteDispatcher::fromPatterns(...$patterns));
     }
 }

@@ -17,7 +17,6 @@ use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Middleware\ErrorMiddleware;
-use Slim\MiddlewareDispatcher;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
@@ -26,7 +25,6 @@ use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\Configurer\DefaultSlimConfigurer;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
-use Takemo101\Chubby\Http\DomainRouter;
 use Takemo101\Chubby\Http\Factory\DefaultSlimFactory;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
@@ -37,8 +35,6 @@ use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
-use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
-use Takemo101\Chubby\Http\Routing\DomainRouteHandler;
 use Takemo101\Chubby\Http\SlimHttp;
 
 use function DI\get;
@@ -190,37 +186,6 @@ class HttpProvider implements Provider
 
                     return $errorMiddleware;
                 },
-                DomainRouteCollector::class => function (
-                    Hook $hook,
-                ) {
-                    $routeCollector = new DomainRouteCollector();
-
-                    $hook->doTyped($routeCollector);
-
-                    return $routeCollector;
-                },
-                DomainRouter::class => function (
-                    DomainRouteCollector $routeCollector,
-                    DomainRouteHandler $routeHandler,
-                    CallableResolverInterface $callableResolver,
-                    ApplicationContainer $container,
-                    Hook $hook,
-                ) {
-                    $router = new DomainRouter(
-                        new MiddlewareDispatcher(
-                            kernel: $routeHandler,
-                            callableResolver: $callableResolver,
-                            container: $container,
-                        ),
-                        $routeCollector,
-                    );
-
-                    $router->add(ErrorMiddleware::class);
-
-                    $hook->doTyped($router);
-
-                    return $router;
-                }
             ],
         );
     }
