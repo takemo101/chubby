@@ -2,16 +2,16 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-
 /**
  * Result of dispatch by DomainRouteDispatcher
  */
-class DomainRouteResult
+readonly class DomainRouteResult
 {
     /**
      * constructor
      *
      * @param boolean $found
+     * @param array<string,string> $arguments
      */
     public function __construct(
         private bool $found,
