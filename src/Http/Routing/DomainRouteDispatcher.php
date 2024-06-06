@@ -7,6 +7,9 @@ use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
 
+/**
+ * Dispatch the route configured for the request domain.
+ */
 class DomainRouteDispatcher
 {
     /** @var string */
@@ -33,13 +36,13 @@ class DomainRouteDispatcher
     {
         $dispatcher = simpleDispatcher(
             function (RouteCollector $r) {
-                $routes = $this->routeCollector->getRoutes();
+                $patterns = $this->routeCollector->getPatterns();
 
-                foreach ($routes as $route) {
+                foreach ($patterns as $pattern) {
                     $r->addRoute(
                         self::CommonRequestMethod,
-                        $route->getPattern(),
-                        $route,
+                        $pattern,
+                        null,
                     );
                 }
             },
@@ -50,32 +53,26 @@ class DomainRouteDispatcher
         /** @var integer */
         $status = $info[0] ?? Dispatcher::NOT_FOUND;
 
-        /** @var DomainRoute|null */
-        $route = $info[1] ?? null;
-
         /** @var array<string,string> */
         $arguments = $info[2] ?? [];
 
         return new DomainRouteResult(
             found: $status === Dispatcher::FOUND,
-            route: $route,
             arguments: $arguments,
         );
     }
 
     /**
-     * Create a new DomainRouteDispatcher instance from the given domain.
+     * Create a new instance from the route pattern.
      *
-     * @param string $domain
+     * @param string ...$patterns
      * @return self
      */
-    public static function fromDomain(string $domain): self
+    public static function fromPatterns(string ...$patterns): self
     {
         return new self(
             new DomainRouteCollector(
-                routes: [
-                    $domain => DomainRouteHandleException::createNeverRequestHandler(),
-                ],
+                ...$patterns,
             ),
         );
     }

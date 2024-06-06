@@ -2,68 +2,72 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Psr\Http\Server\RequestHandlerInterface;
+use InvalidArgumentException;
 
+/**
+ * Collects route patterns for the domain.
+ */
 class DomainRouteCollector
 {
     /**
-     * @var array<string,DomainRoute>
+     * @var string[]
      */
-    private array $routes = [];
+    private array $patterns = [];
 
     /**
      * constructor
      *
-     * @param array<string,RequestHandlerInterface> $routes
+     * @param string ...$patterns
      */
-    public function __construct(
-        array $routes = [],
-    ) {
-        foreach ($routes as $domain => $handler) {
-            $this->addRoute($domain, $handler);
+    public function __construct(string ...$patterns)
+    {
+        foreach ($patterns as $pattern) {
+            $this->addPattern($pattern);
         }
     }
 
     /**
-     * Add a route
+     * Add a route pattern to the domain.
      *
      * @param string $pattern
-     * @param RequestHandlerInterface $handler
-     * @return DomainRoute
+     * @return self
+     * @throws InvalidArgumentException
      */
-    public function addRoute(string $pattern, RequestHandlerInterface $handler): DomainRoute
+    public function addPattern(string $pattern): self
     {
-        $route = new DomainRoute($pattern, $handler);
-
-        $this->routes[$pattern] = $route;
-
-        return $route;
-    }
-
-    /**
-     * Get route by name
-     *
-     * @param string $name
-     * @return DomainRoute|null
-     */
-    public function getNamedRoute(string $name): ?DomainRoute
-    {
-        foreach ($this->routes as $route) {
-            if ($route->getName() === $name) {
-                return $route;
-            }
+        if (empty($pattern)) {
+            throw new InvalidArgumentException('The pattern is empty.');
         }
 
-        return null;
+        $patterns = [
+            ...$this->patterns,
+            $pattern,
+        ];
+
+        $this->patterns = array_unique($patterns);
+
+        return $this;
     }
 
     /**
-     * Get routes
+     * Check if the route pattern is set for the domain.
      *
-     * @return array<string,DomainRoute>
+     * @param string $pattern
+     * @return bool
      */
-    public function getRoutes(): array
+    public function hasPattern(string $pattern): bool
     {
-        return $this->routes;
+        return in_array($pattern, $this->patterns, true);
+    }
+
+
+    /**
+     * Get route patterns.
+     *
+     * @return string[]
+     */
+    public function getPatterns(): array
+    {
+        return $this->patterns;
     }
 }
