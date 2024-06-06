@@ -4,7 +4,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
-use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
+use Takemo101\Chubby\Http\Routing\DomainRoutePatterns;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 use Tests\AppTestCase;
@@ -70,11 +70,11 @@ describe(
             function (string $pattern) {
                 /** @var AppTestCase $this */
 
-                $collector = new DomainRouteCollector();
+                $collector = new DomainRoutePatterns();
 
-                $collector->addPattern($pattern);
+                $collector->add($pattern);
 
-                expect($collector->hasPattern($pattern))->toBeTrue();
+                expect($collector->has($pattern))->toBeTrue();
             }
         )->with([
             ['localhost'],

@@ -5,9 +5,9 @@ namespace Takemo101\Chubby\Http\Routing;
 use InvalidArgumentException;
 
 /**
- * Collects route patterns for the domain.
+ * Route patterns for the domain.
  */
-class DomainRouteCollector
+class DomainRoutePatterns
 {
     /**
      * @var string[]
@@ -22,7 +22,7 @@ class DomainRouteCollector
     public function __construct(string ...$patterns)
     {
         foreach ($patterns as $pattern) {
-            $this->addPattern($pattern);
+            $this->add($pattern);
         }
     }
 
@@ -33,7 +33,7 @@ class DomainRouteCollector
      * @return self
      * @throws InvalidArgumentException
      */
-    public function addPattern(string $pattern): self
+    public function add(string $pattern): self
     {
         if (empty($pattern)) {
             throw new InvalidArgumentException('The pattern is empty.');
@@ -55,7 +55,7 @@ class DomainRouteCollector
      * @param string $pattern
      * @return bool
      */
-    public function hasPattern(string $pattern): bool
+    public function has(string $pattern): bool
     {
         return in_array($pattern, $this->patterns, true);
     }
@@ -66,7 +66,7 @@ class DomainRouteCollector
      *
      * @return string[]
      */
-    public function getPatterns(): array
+    public function patterns(): array
     {
         return $this->patterns;
     }

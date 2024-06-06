@@ -18,10 +18,10 @@ class DomainRouteDispatcher
     /**
      * constructor
      *
-     * @param DomainRouteCollector $routeCollector
+     * @param DomainRoutePatterns $patterns
      */
     public function __construct(
-        private DomainRouteCollector $routeCollector,
+        private DomainRoutePatterns $patterns,
     ) {
         //
     }
@@ -36,7 +36,7 @@ class DomainRouteDispatcher
     {
         $dispatcher = simpleDispatcher(
             function (RouteCollector $r) {
-                $patterns = $this->routeCollector->getPatterns();
+                $patterns = $this->patterns->patterns();
 
                 foreach ($patterns as $pattern) {
                     $r->addRoute(
@@ -71,7 +71,7 @@ class DomainRouteDispatcher
     public static function fromPatterns(string ...$patterns): self
     {
         return new self(
-            new DomainRouteCollector(
+            new DomainRoutePatterns(
                 ...$patterns,
             ),
         );
