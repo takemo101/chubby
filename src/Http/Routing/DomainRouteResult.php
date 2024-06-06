@@ -2,8 +2,6 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use RuntimeException;
-use InvalidArgumentException;
 
 /**
  * Result of dispatch by DomainRouteDispatcher
@@ -14,7 +12,6 @@ class DomainRouteResult
      * constructor
      *
      * @param boolean $found
-     * @throws InvalidArgumentException
      */
     public function __construct(
         private bool $found,
