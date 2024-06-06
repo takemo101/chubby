@@ -92,8 +92,8 @@ hook()
                     return $response;
                 },
             )->add(DomainRouting::pattern(
-                '{domain:[a-zA-Z]+}.localhost',
-                '{domain:[a-zA-Z]+}.{locale:[jp|en]+}.localhost',
+                '{domain}.localhost',
+                '{domain}.{locale:[jp|en]+}.localhost',
             ));
 
             $http->get(
