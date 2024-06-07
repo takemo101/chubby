@@ -73,7 +73,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $this->dispatcher->dispatch(
-            new AfterControllerInvoke($hookedResponse),
+            new AfterControllerExecution($hookedResponse),
         );
 
         return $hookedResponse;
@@ -109,7 +109,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $this->dispatcher->dispatch(
-            new BeforeControllerInvoke($hookedRequest),
+            new BeforeControllerExecution($hookedRequest),
         );
 
         $context = new Context(

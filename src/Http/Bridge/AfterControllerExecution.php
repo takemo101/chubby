@@ -8,7 +8,7 @@ use Takemo101\Chubby\Event\StoppableEvent;
 /**
  * This is an event after running the controller.
  */
-class AfterControllerInvoke extends StoppableEvent
+class AfterControllerExecution extends StoppableEvent
 {
     /**
      * constructor
