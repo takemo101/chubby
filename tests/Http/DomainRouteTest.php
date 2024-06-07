@@ -4,7 +4,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
-use Takemo101\Chubby\Http\Routing\DomainRoutePatterns;
+use Takemo101\Chubby\Http\Routing\DomainPattern;
+use Takemo101\Chubby\Http\Routing\DomainPatterns;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
 use Takemo101\Chubby\Http\Routing\DomainRouteDispatcher;
 use Tests\AppTestCase;
@@ -12,6 +13,33 @@ use Tests\AppTestCase;
 describe(
     'domain route',
     function () {
+
+        test(
+            'The domain pattern is created.',
+            function (string $pattern) {
+                $domainPattern = new DomainPattern($pattern);
+
+                expect($domainPattern->pattern)->toEqual($pattern);
+            },
+        )->with([
+            ['localhost'],
+            ['{domain}.localhost'],
+        ]);
+
+        test(
+            'The domain pattern is replaced to a pattern for FastRoute.',
+            function (string $pattern, string $expected) {
+                $domainPattern = new DomainPattern($pattern);
+
+                expect($domainPattern->replaceDotsToSlashes())->toEqual($expected);
+            },
+        )->with([
+            ['localhost', 'localhost'],
+            ['{domain}.localhost', '{domain}/localhost'],
+            ['{subdomain}.example.{domain}.com', '{subdomain}/example/{domain}/com'],
+            ['{domain:.+}.localhost', '{domain:.+}/localhost'],
+        ]);
+
         test(
             'The domain route configured for the host is found.',
             function (string $route, string $host, array $routeArguments) {
@@ -70,11 +98,13 @@ describe(
             function (string $pattern) {
                 /** @var AppTestCase $this */
 
-                $collector = new DomainRoutePatterns();
+                $collector = new DomainPatterns();
 
-                $collector->add($pattern);
+                $domainPattern = new DomainPattern($pattern);
 
-                expect($collector->has($pattern))->toBeTrue();
+                $collector->add($domainPattern);
+
+                expect($collector->has($domainPattern))->toBeTrue();
             }
         )->with([
             ['localhost'],
