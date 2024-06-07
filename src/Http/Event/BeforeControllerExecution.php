@@ -1,6 +1,6 @@
 <?php
 
-namespace Takemo101\Chubby\Http\Bridge;
+namespace Takemo101\Chubby\Http\Event;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Event\StoppableEvent;
@@ -8,7 +8,7 @@ use Takemo101\Chubby\Event\StoppableEvent;
 /**
  * This is an event before running the controller.
  */
-class BeforeControllerInvoke extends StoppableEvent
+class BeforeControllerExecution extends StoppableEvent
 {
     /**
      * constructor

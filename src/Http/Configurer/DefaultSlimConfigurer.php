@@ -4,7 +4,9 @@ namespace Takemo101\Chubby\Http\Configurer;
 
 use DI\Attribute\Inject;
 use Slim\App as Slim;
+use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
+use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
 
 class DefaultSlimConfigurer implements SlimConfigurer
 {
@@ -16,9 +18,11 @@ class DefaultSlimConfigurer implements SlimConfigurer
     /**
      * constructor
      *
+     * @param GlobalMiddlewareCollection $middlewares
      * @param string|null $basePath
      */
     public function __construct(
+        private GlobalMiddlewareCollection $middlewares,
         #[Inject('config.slim.base_path')]
         ?string $basePath = null,
     ) {
@@ -37,9 +41,13 @@ class DefaultSlimConfigurer implements SlimConfigurer
             $slim->setBasePath($this->basePath);
         }
 
-        $slim->addBodyParsingMiddleware();
         $slim->addRoutingMiddleware();
+        $slim->add(BodyParsingMiddleware::class);
         $slim->add(ErrorMiddleware::class);
+
+        foreach ($this->middlewares->classes() as $middleware) {
+            $slim->add($middleware);
+        }
 
         return $slim;
     }

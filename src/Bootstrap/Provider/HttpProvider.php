@@ -4,11 +4,13 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Slim\CallableResolver;
 use Slim\Interfaces\ErrorHandlerInterface;
@@ -16,6 +18,7 @@ use Slim\Interfaces\RouteParserInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
+use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\DefinitionHelper;
@@ -29,6 +32,7 @@ use Takemo101\Chubby\Http\Factory\DefaultSlimFactory;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
+use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
@@ -86,11 +90,13 @@ class HttpProvider implements Provider
                 SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
+                    EventDispatcherInterface $dispatcher,
                     Hook $hook,
                 ): SlimHttp {
                     $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
+                        dispatcher: $dispatcher,
                     );
 
                     $hook->doTyped($adapter);
@@ -186,6 +192,28 @@ class HttpProvider implements Provider
 
                     return $errorMiddleware;
                 },
+                BodyParsingMiddleware::class => function (
+                    Hook $hook,
+                ) {
+                    $middleware = new BodyParsingMiddleware();
+
+                    $hook->doTyped($middleware);
+
+                    return $middleware;
+                },
+                GlobalMiddlewareCollection::class => function (
+                    ConfigRepository $config,
+                    Hook $hook,
+                ) {
+                    /** @var class-string<MiddlewareInterface>[] */
+                    $classes = $config->get('slim.middlewares', []);
+
+                    $middlewares = new GlobalMiddlewareCollection(...$classes);
+
+                    $hook->doTyped($middlewares);
+
+                    return $middlewares;
+                }
             ],
         );
     }
