@@ -8,7 +8,7 @@ use Takemo101\Chubby\Event\StoppableEvent;
 /**
  * This is an event after configuring the slim application.
  */
-class ConfiguredSlim extends StoppableEvent
+class AfterSlimConfiguration extends StoppableEvent
 {
     /**
      * constructor

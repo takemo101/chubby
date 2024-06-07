@@ -9,7 +9,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App as Slim;
 use Takemo101\Chubby\Http\Concern\HasRouting;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
-use Takemo101\Chubby\Http\Event\ConfiguredSlim;
+use Takemo101\Chubby\Http\Event\AfterSlimConfiguration;
 
 class SlimHttp implements RequestHandlerInterface
 {
@@ -50,7 +50,7 @@ class SlimHttp implements RequestHandlerInterface
 
         // Dispatch event after slim configured.
         $this->dispatcher->dispatch(
-            new ConfiguredSlim($this->application),
+            new AfterSlimConfiguration($this->application),
         );
 
         $this->isConfigured = true;
