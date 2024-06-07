@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -89,11 +90,13 @@ class HttpProvider implements Provider
                 SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
+                    EventDispatcherInterface $dispatcher,
                     Hook $hook,
                 ): SlimHttp {
                     $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
+                        dispatcher: $dispatcher,
                     );
 
                     $hook->doTyped($adapter);
