@@ -35,8 +35,8 @@ class DependencyProvider implements Provider
      * @param LocalFilesystem $filesystem
      */
     public function __construct(
-        private ApplicationPath $path,
-        private LocalFilesystem $filesystem,
+        private readonly ApplicationPath $path,
+        private readonly LocalFilesystem $filesystem,
     ) {
         //
     }
