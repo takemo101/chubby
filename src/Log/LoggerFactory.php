@@ -2,6 +2,7 @@
 
 namespace Takemo101\Chubby\Log;
 
+use Monolog\Level;
 use Psr\Log\LoggerInterface;
 
 interface LoggerFactory
@@ -9,8 +10,7 @@ interface LoggerFactory
     /**
      * Create logger.
      *
-     * @param string|null $name
      * @return LoggerInterface
      */
-    public function create(?string $name = null): LoggerInterface;
+    public function create(): LoggerInterface;
 }
