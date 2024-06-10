@@ -2,10 +2,9 @@
 
 namespace Takemo101\Chubby\Log\Factory;
 
-use Monolog\Formatter\LineFormatter;
+use DI\Attribute\Inject;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\HandlerInterface;
-use Monolog\Level;
 
 /**
  * Create a handler that outputs logs in file format.
@@ -18,39 +17,27 @@ class FileHandlerFactory implements LoggerHandlerFactory
      *
      * @param string $path
      * @param string $filename
-     * @param Level $level
      */
     public function __construct(
-        private string $path,
-        private string $filename = 'error.log',
-        private Level $level = Level::Debug,
+        #[Inject('config.log.file.path')]
+        private readonly string $path,
+        #[Inject('config.log.file.filename')]
+        private readonly string $filename = 'error.log',
+        #[Inject('config.log.file.permission')]
+        private readonly int $permission = 0777,
     ) {
         //
     }
 
     /**
-     * Create logger handler.
-     *
-     * @return HandlerInterface
+     * {@inheritDoc}
      */
     public function create(): HandlerInterface
     {
         $handler = new RotatingFileHandler(
             filename: $this->createPath(),
             maxFiles: 0,
-            level: $this->level,
-            bubble: true,
-            filePermission: 0777,
-        );
-
-        $handler->setFormatter(
-            new LineFormatter(
-                format: null,
-                dateFormat: null,
-                allowInlineLineBreaks: true,
-                ignoreEmptyContextAndExtra: true,
-                includeStacktraces: true,
-            ),
+            filePermission: $this->permission,
         );
 
         return $handler;

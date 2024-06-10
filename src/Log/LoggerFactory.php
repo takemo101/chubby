@@ -9,8 +9,7 @@ interface LoggerFactory
     /**
      * Create logger.
      *
-     * @param string|null $name
      * @return LoggerInterface
      */
-    public function create(?string $name = null): LoggerInterface;
+    public function create(): LoggerInterface;
 }

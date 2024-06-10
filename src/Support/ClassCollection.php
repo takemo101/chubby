@@ -146,6 +146,16 @@ abstract class ClassCollection
     }
 
     /**
+     * Check if the collection is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->classes);
+    }
+
+    /**
      * Create an empty collection.
      *
      * @return static
