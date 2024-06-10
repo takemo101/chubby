@@ -22,9 +22,6 @@ readonly class ApplicationOption
     /** @var string */
     public const DefaultStoragePath = '/storage';
 
-    /** @var string[] */
-    public const DefaultDotenvNames = ['.env'];
-
     /**
      * constructor
      *
@@ -32,7 +29,6 @@ readonly class ApplicationOption
      * @param string $configPath
      * @param string $settingPath
      * @param string $storagePath
-     * @param string[] $dotenvNames
      * @param ContainerBuilder<Container> $builder
      * @param Bootstrap $bootstrap
      */
@@ -41,7 +37,6 @@ readonly class ApplicationOption
         public string $configPath,
         public string $settingPath,
         public string $storagePath,
-        public array $dotenvNames,
         public ContainerBuilder $builder,
         public Bootstrap $bootstrap,
     ) {
@@ -66,7 +61,6 @@ readonly class ApplicationOption
             configPath: $this->configPath,
             settingPath: $this->settingPath,
             storagePath: $this->storagePath,
-            dotenvNames: $this->dotenvNames,
         );
     }
 
@@ -77,7 +71,6 @@ readonly class ApplicationOption
      * @param string|null $configPath
      * @param string|null $settingPath
      * @param string|null $storagePath
-     * @param string[]|null $dotenvNames
      * @param ContainerBuilder<Container>|null $builder
      * @param Bootstrap|null $bootstrap
      * @return self
@@ -87,7 +80,6 @@ readonly class ApplicationOption
         ?string $configPath = null,
         ?string $settingPath = null,
         ?string $storagePath = null,
-        ?array $dotenvNames = null,
         ?ContainerBuilder $builder = null,
         ?Bootstrap $bootstrap = null,
     ): self {
@@ -98,7 +90,6 @@ readonly class ApplicationOption
             configPath: empty($configPath) ? self::DefaultConfigPath : $configPath,
             settingPath: empty($settingPath) ? self::DefaultSettingPath : $settingPath,
             storagePath: empty($storagePath) ? self::DefaultStoragePath : $storagePath,
-            dotenvNames: empty($dotenvNames) ? self::DefaultDotenvNames : $dotenvNames,
             builder: $builder ?? (new ContainerBuilder())
                 ->useAttributes(true),
             bootstrap: $bootstrap ?? new Bootstrap(),
