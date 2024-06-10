@@ -93,10 +93,12 @@ class ConfigProvider implements Provider
      * Set config repository.
      *
      * @param ConfigRepository $repository
-     * @return void
+     * @return self
      */
-    public function setConfigRepository(ConfigRepository $repository): void
+    public function setConfigRepository(ConfigRepository $repository): self
     {
         $this->repository = $repository;
+
+        return $this;
     }
 }
