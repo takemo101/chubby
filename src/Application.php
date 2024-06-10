@@ -114,7 +114,11 @@ class Application implements ApplicationContainer
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
             new BootStartProvider(),
-            new EnvironmentProvider($this->path),
+            new EnvironmentProvider(
+                paths: [
+                    $this->path->getBasePath(),
+                ],
+            ),
             new ErrorProvider(),
             new EventProvider(),
             new ConfigProvider(),

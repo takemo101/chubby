@@ -11,7 +11,6 @@ use Dotenv\Repository\RepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
-use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Support\Environment;
 
 /**
@@ -30,9 +29,11 @@ class EnvironmentProvider implements Provider
     public const EnvPrependKey = 'env';
 
     /**
-     * @var string[]
+     * @var string[] Default dotenv file names.
      */
-    private array $envPaths;
+    public const DefaultEnvNames = [
+        '.env',
+    ];
 
     /**
      * @var boolean Should throw exception on missing dotenv.
@@ -40,14 +41,27 @@ class EnvironmentProvider implements Provider
     private $shouldThrowsExceptionOnMissingDotenv = false;
 
     /**
+     * @var string[] Dotenv directory paths.
+     */
+    private array $paths;
+
+    /**
+     * @var string[] Dotenv file names.
+     */
+    private array $names;
+
+    /**
      * constructor
      *
-     * @param ApplicationPath $path
+     * @param string[] $paths Dotenv directory paths.
+     * @param string[] $names Dotenv file names.
      */
     public function __construct(
-        private ApplicationPath $path,
+        array $paths,
+        array $names = self::DefaultEnvNames,
     ) {
-        $this->envPaths = [$path->getBasePath()];
+        $this->setDotenvPath(...$paths);
+        $this->setDotenvName(...$names);
     }
 
     /**
@@ -68,8 +82,8 @@ class EnvironmentProvider implements Provider
                         ->immutable()
                         ->make();
 
-                    $paths = $this->envPaths;
-                    $names = $this->path->getDotenvNames();
+                    $paths = $this->paths;
+                    $names = $this->names;
 
                     try {
                         Dotenv::create(
@@ -122,17 +136,39 @@ class EnvironmentProvider implements Provider
     }
 
     /**
-     * Add env path.
+     * Set dotenv directory path.
      *
-     * @param string $path
-     * @return void
+     * @param string ...$paths
+     * @return self
      */
-    public function addEnvPath(string $path): void
+    public function setDotenvPath(string ...$paths): self
     {
-        $this->envPaths = array_unique([
-            ...$this->envPaths,
-            $path,
-        ]);
+        assert(
+            !empty($paths),
+            'EnvironmentProvider requires at least one path.'
+        );
+
+        $this->paths = $paths;
+
+        return $this;
+    }
+
+    /**
+     * Set dotenv file name.
+     *
+     * @param string ...$names Dotenv file names.
+     * @return self
+     */
+    public function setDotenvName(string ...$names): self
+    {
+        assert(
+            !empty($names),
+            'EnvironmentProvider requires at least one name.'
+        );
+
+        $this->names = $names;
+
+        return $this;
     }
 
     /**
