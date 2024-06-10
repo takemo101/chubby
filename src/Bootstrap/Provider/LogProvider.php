@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Processor\ProcessorInterface;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
@@ -71,7 +72,7 @@ class LogProvider implements Provider
                     ConfigRepository $config,
                     Hook $hook,
                 ) {
-                    /** @var class-string<LoggerProcessorInterface>[] */
+                    /** @var class-string<ProcessorInterface>[] */
                     $processors = $config->get('log.processors', [
                         UidProcessor::class,
                     ]);

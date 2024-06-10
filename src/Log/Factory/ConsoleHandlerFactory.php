@@ -5,7 +5,6 @@ namespace Takemo101\Chubby\Log\Factory;
 use DI\Attribute\Inject;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 
 /**
  * Create a handler to output logs in the stream.
