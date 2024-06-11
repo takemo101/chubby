@@ -13,9 +13,11 @@ class Environment
      * constructor
      *
      * @param RepositoryInterface $repository
+     * @param EnvironmentStringParser $parser
      */
     public function __construct(
         private readonly RepositoryInterface $repository,
+        private readonly EnvironmentStringParser $parser = new EnvironmentStringParser(),
     ) {
         //
     }
@@ -34,19 +36,8 @@ class Environment
             strtoupper($key),
         );
 
-        if (is_null($value)) {
-            return $default;
-        }
-
-        $lower = strtolower($value);
-
-        return match ($lower) {
-            'true', '(true)' => true,
-            'false', '(false)' => false,
-            'empty', '(empty)' => '',
-            'null', '(null)' => null,
-            preg_match('/\A([\'"])(.*)\1\z/', $value, $matches) !== false => $matches[2], /* @phpstan-ignore-line */
-            default => $value,
-        };
+        return $value === null
+            ? $default
+            : $this->parser->parse($value);
     }
 }
