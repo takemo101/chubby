@@ -33,14 +33,13 @@ readonly class DomainRouteResult
     /**
      * Get the arguments of the found route.
      *
-     * @return array<string,string>
+     * @return RouteArguments
      */
-    public function getArguments(bool $urlDecode = true): array
+    public function getArguments(bool $urlDecode = true): RouteArguments
     {
-        if (!$urlDecode) {
-            return $this->arguments;
-        }
-
-        return array_map('rawurldecode', $this->arguments);
+        return RouteArguments::create(
+            arguments: $this->arguments,
+            urlDecode: $urlDecode,
+        );
     }
 }
