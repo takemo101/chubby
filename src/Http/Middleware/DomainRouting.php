@@ -48,7 +48,7 @@ class DomainRouting implements MiddlewareInterface
 
         $context = new DomainRouteContext($result->getArguments());
 
-        return $handler->handle($context->withContext($request));
+        return $handler->handle($context->withRequest($request));
     }
 
     /**
