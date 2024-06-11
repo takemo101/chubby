@@ -48,7 +48,7 @@ describe(
                 $result = $dispatcher->dispatch($host);
 
                 expect($result->isFound())->toBeTrue();
-                expect($result->getArguments())->toEqual($routeArguments);
+                expect($result->getArguments()->getArguments())->toEqual($routeArguments);
             },
         )->with('domain-routes');
 
@@ -79,7 +79,6 @@ describe(
                     }
                 };
 
-
                 $middleware->process(
                     $request,
                     $mock,
@@ -88,7 +87,7 @@ describe(
                 $context = DomainRouteContext::fromRequest($mock?->actualRequest);
 
                 foreach ($routeArguments as $key => $argument) {
-                    expect($context->getArguments()[$key])->toEqual($argument);
+                    expect($context->getArguments()->getArgument($key))->toEqual($argument);
                 }
             },
         )->with('domain-routes');
