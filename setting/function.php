@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
-use Takemo101\Chubby\Http\Context;
+use Takemo101\Chubby\Http\Context\RequestContext;
 use Takemo101\Chubby\Http\Middleware\DomainRouting;
 use Takemo101\Chubby\Http\Renderer\HtmlRenderer;
 use Takemo101\Chubby\Http\Renderer\JsonRenderer;
@@ -98,8 +98,8 @@ hook()
 
             $http->get(
                 '/json',
-                fn (Context $context) => new JsonRenderer(
-                    $context->getRequest()->getHeaders(),
+                fn (RequestContext $context) => new JsonRenderer(
+                    $context->getTyped(ServerRequestInterface::class)->getHeaders(),
                 ),
             );
 
