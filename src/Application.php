@@ -36,6 +36,7 @@ use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
 use Takemo101\Chubby\Support\ApplicationSummary;
+use Takemo101\Chubby\Support\ExternalEnvironmentAccessor;
 
 use function DI\get;
 
@@ -96,6 +97,7 @@ class Application implements ApplicationContainer
         $mimeTypes = MimeTypes::getDefault();
         $mimeTypeGuesser = new SymfonyMimeTypeGuesser($mimeTypes);
         $filesystem = new SymfonyLocalFilesystem($mimeTypeGuesser);
+        $envAccessor = new ExternalEnvironmentAccessor();
 
         $this->instantContainer
             ->add($this)
@@ -109,15 +111,15 @@ class Application implements ApplicationContainer
                 LocalFilesystem::class,
             )
             ->add($this->path)
-            ->add($pathHelper);
+            ->add($pathHelper)
+            ->add($envAccessor);
 
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
             new BootStartProvider(),
             new EnvironmentProvider(
-                paths: [
-                    $this->path->getBasePath(),
-                ],
+                path: $this->path,
+                envAccessor: $envAccessor,
             ),
             new ErrorProvider(),
             new EventProvider(),

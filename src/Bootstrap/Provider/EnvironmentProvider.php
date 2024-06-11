@@ -11,7 +11,9 @@ use Dotenv\Repository\RepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Support\Environment;
+use Takemo101\Chubby\Support\ExternalEnvironmentAccessor;
 
 /**
  * Environment variable related.
@@ -36,6 +38,11 @@ class EnvironmentProvider implements Provider
     ];
 
     /**
+     * @var string Application environment value name.
+     */
+    public const EnvValueName = 'APP_ENV';
+
+    /**
      * @var boolean Should throw exception on missing dotenv.
      */
     private $shouldThrowsExceptionOnMissingDotenv = false;
@@ -43,25 +50,24 @@ class EnvironmentProvider implements Provider
     /**
      * @var string[] Dotenv directory paths.
      */
-    private array $paths;
+    private array $paths = [];
 
     /**
      * @var string[] Dotenv file names.
      */
-    private array $names;
+    private array $names = [];
 
     /**
      * constructor
      *
-     * @param string[] $paths Dotenv directory paths.
-     * @param string[] $names Dotenv file names.
+     * @param ApplicationPath $path
+     * @param ExternalEnvironmentAccessor $envAccessor
      */
     public function __construct(
-        array $paths,
-        array $names = self::DefaultEnvNames,
+        private readonly ApplicationPath $path,
+        private readonly ExternalEnvironmentAccessor $envAccessor = new ExternalEnvironmentAccessor(),
     ) {
-        $this->setDotenvPath(...$paths);
-        $this->setDotenvName(...$names);
+        //
     }
 
     /**
@@ -82,25 +88,26 @@ class EnvironmentProvider implements Provider
                         ->immutable()
                         ->make();
 
-                    $paths = $this->paths;
-                    $names = $this->names;
+                    $paths = $this->getDotenvPaths();
+                    $names = $this->getDotenvNames();
 
                     try {
-                        Dotenv::create(
+                        $dotenv = Dotenv::create(
                             repository: $repository,
                             paths: $paths,
                             names: $names,
-                        )
-                            ->load();
+                        );
+
+                        $this->shouldThrowsExceptionOnMissingDotenv
+                            ? $dotenv->load()
+                            : $dotenv->safeLoad();
                     } catch (InvalidPathException $e) {
                         $logger->warning($e, [
                             'paths' => $paths,
                             'names' => $names,
                         ]);
 
-                        if ($this->shouldThrowsExceptionOnMissingDotenv) {
-                            throw $e;
-                        }
+                        throw $e;
                     }
 
                     return $repository;
@@ -154,6 +161,22 @@ class EnvironmentProvider implements Provider
     }
 
     /**
+     * Get dotenv directory paths.
+     *
+     * @return string[]
+     */
+    private function getDotenvPaths(): array
+    {
+        if (!empty($this->paths)) {
+            return array_unique($this->paths);
+        }
+
+        return [
+            $this->path->getBasePath(),
+        ];
+    }
+
+    /**
      * Set dotenv file name.
      *
      * @param string ...$names Dotenv file names.
@@ -161,14 +184,51 @@ class EnvironmentProvider implements Provider
      */
     public function setDotenvName(string ...$names): self
     {
-        assert(
-            !empty($names),
-            'EnvironmentProvider requires at least one name.'
-        );
-
         $this->names = $names;
 
         return $this;
+    }
+
+    /**
+     * Get dotenv file names.
+     * If no names are set, it will be determined from the environment.
+     *
+     * @return string[]
+     */
+    private function getDotenvNames(): array
+    {
+        if (!empty($this->names)) {
+            return array_unique($this->names);
+        }
+
+        return $this->getDefaultDotenvNames();
+    }
+
+    /**
+     * Get default dotenv file names.
+     *
+     * @return string[]
+     */
+    private function getDefaultDotenvNames(): array
+    {
+        /** @var string[] */
+        $result = [];
+
+        // Get APP_ENV value from external environment.
+        if (
+            ($env = $this->envAccessor->get(self::EnvValueName)) &&
+            is_string($env)
+        ) {
+            // Add .env.{APP_ENV} to the list.
+            $result[] = ".env.{$env}";
+        }
+
+        $result = [
+            ...$result,
+            ...self::DefaultEnvNames,
+        ];
+
+        return $result;
     }
 
     /**
