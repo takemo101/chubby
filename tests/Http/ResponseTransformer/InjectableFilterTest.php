@@ -2,7 +2,6 @@
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Contract\ContainerInjectable;
 use Takemo101\Chubby\ApplicationContainer;
