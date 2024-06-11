@@ -25,14 +25,12 @@ describe(
                 $configDirectory = '/config';
                 $settingDirectory = '/setting';
                 $storageDirectory = '/storage';
-                $dotenvNames = ['.env'];
 
                 $option = ApplicationOption::from(
                     basePath: $basePath,
                     configPath: $configDirectory,
                     settingPath: $settingDirectory,
                     storagePath: $storageDirectory,
-                    dotenvNames: $dotenvNames,
                 );
 
                 $realBasePath = realpath($basePath);
@@ -43,7 +41,6 @@ describe(
                 expect($path->getConfigPath())->toEqual($realBasePath . $configDirectory);
                 expect($path->getSettingPath())->toEqual($realBasePath . $settingDirectory);
                 expect($path->getStoragePath())->toEqual($realBasePath . $storageDirectory);
-                expect($path->getDotenvNames())->toEqual($dotenvNames);
             },
         )->skipOnWindows();
 

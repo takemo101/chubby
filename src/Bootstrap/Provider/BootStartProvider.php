@@ -65,21 +65,25 @@ class BootStartProvider implements Provider
      * Add definition.
      *
      * @param string|mixed[]|DefinitionSource $definition
-     * @return void
+     * @return self
      */
-    public function addDefinition(string|array|DefinitionSource $definition): void
+    public function addDefinition(string|array|DefinitionSource $definition): self
     {
         $this->definitions[] = $definition;
+
+        return $this;
     }
 
     /**
      * Add booting.
      *
      * @param callable(ApplicationContainer):void $booting
-     * @return void
+     * @return self
      */
-    public function addBoot(callable $booting): void
+    public function addBoot(callable $booting): self
     {
         $this->booting[] = $booting;
+
+        return $this;
     }
 }

@@ -2,41 +2,35 @@
 
 namespace Takemo101\Chubby\Support;
 
-use Dotenv\Repository\RepositoryInterface;
-
 /**
- * Get environment.
+ * Get environment variable from external source.
  */
-class Environment
+class ExternalEnvironmentAccessor
 {
     /**
      * constructor
      *
-     * @param RepositoryInterface $repository
      * @param EnvironmentStringParser $parser
      */
     public function __construct(
-        private readonly RepositoryInterface $repository,
         private readonly EnvironmentStringParser $parser = new EnvironmentStringParser(),
     ) {
         //
     }
 
     /**
-     * Get environment value.
+     * Get environment variable.
      *
      * @param string $key
      * @param mixed $default
      * @return mixed
      */
-    public function get(string $key, $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        /** @var string|null */
-        $value = $this->repository->get(
-            strtoupper($key),
-        );
+        /** @var string|false */
+        $value = getenv($key);
 
-        return $value === null
+        return $value === false
             ? $default
             : $this->parser->parse($value);
     }
