@@ -33,6 +33,7 @@ use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
 use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
+use Takemo101\Chubby\Http\Middleware\StartContext;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
@@ -80,6 +81,8 @@ class HttpProvider implements Provider
                     Hook $hook,
                 ): Slim {
                     $slim = $factory->create();
+
+                    $slim->add(StartContext::class);
 
                     $hook->doTyped($slim);
                     $hook->do(RouteCollectorProxyInterface::class, $slim);
