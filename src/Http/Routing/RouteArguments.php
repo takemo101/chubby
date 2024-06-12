@@ -20,7 +20,7 @@ readonly class RouteArguments
      *
      * @return array<string,string>
      */
-    public function getArguments(): array
+    public function arguments(): array
     {
         return $this->arguments;
     }
@@ -31,7 +31,7 @@ readonly class RouteArguments
      * @param string $key
      * @return string|null
      */
-    public function getArgument(string $key): ?string
+    public function get(string $key): ?string
     {
         return $this->arguments[$key] ?? null;
     }
@@ -42,7 +42,7 @@ readonly class RouteArguments
      * @param string $key
      * @return bool
      */
-    public function hasArgument(string $key): bool
+    public function has(string $key): bool
     {
         return array_key_exists($key, $this->arguments);
     }
@@ -57,7 +57,7 @@ readonly class RouteArguments
     {
         return new self([
             ...$this->arguments,
-            ...$arguments->getArguments(),
+            ...$arguments->arguments(),
         ]);
     }
 
