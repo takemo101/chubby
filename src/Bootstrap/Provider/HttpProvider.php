@@ -24,6 +24,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Config\ConfigRepository;
+use Takemo101\Chubby\Event\EventRegister;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\Configurer\DefaultSlimConfigurer;
@@ -33,6 +34,7 @@ use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
 use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
+use Takemo101\Chubby\Http\Listener\ApplicationUriReplace;
 use Takemo101\Chubby\Http\Middleware\StartContext;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
@@ -229,6 +231,13 @@ class HttpProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        //
+        /** @var Hook */
+        $hook = $container->get(Hook::class);
+
+        $hook->onTyped(
+            fn (EventRegister $register) => $register->on(
+                ApplicationUriReplace::class,
+            ),
+        );
     }
 }

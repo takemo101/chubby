@@ -3,6 +3,7 @@
 namespace Takemo101\Chubby\Support;
 
 use Takemo101\Chubby\Application;
+use Takemo101\Chubby\Http\Uri\ApplicationUri;
 
 /**
  * Application summary data
@@ -17,18 +18,30 @@ readonly class ApplicationSummary
     /**
      * constructor
      *
+     * @param ApplicationUri $uri
      * @param string $name
      * @param string $env local | development | production
      * @param boolean $debug
      * @param boolean $builtInServer
      */
     public function __construct(
+        public ApplicationUri $uri,
         public string $name = Application::Name,
         string $env = 'local',
         public bool $debug = true,
         public bool $builtInServer = false,
     ) {
         $this->env = strtolower($env);
+    }
+
+    /**
+     * Get application uri.
+     *
+     * @return ApplicationUri
+     */
+    public function getUri(): ApplicationUri
+    {
+        return $this->uri;
     }
 
     /**

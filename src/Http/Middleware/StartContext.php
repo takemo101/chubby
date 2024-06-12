@@ -2,17 +2,30 @@
 
 namespace Takemo101\Chubby\Http\Middleware;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Takemo101\Chubby\Http\Context\RequestContext;
+use Takemo101\Chubby\Http\Event\BeforeStartContext;
 
 /**
  * Start the request context.
  */
 class StartContext implements MiddlewareInterface
 {
+    /**
+     * constructor
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(
+        private EventDispatcherInterface $dispatcher,
+    ) {
+        //
+    }
+
     /**
      * Process an incoming server request.
      *
@@ -22,8 +35,16 @@ class StartContext implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        return $handler->handle(
-            (new RequestContext())->withRequest($request),
+        $context = new RequestContext();
+        $request = $context->withRequest($request);
+
+        $this->dispatcher->dispatch(
+            new BeforeStartContext(
+                request: $request,
+                context: $context,
+            ),
         );
+
+        return $handler->handle($request);
     }
 }

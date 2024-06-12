@@ -2,7 +2,7 @@
 
 use Monolog\Level;
 use Psr\Log\LoggerInterface;
-use Takemo101\Chubby\Application;
+use Slim\Interfaces\RouteParserInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Console\SymfonyConsole;
 use Takemo101\Chubby\Hook\Hook;
@@ -151,5 +151,23 @@ if (!function_exists('event')) {
     function event(object $event): object
     {
         return ServiceLocator::event()->dispatch($event);
+    }
+}
+
+if (!function_exists('route')) {
+    /**
+     * Obtain a URI path from the named route.
+     *
+     * @param string $name
+     * @param array<string,string> $data
+     * @param array<string,string> $query
+     * @return string
+     */
+    function route(string $name, array $data = [], array $query = []): string
+    {
+        /** @var RouteParserInterface */
+        $route = container()->get(RouteParserInterface::class);
+
+        return $route->urlFor($name, $data, $query);
     }
 }
