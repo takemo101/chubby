@@ -25,15 +25,6 @@ describe(
             expect($result)->toBe('default');
         });
 
-        it('throws exception when setting existing value', function () {
-            $context = new RequestContext();
-            $context->set('key', 'value');
-
-            expect(function () use ($context) {
-                $context->set('key', 'new value');
-            })->toThrow(InvalidArgumentException::class);
-        });
-
         it('sets and gets a typed value', function () {
             $context = new RequestContext();
             $object = new stdClass();
@@ -80,9 +71,45 @@ describe(
             $context->set('key1', 'value1');
             $context->set('key2', 'value2');
 
-            $result = $context->getValues();
+            $result = $context->values();
 
             expect($result)->toEqual(['key1' => 'value1', 'key2' => 'value2', RequestContext::class => $context]);
+        });
+
+        it('checks if the specified identifier exists', function () {
+            $context = new RequestContext();
+            $context->set('key', 'value');
+
+            $result = $context->has('key');
+
+            expect($result)->toBe(true);
+        });
+
+        it('checks if the specified identifier does not exist', function () {
+            $context = new RequestContext();
+
+            $result = $context->has('nonexistent');
+
+            expect($result)->toBe(false);
+        });
+
+        it('checks if the specified object type exists', function () {
+            $context = new RequestContext();
+            $object = new stdClass();
+            $context->setTyped($object);
+
+            $result = $context->hasTyped($object);
+
+            expect($result)->toBe(true);
+        });
+
+        it('checks if the specified object type does not exist', function () {
+            $context = new RequestContext();
+            $object = new stdClass();
+
+            $result = $context->hasTyped($object);
+
+            expect($result)->toBe(false);
         });
 
         it('returns the request context from a server request', function () {
