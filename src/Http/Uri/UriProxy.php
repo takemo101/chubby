@@ -65,7 +65,7 @@ class UriProxy implements UriInterface, Stringable
     /**
      * {@inheritdoc}
      *
-     * @return string
+     * @return integer|null
      */
     public function getPort()
     {

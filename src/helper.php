@@ -159,8 +159,8 @@ if (!function_exists('route')) {
      * Obtain a URI path from the named route.
      *
      * @param string $name
-     * @param array<string,mixed> $data
-     * @param array<string,mixed> $query
+     * @param array<string,string> $data
+     * @param array<string,string> $query
      * @return string
      */
     function route(string $name, array $data = [], array $query = []): string

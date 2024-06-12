@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Support;
 
-use Psr\Http\Message\UriInterface;
 use Takemo101\Chubby\Application;
 use Takemo101\Chubby\Http\Uri\ApplicationUri;
 
