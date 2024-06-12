@@ -121,8 +121,8 @@ class ControllerInvoker implements InvocationStrategyInterface
             ->set(ResponseInterface::class, $response);
 
         return [
-            ...$requestContext->getValues(),
-            ...$routeArguments->getArguments(),
+            ...$requestContext->values(),
+            ...$routeArguments->arguments(),
         ];
     }
 
@@ -140,7 +140,7 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         $requestWithArguments = $request;
 
-        foreach ($routeArguments->getArguments() as $key => $value) {
+        foreach ($routeArguments->arguments() as $key => $value) {
             $requestWithArguments = $requestWithArguments->withAttribute($key, $value);
         }
         return $requestWithArguments;
