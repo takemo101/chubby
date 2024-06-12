@@ -2,7 +2,7 @@
 
 namespace Takemo101\Chubby\Http\Routing;
 
-use Takemo101\Chubby\Http\Support\AbstractContext;
+use Takemo101\Chubby\Http\Context\AbstractContext;
 
 class DomainRouteContext extends AbstractContext
 {
@@ -10,27 +10,22 @@ class DomainRouteContext extends AbstractContext
     public const ContextKey = self::class;
 
     /**
-     * @var array<string,string>
-     */
-    private array $arguments;
-
-    /**
      * constructor
      *
-     * @param array<string,string> $arguments
+     * @param RouteArguments $arguments
      */
     public function __construct(
-        array $arguments = [],
+        private readonly RouteArguments $arguments = new RouteArguments(),
     ) {
-        $this->arguments = $arguments;
+        //
     }
 
     /**
      * Get domain route arguments
      *
-     * @return array<string,string>
+     * @return RouteArguments
      */
-    public function getArguments(): array
+    public function getArguments(): RouteArguments
     {
         return $this->arguments;
     }

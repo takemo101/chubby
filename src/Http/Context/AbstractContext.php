@@ -1,9 +1,8 @@
 <?php
 
-namespace Takemo101\Chubby\Http\Support;
+namespace Takemo101\Chubby\Http\Context;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Closure;
 
 abstract class AbstractContext
 {
@@ -16,15 +15,17 @@ abstract class AbstractContext
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
      */
-    public function withContext(ServerRequestInterface $request): ServerRequestInterface
+    public function withRequest(ServerRequestInterface $request): ServerRequestInterface
     {
-        $request = $request->withAttribute(
+        $context = RequestContext::fromRequest($request);
+
+        $context->set(
             static::ContextKey,
             $this,
         );
 
-        foreach ($this->getServerRequestAttributes() as $key => $value) {
-            $request = $request->withAttribute($key, $value);
+        foreach ($this->getContextValues() as $id => $value) {
+            $context->set($id, $value);
         }
 
         return $request;
@@ -33,9 +34,9 @@ abstract class AbstractContext
     /**
      * Get contextual data.
      *
-     * @return array<string,mixed>
+     * @return array<string,mixed> The key-value pairs of the contextual data.
      */
-    protected function getServerRequestAttributes(): array
+    protected function getContextValues(): array
     {
         return [];
     }
@@ -44,32 +45,28 @@ abstract class AbstractContext
      * Create a context instance from a ServerRequest
      *
      * @param ServerRequestInterface $request
-     * @param null|Closure():static $factory A factory function that returns a new instance of the context.
      * @return static|null
      * @throws ContextException
      */
     public static function fromRequest(
         ServerRequestInterface $request,
-        ?Closure $factory = null,
     ): ?static {
+        $context = RequestContext::fromRequest($request);
+
         /** @var static|null */
-        $context = $request->getAttribute(static::ContextKey);
+        $value = $context->get(static::ContextKey);
 
-        if (is_null($context)) {
-            if (is_null($factory)) {
-                return null;
-            }
-
-            $context = $factory();
+        if ($value === null) {
+            return null;
         }
 
-        if (!($context instanceof static)) {
+        if (!($value instanceof static)) {
             throw ContextException::notInstanceOf(
                 static::ContextKey,
                 static::class,
             );
         }
 
-        return $context;
+        return $value;
     }
 }

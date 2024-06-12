@@ -1,8 +1,9 @@
 <?php
 
-use Takemo101\Chubby\Http\Support\AbstractContext;
-use Takemo101\Chubby\Http\Support\ContextException;
+use Takemo101\Chubby\Http\Context\AbstractContext;
+use Takemo101\Chubby\Http\Context\ContextException;
 use Psr\Http\Message\ServerRequestInterface;
+use Takemo101\Chubby\Http\Context\RequestContext;
 
 describe(
     'AbstractContext',
@@ -20,12 +21,13 @@ describe(
                 };
 
                 $request = Mockery::mock(ServerRequestInterface::class);
-                $request->shouldReceive('withAttribute')
-                    ->once()
-                    ->with(AbstractContext::ContextKey, $context)
-                    ->andReturn($request);
 
-                $actual = $context->withContext($request);
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(RequestContext::ContextKey)
+                    ->andReturn(new RequestContext());
+
+                $actual = $context->withRequest($request);
 
                 expect($actual)->toBe($request);
             }
@@ -43,10 +45,17 @@ describe(
                 };
 
                 $request = Mockery::mock(ServerRequestInterface::class);
-                $request->shouldReceive('getAttribute')
+
+                $requestContext = Mockery::mock(RequestContext::class);
+                $requestContext->shouldReceive('get')
                     ->once()
                     ->with(AbstractContext::ContextKey)
                     ->andReturn($context);
+
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(RequestContext::ContextKey)
+                    ->andReturn($requestContext);;
 
                 $actual = AbstractContext::fromRequest($request);
 
@@ -58,10 +67,17 @@ describe(
             'return null when context not found',
             function () {
                 $request = Mockery::mock(ServerRequestInterface::class);
-                $request->shouldReceive('getAttribute')
+
+                $requestContext = Mockery::mock(RequestContext::class);
+                $requestContext->shouldReceive('get')
                     ->once()
                     ->with(AbstractContext::ContextKey)
                     ->andReturn(null);
+
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(RequestContext::ContextKey)
+                    ->andReturn($requestContext);;
 
                 expect(AbstractContext::fromRequest($request))
                     ->toBeNull();
@@ -80,21 +96,21 @@ describe(
                 };
 
                 $request = Mockery::mock(ServerRequestInterface::class);
-                $request->shouldReceive('getAttribute')
+
+                $requestContext = Mockery::mock(RequestContext::class);
+                $requestContext->shouldReceive('get')
                     ->once()
                     ->with(AbstractContext::ContextKey)
                     ->andReturn($context);
 
+                $request->shouldReceive('getAttribute')
+                    ->once()
+                    ->with(RequestContext::ContextKey)
+                    ->andReturn($requestContext);;
+
+
                 expect(function () use ($request) {
-                    AbstractContext::fromRequest($request, function () {
-                        return new class() extends AbstractContext
-                        {
-                            public function __construct()
-                            {
-                                // ...
-                            }
-                        };
-                    });
+                    AbstractContext::fromRequest($request);
                 })->toThrow(ContextException::class);
             }
         );
