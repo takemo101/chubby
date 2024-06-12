@@ -16,7 +16,7 @@ class RequestContext
     public const ContextKey = 'request-context';
 
     /**
-     * @var array<string,mixed>
+     * @var array<string,ContextValue>
      */
     private array $values = [];
 
@@ -59,15 +59,15 @@ class RequestContext
      * @param string $id
      * @param mixed $value
      * @return self
-     * @throws InvalidArgumentException If the value with the specified identifier already exists.
      */
     public function set(string $id, mixed $value): self
     {
-        if (array_key_exists($id, $this->values)) {
-            throw new InvalidArgumentException("The value with the specified identifier already exists: {$id}");
+        // If the value already exists, update it.
+        if ($object = $this->values[$id] ?? false) {
+            $object->update($value);
+        } else {
+            $this->values[$id] = new ContextValue($value);
         }
-
-        $this->values[$id] = $value;
 
         return $this;
     }
@@ -93,7 +93,7 @@ class RequestContext
     public function get(string $id, mixed $default = null): mixed
     {
         return array_key_exists($id, $this->values)
-            ? $this->values[$id]
+            ? $this->values[$id]->value()
             : $default;
     }
 
@@ -112,7 +112,7 @@ class RequestContext
             throw new InvalidArgumentException("The value with the specified identifier does not exist: {$type}");
         }
 
-        $value = $this->values[$type];
+        $value = $this->values[$type]->value();
 
         if ($value instanceof $type) {
             return $value;
@@ -135,13 +135,35 @@ class RequestContext
             throw new InvalidArgumentException("The value with the specified identifier does not exist: {$id}");
         }
 
-        $value = $this->values[$id];
+        $object = $this->values[$id];
 
         foreach ($aliases as $alias) {
-            $this->set($alias, $value);
+            $this->values[$alias] = $object;
         }
 
         return $this;
+    }
+
+    /**
+     * Checks if the specified identifier exists.
+     *
+     * @param string $id
+     * @return bool
+     */
+    public function has(string $id): bool
+    {
+        return array_key_exists($id, $this->values);
+    }
+
+    /**
+     * Checks if the specified object type exists.
+     *
+     * @param object $object
+     * @return bool
+     */
+    public function hasTyped(object $object)
+    {
+        return array_key_exists(get_class($object), $this->values);
     }
 
     /**
@@ -149,9 +171,16 @@ class RequestContext
      *
      * @return array<string,mixed>
      */
-    public function getValues(): array
+    public function values(): array
     {
-        return $this->values;
+        /** @var array<string,mixed> */
+        $result = [];
+
+        foreach ($this->values as $id => $object) {
+            $result[$id] = $object->value();
+        }
+
+        return $result;
     }
 
     /**
