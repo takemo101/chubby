@@ -35,6 +35,7 @@ use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
+use Takemo101\Chubby\Http\Uri\ApplicationUri;
 use Takemo101\Chubby\Support\ApplicationSummary;
 use Takemo101\Chubby\Support\ExternalEnvironmentAccessor;
 
@@ -136,6 +137,8 @@ class Application implements ApplicationContainer
                     ConfigRepository $config,
                 ) {
                     /** @var string */
+                    $uri = $config->get('app.url', 'http://localhost:8080');
+                    /** @var string */
                     $name = $config->get('app.name', self::Name);
                     /** @var string */
                     $env = $config->get('app.env', 'local');
@@ -145,12 +148,16 @@ class Application implements ApplicationContainer
                     $builtInServer = $config->get('app.built_in_server', false);
 
                     return new ApplicationSummary(
+                        uri: ApplicationUri::fromString($uri),
                         name: $name,
                         env: $env,
                         debug: $debug,
                         builtInServer: $builtInServer,
                     );
                 },
+                ApplicationUri::class => fn (
+                    ApplicationSummary $summary,
+                ) => $summary->getUri()->copy(),
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
