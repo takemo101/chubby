@@ -21,8 +21,8 @@ use Slim\Interfaces\RouteCollectorProxyInterface;
 use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationContainer;
-use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Event\EventRegister;
 use Takemo101\Chubby\Hook\Hook;
@@ -68,15 +68,13 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => DefinitionHelper::createReplaceable(
-                    entry: SlimFactory::class,
-                    configKey: 'slim.factory',
+                SlimFactory::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: DefaultSlimFactory::class,
+                    configKey: 'slim.factory',
                 ),
-                SlimConfigurer::class => DefinitionHelper::createReplaceable(
-                    entry: SlimConfigurer::class,
-                    configKey: 'slim.configurer',
+                SlimConfigurer::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: DefaultSlimConfigurer::class,
+                    configKey: 'slim.configurer',
                 ),
                 Slim::class => function (
                     SlimFactory $factory,
@@ -145,8 +143,7 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => DefinitionHelper::createReplaceable(
-                    entry: ErrorHandlerInterface::class,
+                ErrorHandlerInterface::class => new ConfigBasedDefinitionReplacer(
                     configKey: 'slim.error.handler',
                     defaultClass: ErrorHandler::class,
                 ),

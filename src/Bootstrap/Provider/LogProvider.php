@@ -8,8 +8,8 @@ use Monolog\Processor\ProcessorInterface;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
-use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Log\DefaultLoggerFactory;
@@ -83,8 +83,7 @@ class LogProvider implements Provider
 
                     return $collection;
                 },
-                FormatterInterface::class => DefinitionHelper::createReplaceable(
-                    entry: FormatterInterface::class,
+                FormatterInterface::class => new ConfigBasedDefinitionReplacer(
                     configKey: 'log.formatter',
                     defaultClass: LineFormatter::class,
                 ),
