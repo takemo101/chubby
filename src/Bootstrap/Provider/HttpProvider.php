@@ -84,8 +84,8 @@ class HttpProvider implements Provider
 
                     $slim->add(StartContext::class);
 
-                    $hook->doTyped($slim);
-                    $hook->do(RouteCollectorProxyInterface::class, $slim);
+                    $hook->doTyped($slim, true);
+                    $hook->do(RouteCollectorProxyInterface::class, $slim, true);
 
                     return $slim;
                 },
@@ -102,7 +102,7 @@ class HttpProvider implements Provider
                         dispatcher: $dispatcher,
                     );
 
-                    $hook->doTyped($adapter);
+                    $hook->doTyped($adapter, true);
 
                     return $adapter;
                 },
@@ -118,7 +118,7 @@ class HttpProvider implements Provider
                         new StringableTransformer(),
                     );
 
-                    $hook->doTyped($transformers);
+                    $hook->doTyped($transformers, true);
 
                     return $transformers;
                 },
@@ -139,7 +139,7 @@ class HttpProvider implements Provider
                 ) {
                     $renders = new ErrorResponseRenders();
 
-                    $hook->doTyped($renders);
+                    $hook->doTyped($renders, true);
 
                     return $renders;
                 },
@@ -161,7 +161,7 @@ class HttpProvider implements Provider
                         $transformers,
                     );
 
-                    $hook->doTyped($errorHandler);
+                    $hook->doTyped($errorHandler, true);
 
                     return $errorHandler;
                 },
@@ -190,7 +190,7 @@ class HttpProvider implements Provider
 
                     $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
-                    $hook->doTyped($errorMiddleware);
+                    $hook->doTyped($errorMiddleware, true);
 
                     return $errorMiddleware;
                 },
@@ -212,7 +212,7 @@ class HttpProvider implements Provider
 
                     $middlewares = new GlobalMiddlewareCollection(...$classes);
 
-                    $hook->doTyped($middlewares);
+                    $hook->doTyped($middlewares, true);
 
                     return $middlewares;
                 }

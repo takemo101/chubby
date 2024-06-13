@@ -42,7 +42,7 @@ class EventProvider implements Provider
 
                     $register = EventRegister::fromArray($listen);
 
-                    $hook->doTyped($register);
+                    $hook->doTyped($register, true);
 
                     return $register;
                 },

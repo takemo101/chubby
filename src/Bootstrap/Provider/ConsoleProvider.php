@@ -64,7 +64,7 @@ class ConsoleProvider implements Provider
                         LogCleanCommand::class,
                     );
 
-                    $hook->doTyped($adapter);
+                    $hook->doTyped($adapter, true);
 
                     return $adapter;
                 },
@@ -78,7 +78,7 @@ class ConsoleProvider implements Provider
 
                     $commands = new CommandCollection(...$classes);
 
-                    $hook->doTyped($commands);
+                    $hook->doTyped($commands, true);
 
                     return $commands;
                 }
