@@ -5,8 +5,8 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Takemo101\Chubby\ApplicationContainer;
-use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Event\EventListenerProvider;
@@ -46,15 +46,13 @@ class EventProvider implements Provider
 
                     return $register;
                 },
-                EventDispatcherInterface::class => DefinitionHelper::createReplaceable(
-                    entry: EventDispatcherInterface::class,
-                    configKey: 'event.dispatcher',
+                EventDispatcherInterface::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: EventDispatcher::class,
+                    configKey: 'event.dispatcher',
                 ),
-                ListenerProviderInterface::class => DefinitionHelper::createReplaceable(
-                    entry: ListenerProviderInterface::class,
-                    configKey: 'event.provider',
+                ListenerProviderInterface::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: EventListenerProvider::class,
+                    configKey: 'event.provider',
                 ),
             ],
         );
