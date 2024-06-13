@@ -13,6 +13,14 @@ class Hook
     private ContainerInterface $container;
 
     /**
+     * Delayed processing parameters.
+     * This parameter is used when delayed processing hooks are added.
+     *
+     * @var array<string,mixed>
+     */
+    private array $delayedParameters = [];
+
+    /**
      * constructor
      *
      * @param ContainerInterface $container
@@ -52,6 +60,10 @@ class Hook
                     function: $function,
                 ),
             );
+        }
+
+        if (isset($this->delayedParameters[$tag])) {
+            $this->do($tag, $this->delayedParameters[$tag]);
         }
 
         return $this;
@@ -108,6 +120,10 @@ class Hook
             unset($this->actions[$tag]);
         }
 
+        if (isset($this->delayedParameters[$tag])) {
+            unset($this->delayedParameters[$tag]);
+        }
+
         return $this;
     }
 
@@ -129,10 +145,15 @@ class Hook
      *
      * @param string $tag
      * @param mixed $parameter
+     * @param boolean $delayed Delayed processing
      * @return mixed
      */
-    public function do(string $tag, $parameter): mixed
+    public function do(string $tag, mixed $parameter, bool $delayed = false): mixed
     {
+        if ($delayed) {
+            $this->delayedParameters[$tag] = $parameter;
+        }
+
         if (!isset($this->actions[$tag])) {
             return $parameter;
         }
@@ -161,12 +182,13 @@ class Hook
      * Get the tag from the object type.
      *
      * @param object $object
+     * @param boolean $delayed Delayed processing
      * @return mixed
      */
-    public function doTyped(object $object): mixed
+    public function doTyped(object $object, bool $delayed = false): mixed
     {
         $type = get_class($object);
 
-        return $this->do($type, $object);
+        return $this->do($type, $object, $delayed);
     }
 }
