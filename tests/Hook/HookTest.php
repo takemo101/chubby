@@ -173,6 +173,40 @@ describe(
             new HookTestData(1),
             new HookTestData(20),
         ]);
+
+        test(
+            'Execute hook processing with delayed parameter',
+            function () {
+                $tag = 'tag';
+
+                $expected = 'test';
+
+                $parameter = new class($expected)
+                {
+                    public function __construct(public string $data)
+                    {
+                        //
+                    }
+                };
+
+                $hook = new Hook();
+
+                // Call `do` method with delayed parameter set to true
+                $result = $hook->do($tag, $parameter, true);
+
+                // The hook processing should not be executed immediately
+                expect($result->data)->toEqual($expected);
+
+                $expected = $parameter->data . ' processed';
+
+                $hook->on($tag, function ($param) {
+                    $param->data .= ' processed';
+                }, 10);
+
+                // The hook processing should be executed now
+                expect($result->data)->toEqual($expected);
+            }
+        );
     }
 )->group('hook');
 
