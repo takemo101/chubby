@@ -27,7 +27,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->uri->getScheme();
     }
@@ -37,7 +37,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
         return $this->uri->getAuthority();
     }
@@ -47,7 +47,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         return $this->uri->getUserInfo();
     }
@@ -57,7 +57,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->uri->getHost();
     }
@@ -67,7 +67,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return integer|null
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->uri->getPort();
     }
@@ -77,7 +77,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->uri->getPath();
     }
@@ -87,7 +87,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->uri->getQuery();
     }
@@ -97,7 +97,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return string
      */
-    public function getFragment()
+    public function getFragment(): string
     {
         return $this->uri->getFragment();
     }
@@ -107,7 +107,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withScheme(string $scheme)
+    public function withScheme(string $scheme): UriInterface
     {
         return new static($this->uri->withScheme($scheme));
     }
@@ -117,7 +117,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withUserInfo(string $user, ?string $password = null)
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         return new static($this->uri->withUserInfo($user, $password));
     }
@@ -127,7 +127,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withHost(string $host)
+    public function withHost(string $host): UriInterface
     {
         return new static($this->uri->withHost($host));
     }
@@ -137,7 +137,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withPort(?int $port)
+    public function withPort(?int $port): UriInterface
     {
         return new static($this->uri->withPort($port));
     }
@@ -147,7 +147,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withPath(string $path)
+    public function withPath(string $path): UriInterface
     {
         return new static($this->uri->withPath($path));
     }
@@ -157,7 +157,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withQuery(string $query)
+    public function withQuery(string $query): UriInterface
     {
         return new static($this->uri->withQuery($query));
     }
@@ -167,7 +167,7 @@ class UriProxy implements UriInterface, Stringable
      *
      * @return static
      */
-    public function withFragment(string $fragment)
+    public function withFragment(string $fragment): UriInterface
     {
         return new static($this->uri->withFragment($fragment));
     }
@@ -175,9 +175,9 @@ class UriProxy implements UriInterface, Stringable
     /**
      * {@inheritdoc}
      *
-     * @return static
+     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->uri->__toString();
     }
