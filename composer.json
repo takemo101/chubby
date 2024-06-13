@@ -15,7 +15,7 @@
     "illuminate/collections": "^10.28",
     "monolog/monolog": "^3.4",
     "nyholm/psr7": "^1.8",
-    "nyholm/psr7-server": "^1.0",
+    "nyholm/psr7-server": "^1.1",
     "php-di/invoker": "^2.3",
     "php-di/php-di": "^7.0",
     "psr/event-dispatcher": "^1.0",
