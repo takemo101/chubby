@@ -4,11 +4,13 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Slim\App as Slim;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Slim\CallableResolver;
 use Slim\Interfaces\ErrorHandlerInterface;
@@ -16,29 +18,30 @@ use Slim\Interfaces\RouteParserInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
+use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
-use Slim\MiddlewareDispatcher;
 use Takemo101\Chubby\ApplicationContainer;
-use Takemo101\Chubby\Bootstrap\DefinitionHelper;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
 use Takemo101\Chubby\Config\ConfigRepository;
+use Takemo101\Chubby\Event\EventRegister;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Bridge\ControllerInvoker;
 use Takemo101\Chubby\Http\Configurer\DefaultSlimConfigurer;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
-use Takemo101\Chubby\Http\DomainRouter;
 use Takemo101\Chubby\Http\Factory\DefaultSlimFactory;
 use Takemo101\Chubby\Http\Factory\SlimFactory;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorHandler;
 use Takemo101\Chubby\Http\ErrorHandler\ErrorResponseRenders;
+use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
+use Takemo101\Chubby\Http\Listener\ApplicationUriReplace;
+use Takemo101\Chubby\Http\Middleware\StartContext;
 use Takemo101\Chubby\Http\ResponseTransformer\ArrayableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\InjectableFilter;
 use Takemo101\Chubby\Http\ResponseTransformer\RenderableTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\RendererTransformer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\ResponseTransformer\StringableTransformer;
-use Takemo101\Chubby\Http\Routing\DomainRouteCollector;
-use Takemo101\Chubby\Http\Routing\DomainRouteHandler;
 use Takemo101\Chubby\Http\SlimHttp;
 
 use function DI\get;
@@ -65,21 +68,21 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => DefinitionHelper::createReplaceable(
-                    entry: SlimFactory::class,
-                    configKey: 'slim.factory',
+                SlimFactory::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: DefaultSlimFactory::class,
+                    configKey: 'slim.factory',
                 ),
-                SlimConfigurer::class => DefinitionHelper::createReplaceable(
-                    entry: SlimConfigurer::class,
-                    configKey: 'slim.configurer',
+                SlimConfigurer::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: DefaultSlimConfigurer::class,
+                    configKey: 'slim.configurer',
                 ),
                 Slim::class => function (
                     SlimFactory $factory,
                     Hook $hook,
                 ): Slim {
                     $slim = $factory->create();
+
+                    $slim->add(StartContext::class);
 
                     $hook->doTyped($slim);
                     $hook->do(RouteCollectorProxyInterface::class, $slim);
@@ -90,11 +93,13 @@ class HttpProvider implements Provider
                 SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
+                    EventDispatcherInterface $dispatcher,
                     Hook $hook,
                 ): SlimHttp {
                     $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
+                        dispatcher: $dispatcher,
                     );
 
                     $hook->doTyped($adapter);
@@ -138,8 +143,7 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => DefinitionHelper::createReplaceable(
-                    entry: ErrorHandlerInterface::class,
+                ErrorHandlerInterface::class => new ConfigBasedDefinitionReplacer(
                     configKey: 'slim.error.handler',
                     defaultClass: ErrorHandler::class,
                 ),
@@ -190,36 +194,27 @@ class HttpProvider implements Provider
 
                     return $errorMiddleware;
                 },
-                DomainRouteCollector::class => function (
+                BodyParsingMiddleware::class => function (
                     Hook $hook,
                 ) {
-                    $routeCollector = new DomainRouteCollector();
+                    $middleware = new BodyParsingMiddleware();
 
-                    $hook->doTyped($routeCollector);
+                    $hook->doTyped($middleware);
 
-                    return $routeCollector;
+                    return $middleware;
                 },
-                DomainRouter::class => function (
-                    DomainRouteCollector $routeCollector,
-                    DomainRouteHandler $routeHandler,
-                    CallableResolverInterface $callableResolver,
-                    ApplicationContainer $container,
+                GlobalMiddlewareCollection::class => function (
+                    ConfigRepository $config,
                     Hook $hook,
                 ) {
-                    $router = new DomainRouter(
-                        new MiddlewareDispatcher(
-                            kernel: $routeHandler,
-                            callableResolver: $callableResolver,
-                            container: $container,
-                        ),
-                        $routeCollector,
-                    );
+                    /** @var class-string<MiddlewareInterface>[] */
+                    $classes = $config->get('slim.middlewares', []);
 
-                    $router->add(ErrorMiddleware::class);
+                    $middlewares = new GlobalMiddlewareCollection(...$classes);
 
-                    $hook->doTyped($router);
+                    $hook->doTyped($middlewares);
 
-                    return $router;
+                    return $middlewares;
                 }
             ],
         );
@@ -233,6 +228,13 @@ class HttpProvider implements Provider
      */
     public function boot(ApplicationContainer $container): void
     {
-        //
+        /** @var Hook */
+        $hook = $container->get(Hook::class);
+
+        $hook->onTyped(
+            fn (EventRegister $register) => $register->on(
+                ApplicationUriReplace::class,
+            ),
+        );
     }
 }

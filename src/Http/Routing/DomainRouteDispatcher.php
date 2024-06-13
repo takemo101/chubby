@@ -7,6 +7,9 @@ use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
 
+/**
+ * Dispatch the route configured for the request domain.
+ */
 class DomainRouteDispatcher
 {
     /** @var string */
@@ -15,10 +18,10 @@ class DomainRouteDispatcher
     /**
      * constructor
      *
-     * @param DomainRouteCollector $routeCollector
+     * @param DomainPatterns $patterns
      */
     public function __construct(
-        private DomainRouteCollector $routeCollector,
+        private DomainPatterns $patterns,
     ) {
         //
     }
@@ -31,51 +34,47 @@ class DomainRouteDispatcher
      */
     public function dispatch(string $domain): DomainRouteResult
     {
+        $domainPattern = new DomainPattern($domain);
+
         $dispatcher = simpleDispatcher(
             function (RouteCollector $r) {
-                $routes = $this->routeCollector->getRoutes();
+                $patterns = $this->patterns->patterns();
 
-                foreach ($routes as $route) {
+                foreach ($patterns as $pattern) {
                     $r->addRoute(
                         self::CommonRequestMethod,
-                        $route->getPattern(),
-                        $route,
+                        $pattern->replaceDotsToSlashes(),
+                        null,
                     );
                 }
             },
         );
 
-        $info = $dispatcher->dispatch(self::CommonRequestMethod, $domain);
+        $info = $dispatcher->dispatch(self::CommonRequestMethod, $domainPattern->replaceDotsToSlashes());
 
         /** @var integer */
         $status = $info[0] ?? Dispatcher::NOT_FOUND;
-
-        /** @var DomainRoute|null */
-        $route = $info[1] ?? null;
 
         /** @var array<string,string> */
         $arguments = $info[2] ?? [];
 
         return new DomainRouteResult(
             found: $status === Dispatcher::FOUND,
-            route: $route,
             arguments: $arguments,
         );
     }
 
     /**
-     * Create a new DomainRouteDispatcher instance from the given domain.
+     * Create a new instance from the route pattern.
      *
-     * @param string $domain
+     * @param string ...$patterns
      * @return self
      */
-    public static function fromDomain(string $domain): self
+    public static function fromPatterns(string ...$patterns): self
     {
         return new self(
-            new DomainRouteCollector(
-                routes: [
-                    $domain => DomainRouteHandleException::createNeverRequestHandler(),
-                ],
+            DomainPatterns::fromPatterns(
+                ...$patterns,
             ),
         );
     }

@@ -35,7 +35,9 @@ use Takemo101\Chubby\Filesystem\Mime\MimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\Mime\SymfonyMimeTypeGuesser;
 use Takemo101\Chubby\Filesystem\PathHelper;
 use Takemo101\Chubby\Filesystem\SymfonyLocalFilesystem;
+use Takemo101\Chubby\Http\Uri\ApplicationUri;
 use Takemo101\Chubby\Support\ApplicationSummary;
+use Takemo101\Chubby\Support\ExternalEnvironmentAccessor;
 
 use function DI\get;
 
@@ -49,7 +51,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.0.27';
+    public const Version = '0.1.1';
 
     /**
      * @var Container|null
@@ -96,6 +98,7 @@ class Application implements ApplicationContainer
         $mimeTypes = MimeTypes::getDefault();
         $mimeTypeGuesser = new SymfonyMimeTypeGuesser($mimeTypes);
         $filesystem = new SymfonyLocalFilesystem($mimeTypeGuesser);
+        $envAccessor = new ExternalEnvironmentAccessor();
 
         $this->instantContainer
             ->add($this)
@@ -109,12 +112,16 @@ class Application implements ApplicationContainer
                 LocalFilesystem::class,
             )
             ->add($this->path)
-            ->add($pathHelper);
+            ->add($pathHelper)
+            ->add($envAccessor);
 
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
             new BootStartProvider(),
-            new EnvironmentProvider($this->path),
+            new EnvironmentProvider(
+                path: $this->path,
+                envAccessor: $envAccessor,
+            ),
             new ErrorProvider(),
             new EventProvider(),
             new ConfigProvider(),
@@ -130,6 +137,8 @@ class Application implements ApplicationContainer
                     ConfigRepository $config,
                 ) {
                     /** @var string */
+                    $uri = $config->get('app.url', 'http://localhost:8080');
+                    /** @var string */
                     $name = $config->get('app.name', self::Name);
                     /** @var string */
                     $env = $config->get('app.env', 'local');
@@ -139,12 +148,16 @@ class Application implements ApplicationContainer
                     $builtInServer = $config->get('app.built_in_server', false);
 
                     return new ApplicationSummary(
+                        uri: ApplicationUri::fromString($uri),
                         name: $name,
                         env: $env,
                         debug: $debug,
                         builtInServer: $builtInServer,
                     );
                 },
+                ApplicationUri::class => fn (
+                    ApplicationSummary $summary,
+                ) => $summary->getUri()->copy(),
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),

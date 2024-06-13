@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Http\SlimHttp;
 use LogicException;
+use Takemo101\Chubby\Http\Context\RequestContext;
 
 /**
  * @method ApplicationContainer getContainer()
@@ -62,7 +63,11 @@ trait HasHttpTest
         /** @var ServerRequestFactoryInterface */
         $factory =  $this->getContainer()->get(ServerRequestFactoryInterface::class);
 
-        return $factory->createServerRequest($method, $uri, $serverParams);
+        $requestContext = new RequestContext();
+
+        return $requestContext->withRequest(
+            $factory->createServerRequest($method, $uri, $serverParams)
+        );
     }
 
     /**

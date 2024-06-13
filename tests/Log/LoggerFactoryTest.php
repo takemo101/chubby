@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\NullHandler;
 use Takemo101\Chubby\Log\Factory\FileHandlerFactory;
 use Takemo101\Chubby\Log\Factory\ConsoleHandlerFactory;
@@ -11,6 +12,8 @@ use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Psr\Log\LoggerInterface;
+use Takemo101\Chubby\Log\LoggerProcessorCollection;
+use Takemo101\Chubby\Log\LoggerProcessorResolver;
 
 describe(
     'LoggerFactory',
@@ -39,15 +42,18 @@ describe(
                 $mock->shouldReceive('create')
                     ->andReturn(new NullHandler());
 
+                $app = Application::fromOption(
+                    ApplicationOption::from(),
+                );
+
                 $factory = new DefaultLoggerFactory(
                     factories: new LoggerHandlerFactoryCollection(
                         $mock,
                     ),
-                    resolver: new LoggerHandlerFactoryResolver(
-                        Application::fromOption(
-                            ApplicationOption::from(),
-                        ),
-                    ),
+                    factoryResolver: new LoggerHandlerFactoryResolver($app),
+                    processors: new LoggerProcessorCollection(),
+                    processorResolver: new LoggerProcessorResolver($app),
+                    formatter: new LineFormatter(),
                 );
 
                 $logger = $factory->create();

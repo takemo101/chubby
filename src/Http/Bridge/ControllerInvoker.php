@@ -3,14 +3,17 @@
 namespace Takemo101\Chubby\Http\Bridge;
 
 use Invoker\InvokerInterface;
-use Takemo101\Chubby\Http\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Http\Context\RequestContext;
+use Takemo101\Chubby\Http\Event\AfterControllerExecution;
+use Takemo101\Chubby\Http\Event\BeforeControllerExecution;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Takemo101\Chubby\Http\Routing\DomainRouteContext;
+use Takemo101\Chubby\Http\Routing\RouteArguments;
 use Takemo101\Chubby\Support\ParameterKeyTypeHintResolver;
 
 class ControllerInvoker implements InvocationStrategyInterface
@@ -73,7 +76,7 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $this->dispatcher->dispatch(
-            new AfterControllerInvoke($hookedResponse),
+            new AfterControllerExecution($hookedResponse),
         );
 
         return $hookedResponse;
@@ -92,15 +95,16 @@ class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
-        $domainRouteContext = DomainRouteContext::fromRequest(
-            $request,
-            fn () => new DomainRouteContext(),
-        );
+        $requestContext = RequestContext::fromRequest($request);
 
-        $routeArguments = [
-            ...($domainRouteContext?->getArguments() ?? []),
-            ...$routeArguments,
-        ];
+        // Get the domain route arguments and join them with the route arguments,
+        // then set them in the request context
+        $domainRouteContext = DomainRouteContext::fromRequest($request) ?? new DomainRouteContext();
+
+        $routeArguments = $domainRouteContext->getArguments()
+            ->join(new RouteArguments($routeArguments));
+
+        $requestContext->setTyped($routeArguments);
 
         /** @var ServerRequestInterface */
         $hookedRequest = $this->hook->do(
@@ -109,21 +113,16 @@ class ControllerInvoker implements InvocationStrategyInterface
         );
 
         $this->dispatcher->dispatch(
-            new BeforeControllerInvoke($hookedRequest),
+            new BeforeControllerExecution($hookedRequest),
         );
 
-        $context = new Context(
-            request: $hookedRequest,
-            response: $response,
-            routeArguments: $routeArguments,
-        );
+        $requestContext
+            ->set(ServerRequestInterface::class, $hookedRequest)
+            ->set(ResponseInterface::class, $response);
 
         return [
-            Context::class => $context,
-            ServerRequestInterface::class  => $context->getRequest(),
-            ResponseInterface::class => $context->getResponse(),
-            ...$context->getRouteArguments(),
-            ...$request->getAttributes(),
+            ...$requestContext->values(),
+            ...$routeArguments->arguments(),
         ];
     }
 
@@ -131,17 +130,17 @@ class ControllerInvoker implements InvocationStrategyInterface
      * Inject route arguments to request attributes.
      *
      * @param ServerRequestInterface $request
-     * @param array<string,string> $routeArguments
+     * @param RouteArguments $routeArguments
      * @return ServerRequestInterface
      */
     private function injectRouteArguments(
         ServerRequestInterface $request,
-        array $routeArguments,
+        RouteArguments $routeArguments,
     ): ServerRequestInterface {
 
         $requestWithArguments = $request;
 
-        foreach ($routeArguments as $key => $value) {
+        foreach ($routeArguments->arguments() as $key => $value) {
             $requestWithArguments = $requestWithArguments->withAttribute($key, $value);
         }
         return $requestWithArguments;

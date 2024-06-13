@@ -18,14 +18,12 @@ readonly class ApplicationPath
      * @param string $settingPath setting directory path
      * @param string $configPath config directory path
      * @param string $storagePath storage directory path
-     * @param string[] $dotenvNames dotenv file names
      */
     public function __construct(
         public string $basePath,
         public string $settingPath = '/setting',
         public string $configPath = '/config',
         public string $storagePath = '/storage',
-        public array $dotenvNames = ['.env'],
     ) {
         $this->helper = new PathHelper();
     }
@@ -81,15 +79,5 @@ readonly class ApplicationPath
             $this->storagePath,
             ...$paths
         );
-    }
-
-    /**
-     * Get dotenv file names
-     *
-     * @return string[]
-     */
-    public function getDotenvNames(): array
-    {
-        return $this->dotenvNames;
     }
 }

@@ -2,8 +2,14 @@
 
 namespace Takemo101\Chubby\Log;
 
+use DI\Attribute\Inject;
+use Monolog\Formatter\FormatterInterface;
+use Monolog\Handler\AbstractHandler;
+use Monolog\Handler\FormattableHandlerInterface;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Level;
 use Monolog\Logger;
+use Monolog\Processor\ProcessorInterface;
 use Psr\Log\LoggerInterface;
 use Monolog\Processor\UidProcessor;
 use Symfony\Component\Uid\Uuid;
@@ -17,11 +23,23 @@ class DefaultLoggerFactory implements LoggerFactory
      * constructor
      *
      * @param LoggerHandlerFactoryCollection $factories
-     * @param LoggerHandlerFactoryResolver $resolver
+     * @param LoggerHandlerFactoryResolver $factoryResolver
+     * @param LoggerProcessorCollection $processors
+     * @param LoggerProcessorResolver $processorResolver
+     * @param FormatterInterface $formatter
      */
     public function __construct(
-        private LoggerHandlerFactoryCollection $factories,
-        private LoggerHandlerFactoryResolver $resolver,
+        private readonly LoggerHandlerFactoryCollection $factories,
+        private readonly LoggerHandlerFactoryResolver $factoryResolver,
+        private readonly LoggerProcessorCollection $processors,
+        private readonly LoggerProcessorResolver $processorResolver,
+        private readonly FormatterInterface $formatter,
+        #[Inject('config.log.name')]
+        private readonly ?string $name = null,
+        #[Inject('config.log.level')]
+        private readonly Level $level = Level::Debug,
+        #[Inject('config.log.bubble')]
+        private readonly bool $bubble = true,
     ) {
         //
     }
@@ -29,15 +47,20 @@ class DefaultLoggerFactory implements LoggerFactory
     /**
      * Create logger.
      *
-     * @param string|null $name
      * @return LoggerInterface
      */
-    public function create(?string $name = null): LoggerInterface
+    public function create(): LoggerInterface
     {
-        $logger = new Logger($name ?? Uuid::v4()->toRfc4122());
+        $logger = new Logger($this->name ?? Uuid::v4()->toRfc4122());
 
-        $logger->pushProcessor(new UidProcessor());
+        // Add processors.
+        $processors = $this->createProcessors();
 
+        foreach ($processors as $processor) {
+            $logger->pushProcessor($processor);
+        }
+
+        // Add handlers.
         $handlers = $this->createHandlers();
 
         foreach ($handlers as $handler) {
@@ -45,6 +68,16 @@ class DefaultLoggerFactory implements LoggerFactory
         }
 
         return $logger;
+    }
+
+    /**
+     * Create default processor.
+     *
+     * @return ProcessorInterface
+     */
+    protected function createDefaultProcessor(): ProcessorInterface
+    {
+        return new UidProcessor();
     }
 
     /**
@@ -59,11 +92,42 @@ class DefaultLoggerFactory implements LoggerFactory
 
         foreach ($this->factories->classes() as $factory) {
 
-            $handler = $this->resolver->resolve($factory);
+            $handlerFactory = $this->factoryResolver->resolve($factory);
 
-            $handlers[] = $handler->create();
+            $handler = $handlerFactory->create();
+
+            // Set the log level and bubble flag.
+            if ($handler instanceof AbstractHandler) {
+                $handler->setLevel($this->level);
+                $handler->setBubble($this->bubble);
+            }
+
+            // Set the formatter.
+            if ($handler instanceof FormattableHandlerInterface) {
+                $handler->setFormatter($this->formatter);
+            }
+
+            $handlers[] = $handler;
         }
 
         return $handlers;
+    }
+
+    /**
+     * Create processors.
+     *
+     * @return ProcessorInterface[]
+     */
+    private function createProcessors(): array
+    {
+        /** @var ProcessorInterface[] */
+        $processors = [];
+
+        // Add processors.
+        foreach ($this->processors->classes() as $processor) {
+            $processors[] = $this->processorResolver->resolve($processor);
+        }
+
+        return $processors;
     }
 }

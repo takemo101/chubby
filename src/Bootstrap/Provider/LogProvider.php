@@ -2,20 +2,24 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use Monolog\Level;
+use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Processor\ProcessorInterface;
+use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
+use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Log\DefaultLoggerFactory;
-use Takemo101\Chubby\Log\Factory\ConsoleHandlerFactory;
 use Takemo101\Chubby\Log\Factory\FileHandlerFactory;
 use Takemo101\Chubby\Log\LoggerFactory;
 use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
-use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
-use Takemo101\Chubby\Support\ApplicationPath;
+use Takemo101\Chubby\Log\LoggerProcessorCollection;
+
+use function DI\get;
 
 /**
  * Logger related.
@@ -37,63 +41,17 @@ class LogProvider implements Provider
     {
         $definitions->add(
             [
-                LoggerFactory::class => function (
-                    LoggerHandlerFactoryCollection $factories,
-                    LoggerHandlerFactoryResolver $resolver,
-                    Hook $hook,
-                ) {
-                    $factory = new DefaultLoggerFactory(
-                        factories: $factories,
-                        resolver: $resolver,
-                    );
-
-                    /** @var LoggerFactory */
-                    $factory = $hook->do(LoggerFactory::class, $factory);
-
-                    return $factory;
-                },
+                LoggerFactory::class => get(DefaultLoggerFactory::class),
                 LoggerInterface::class => function (
-                    ConfigRepository $config,
                     LoggerFactory $factory,
+                    Hook $hook,
                 ): LoggerInterface {
+                    $logger = $factory->create();
 
-                    /** @var string|null */
-                    $name = $config->get('log.name');
+                    /** @var LoggerInterface */
+                    $logger = $hook->do(LoggerInterface::class, $logger);
 
-                    return $factory->create($name);
-                },
-                FileHandlerFactory::class => function (
-                    ConfigRepository $config,
-                    ApplicationPath $path,
-                ) {
-                    /** @var string */
-                    $path = $config->get('log.path', $path->getStoragePath('logs'));
-
-                    /** @var string */
-                    $filename = $config->get('log.filename', 'error.log');
-
-                    /** @var Level */
-                    $level = $config->get('log.level', Level::Debug);
-
-                    return new FileHandlerFactory(
-                        path: $path,
-                        filename: $filename,
-                        level: $level,
-                    );
-                },
-                ConsoleHandlerFactory::class => function (
-                    ConfigRepository $config,
-                ) {
-                    /** @var string */
-                    $stream = $config->get('log.stream', ConsoleHandlerFactory::DefaultStream);
-
-                    /** @var Level */
-                    $level = $config->get('log.level', Level::Debug);
-
-                    return new ConsoleHandlerFactory(
-                        stream: $stream,
-                        level: $level,
-                    );
+                    return $logger;
                 },
                 LoggerHandlerFactoryCollection::class => function (
                     ConfigRepository $config,
@@ -109,7 +67,33 @@ class LogProvider implements Provider
                     $hook->doTyped($factories);
 
                     return $factories;
-                }
+                },
+                LoggerProcessorCollection::class => function (
+                    ConfigRepository $config,
+                    Hook $hook,
+                ) {
+                    /** @var class-string<ProcessorInterface>[] */
+                    $processors = $config->get('log.processors', [
+                        UidProcessor::class,
+                    ]);
+
+                    $collection = new LoggerProcessorCollection(...$processors);
+
+                    $hook->doTyped($collection);
+
+                    return $collection;
+                },
+                FormatterInterface::class => new ConfigBasedDefinitionReplacer(
+                    configKey: 'log.formatter',
+                    defaultClass: LineFormatter::class,
+                ),
+                LineFormatter::class => fn () => new LineFormatter(
+                    format: null,
+                    dateFormat: null,
+                    allowInlineLineBreaks: true,
+                    ignoreEmptyContextAndExtra: true,
+                    includeStacktraces: true,
+                ),
             ],
         );
     }

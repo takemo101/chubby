@@ -34,8 +34,8 @@ class FunctionProvider implements Provider
      * @param LocalFilesystem $filesystem
      */
     public function __construct(
-        private ApplicationPath $path,
-        private LocalFilesystem $filesystem,
+        private readonly ApplicationPath $path,
+        private readonly LocalFilesystem $filesystem,
     ) {
         //
     }
@@ -92,10 +92,12 @@ class FunctionProvider implements Provider
      * Set function paths.
      *
      * @param string ...$paths
-     * @return void
+     * @return self
      */
-    public function setFunctionPath(string ...$paths): void
+    public function setFunctionPath(string ...$paths): self
     {
         $this->functionPaths = $paths;
+
+        return $this;
     }
 }

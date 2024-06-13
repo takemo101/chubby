@@ -1,6 +1,7 @@
 <?php
 
 use Fig\Http\Message\StatusCodeInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -20,8 +21,9 @@ describe(
                 /** @var App */
                 $app = $this->getContainer()->get(App::class);
                 $configurer = $this->getContainer()->get(SlimConfigurer::class);
+                $dispatcher = $this->getContainer()->get(EventDispatcherInterface::class);
 
-                $http = new SlimHttp($app, $configurer);
+                $http = new SlimHttp($app, $configurer, $dispatcher);
 
                 $request = $this->createRequest('GET', '/');
 

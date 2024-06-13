@@ -2,10 +2,9 @@
 
 namespace Takemo101\Chubby\Log\Factory;
 
-use Monolog\Formatter\LineFormatter;
+use DI\Attribute\Inject;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 
 /**
  * Create a handler to output logs in the stream.
@@ -19,32 +18,25 @@ class ConsoleHandlerFactory implements LoggerHandlerFactory
      * constructor
      *
      * @param string $stream
-     * @param Level $level
+     * @param int $permission
      */
     public function __construct(
-        private string $stream = self::DefaultStream,
-        private Level $level = Level::Debug,
+        #[Inject('config.log.console.stream')]
+        private readonly string $stream = self::DefaultStream,
+        #[Inject('config.log.console.permission')]
+        private readonly int $permission = 0777,
     ) {
         //
     }
 
     /**
-     * Create logger handler.
-     *
-     * @return HandlerInterface
+     * {@inheritDoc}
      */
     public function create(): HandlerInterface
     {
-        $handler = new StreamHandler($this->stream, $this->level);
-
-        $handler->setFormatter(
-            new LineFormatter(
-                format: null,
-                dateFormat: null,
-                allowInlineLineBreaks: false,
-                ignoreEmptyContextAndExtra: true,
-                includeStacktraces: false,
-            ),
+        $handler = new StreamHandler(
+            stream: $this->stream,
+            filePermission: $this->permission,
         );
 
         return $handler;

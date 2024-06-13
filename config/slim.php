@@ -33,4 +33,9 @@ return [
             'log_error_details' => true,
         ],
     ],
+
+    // Global middleware settings
+    'middlewares' => [
+        // class-string<MiddlewareInterface>
+    ],
 ];
