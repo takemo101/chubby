@@ -113,7 +113,8 @@ class Application implements ApplicationContainer
             )
             ->add($this->path)
             ->add($pathHelper)
-            ->add($envAccessor);
+            ->add($envAccessor)
+            ->add($this->builder);
 
         // Add a provider that satisfies the dependencies required to run the application
         $bootstrap->addProvider(
@@ -128,6 +129,8 @@ class Application implements ApplicationContainer
             new LogProvider(),
             new HelperProvider(),
         );
+
+        $builder->useAttributes(true);
 
         $builder->addDefinitions(
             [
