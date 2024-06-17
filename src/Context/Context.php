@@ -27,6 +27,10 @@ class Context
         }
 
         $this->set(self::class, $this);
+
+        if (!$this->has(static::class)) {
+            $this->setAliases(self::class, [static::class]);
+        }
     }
 
     /**
