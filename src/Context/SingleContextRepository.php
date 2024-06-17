@@ -66,6 +66,8 @@ class SingleContextRepository implements ContextRepository
      */
     public function cid(): string
     {
-        return getmypid() ?: throw new RuntimeException('Failed to get the process ID.');
+        $cid = getmypid() ?: throw new RuntimeException('Failed to get the process ID.');
+
+        return (string)$cid;
     }
 }
