@@ -24,6 +24,7 @@ use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Bootstrap\Provider\BootStartProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
+use Takemo101\Chubby\Bootstrap\Provider\ContextProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
 use Takemo101\Chubby\Bootstrap\Provider\EventProvider;
 use Takemo101\Chubby\Bootstrap\Provider\HelperProvider;
@@ -127,6 +128,7 @@ class Application implements ApplicationContainer
             new EventProvider(),
             new ConfigProvider(),
             new LogProvider(),
+            new ContextProvider(),
             new HelperProvider(),
         );
 
