@@ -90,8 +90,7 @@ readonly class ApplicationOption
             configPath: empty($configPath) ? self::DefaultConfigPath : $configPath,
             settingPath: empty($settingPath) ? self::DefaultSettingPath : $settingPath,
             storagePath: empty($storagePath) ? self::DefaultStoragePath : $storagePath,
-            builder: $builder ?? (new ContainerBuilder())
-                ->useAttributes(true),
+            builder: $builder ?? new ContainerBuilder(),
             bootstrap: $bootstrap ?? new Bootstrap(),
         );
     }
