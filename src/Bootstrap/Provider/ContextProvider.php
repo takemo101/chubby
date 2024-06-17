@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Bootstrap\Provider;
 
-use DI\Factory\RequestedEntry;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Context\ContextRepository;
