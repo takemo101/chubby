@@ -1,6 +1,6 @@
 <?php
 
-namespace Takemo101\Chubby\Http\Context;
+namespace Takemo101\Chubby\Context;
 
 /**
  * The value object that represents the value of the context.

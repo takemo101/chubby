@@ -46,7 +46,7 @@ abstract class AbstractContext
      *
      * @param ServerRequestInterface $request
      * @return static|null
-     * @throws ContextException
+     * @throws RequestContextException
      */
     public static function fromRequest(
         ServerRequestInterface $request,
@@ -61,7 +61,7 @@ abstract class AbstractContext
         }
 
         if (!($value instanceof static)) {
-            throw ContextException::notInstanceOf(
+            throw RequestContextException::notInstanceOf(
                 static::ContextKey,
                 static::class,
             );

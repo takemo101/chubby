@@ -1,7 +1,7 @@
 <?php
 
 use Takemo101\Chubby\Http\Context\AbstractContext;
-use Takemo101\Chubby\Http\Context\ContextException;
+use Takemo101\Chubby\Http\Context\RequestContextException;
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Http\Context\RequestContext;
 
@@ -111,7 +111,7 @@ describe(
 
                 expect(function () use ($request) {
                     AbstractContext::fromRequest($request);
-                })->toThrow(ContextException::class);
+                })->toThrow(RequestContextException::class);
             }
         );
     }

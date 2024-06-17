@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Http\Context;
 
 use Exception;
 
-class ContextException extends Exception
+class RequestContextException extends Exception
 {
     /**
      * The error code indicating that the context is not an instance of the given class.

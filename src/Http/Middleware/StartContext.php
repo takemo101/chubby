@@ -7,6 +7,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Takemo101\Chubby\Context\ContextRepository;
+use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Context\RequestContext;
 use Takemo101\Chubby\Http\Event\BeforeStartContext;
 
@@ -18,10 +20,14 @@ class StartContext implements MiddlewareInterface
     /**
      * constructor
      *
+     * @param ContextRepository $repository
      * @param EventDispatcherInterface $dispatcher
+     * @param Hook $hook
      */
     public function __construct(
+        private ContextRepository $repository,
         private EventDispatcherInterface $dispatcher,
+        private Hook $hook,
     ) {
         //
     }
@@ -37,6 +43,10 @@ class StartContext implements MiddlewareInterface
     {
         $context = new RequestContext();
         $request = $context->withRequest($request);
+
+        $this->repository->set($context);
+
+        $this->hook->doTyped($context);
 
         $this->dispatcher->dispatch(
             new BeforeStartContext(
