@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 use Monolog\Processor\ProcessorInterface;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
@@ -17,7 +18,9 @@ use Takemo101\Chubby\Log\Factory\FileHandlerFactory;
 use Takemo101\Chubby\Log\LoggerFactory;
 use Takemo101\Chubby\Log\Factory\LoggerHandlerFactory;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
+use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Takemo101\Chubby\Log\LoggerProcessorCollection;
+use Takemo101\Chubby\Log\LoggerProcessorResolver;
 
 use function DI\get;
 
@@ -42,6 +45,34 @@ class LogProvider implements Provider
         $definitions->add(
             [
                 LoggerFactory::class => get(DefaultLoggerFactory::class),
+                DefaultLoggerFactory::class => function (
+                    LoggerHandlerFactoryCollection $factories,
+                    LoggerHandlerFactoryResolver $factoryResolver,
+                    LoggerProcessorCollection $processors,
+                    LoggerProcessorResolver $processorResolver,
+                    FormatterInterface $formatter,
+                    ConfigRepository $config,
+                ) {
+                    /** @var string|null */
+                    $name = $config->get('log.name', null);
+                    /** @var Level|integer */
+                    $level = $config->get('log.level', Level::Debug);
+                    /** @var bool */
+                    $bubble = $config->get('log.bubble', true);
+
+                    return new DefaultLoggerFactory(
+                        factories: $factories,
+                        factoryResolver: $factoryResolver,
+                        processors: $processors,
+                        processorResolver: $processorResolver,
+                        formatter: $formatter,
+                        name: $name,
+                        level: is_int($level)
+                            ? Level::from($level)
+                            : $level,
+                        bubble: $bubble,
+                    );
+                },
                 LoggerInterface::class => function (
                     LoggerFactory $factory,
                     Hook $hook,
