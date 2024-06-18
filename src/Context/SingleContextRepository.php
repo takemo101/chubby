@@ -60,6 +60,16 @@ class SingleContextRepository implements ContextRepository
     }
 
     /**
+     * Clears the context.
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $this->context = null;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @throws RuntimeException If the process ID cannot be obtained.
