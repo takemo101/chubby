@@ -44,6 +44,7 @@ class StartContext implements MiddlewareInterface
         $context = new RequestContext();
         $request = $context->withRequest($request);
 
+        // Set the context.
         $this->repository->set($context);
 
         $this->hook->doTyped($context);
@@ -55,6 +56,11 @@ class StartContext implements MiddlewareInterface
             ),
         );
 
-        return $handler->handle($request);
+        $response = $handler->handle($request);
+
+        // Clear the context.
+        $this->repository->clear();
+
+        return $response;
     }
 }
