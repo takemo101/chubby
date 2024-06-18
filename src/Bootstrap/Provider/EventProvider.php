@@ -38,7 +38,7 @@ class EventProvider implements Provider
                     Hook $hook,
                 ) {
                     /** @var class-string[] */
-                    $listen = $config->get('event.listen', []);
+                    $listen = $config->get('event.listeners', []);
 
                     $register = EventRegister::fromArray($listen);
 
