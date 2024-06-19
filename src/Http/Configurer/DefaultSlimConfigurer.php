@@ -9,16 +9,13 @@ use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Http\Event\AfterSlimConfiguration;
+use Takemo101\Chubby\Http\Event\BeforeSlimConfiguration;
 use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
 use Takemo101\Chubby\Http\Middleware\StartContext;
 
 class DefaultSlimConfigurer implements SlimConfigurer
 {
-    /**
-     * @var string|null
-     */
-    private ?string $basePath;
-
     /**
      * constructor
      *
@@ -32,9 +29,9 @@ class DefaultSlimConfigurer implements SlimConfigurer
         private readonly EventDispatcher $dispatcher,
         private readonly Hook $hook,
         #[Inject('config.slim.base_path')]
-        ?string $basePath = null,
+        private readonly ?string $basePath = null,
     ) {
-        $this->basePath = $basePath;
+        //
     }
 
     /**
@@ -51,6 +48,36 @@ class DefaultSlimConfigurer implements SlimConfigurer
             parameter: $slim,
         );
 
+        // Dispatch event before slim configured.
+        $this->dispatcher->dispatch(
+            new BeforeSlimConfiguration($slim),
+        );
+
+        // Add base middlewares.
+        $this->addBaseMiddlewares($slim);
+
+        // Hook after slim configuration.
+        $this->hook->do(
+            tag: ApplicationHookTags::Http_AfterSlimConfiguration,
+            parameter: $slim,
+        );
+
+        // Dispatch event after slim configured.
+        $this->dispatcher->dispatch(
+            new AfterSlimConfiguration($slim),
+        );
+
+        return $slim;
+    }
+
+    /**
+     * Add basic middlewares.
+     *
+     * @param Slim $slim
+     * @return void
+     */
+    private function addBaseMiddlewares(Slim $slim): void
+    {
         // Add global middlewares.
         foreach ($this->middlewares->classes() as $middleware) {
             $slim->add($middleware);
@@ -77,13 +104,5 @@ class DefaultSlimConfigurer implements SlimConfigurer
         $slim->add(BodyParsingMiddleware::class);
         $slim->add(ErrorMiddleware::class);
         $slim->add(StartContext::class);
-
-        // Hook after slim configuration.
-        $this->hook->do(
-            tag: ApplicationHookTags::Http_AfterSlimConfiguration,
-            parameter: $slim,
-        );
-
-        return $slim;
     }
 }
