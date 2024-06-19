@@ -96,7 +96,6 @@ class HttpProvider implements Provider
                     $adapter = new SlimHttp(
                         application: $slim,
                         configurer: $configurer,
-                        dispatcher: $dispatcher,
                     );
 
                     $hook->doTyped($adapter, true);
