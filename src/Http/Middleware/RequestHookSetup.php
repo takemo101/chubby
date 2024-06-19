@@ -65,11 +65,6 @@ class RequestHookSetup implements MiddlewareInterface
 
         $response = $handler->handle($request);
 
-        // Dispatch an event indicating the response is being sent back to the client
-        $this->dispatcher->dispatch(
-            new ResponseSending($response),
-        );
-
         /**
          * Hook into the response before it is sent back to the client
          *
@@ -84,6 +79,11 @@ class RequestHookSetup implements MiddlewareInterface
         $response = $this->hook->do(
             tag: ApplicationHookTags::Http_ResponseSending,
             parameter: $response,
+        );
+
+        // Dispatch an event indicating the response is being sent back to the client
+        $this->dispatcher->dispatch(
+            new ResponseSending($response),
         );
 
         return $response;
