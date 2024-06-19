@@ -6,6 +6,7 @@ use DI\Attribute\Inject;
 use Slim\App as Slim;
 use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
+use Takemo101\Chubby\Http\Middleware\StartContext;
 
 class DefaultSlimConfigurer implements SlimConfigurer
 {
@@ -41,6 +42,7 @@ class DefaultSlimConfigurer implements SlimConfigurer
         $slim->addRoutingMiddleware();
         $slim->add(BodyParsingMiddleware::class);
         $slim->add(ErrorMiddleware::class);
+        $slim->add(StartContext::class);
 
         return $slim;
     }

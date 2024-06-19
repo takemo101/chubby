@@ -7,7 +7,6 @@ use Slim\App as Slim;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
-use Takemo101\Chubby\Http\Middleware\StartContext;
 
 class DefaultSlimFactory implements SlimFactory
 {
@@ -41,8 +40,6 @@ class DefaultSlimFactory implements SlimFactory
         foreach ($this->middlewares->classes() as $middleware) {
             $app->add($middleware);
         }
-
-        $app->add(StartContext::class);
 
         return $app;
     }
