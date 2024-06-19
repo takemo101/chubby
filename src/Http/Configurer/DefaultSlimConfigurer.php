@@ -3,11 +3,11 @@
 namespace Takemo101\Chubby\Http\Configurer;
 
 use DI\Attribute\Inject;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Slim\App as Slim;
 use Slim\Middleware\BodyParsingMiddleware;
 use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationHookTags;
-use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Event\AfterAddRoutingMiddleware;
 use Takemo101\Chubby\Http\Event\AfterSlimConfiguration;
@@ -22,13 +22,13 @@ class DefaultSlimConfigurer implements SlimConfigurer
      * constructor
      *
      * @param GlobalMiddlewareCollection $middlewares
-     * @param EventDispatcher $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param Hook $hook
      * @param string|null $basePath
      */
     public function __construct(
         private readonly GlobalMiddlewareCollection $middlewares,
-        private readonly EventDispatcher $dispatcher,
+        private readonly EventDispatcherInterface $dispatcher,
         private readonly Hook $hook,
         #[Inject('config.slim.base_path')]
         private readonly ?string $basePath = null,
