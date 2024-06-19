@@ -7,6 +7,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Event\RequestReceived;
 use Takemo101\Chubby\Http\Event\ResponseSending;
@@ -51,6 +52,12 @@ class RequestHookSetup implements MiddlewareInterface
             parameter: $request,
         );
 
+        /** @var ServerRequestInterface $request */
+        $request = $this->hook->do(
+            tag: ApplicationHookTags::Http_RequestReceived,
+            parameter: $request,
+        );
+
         // Dispatch an event indicating that an external request has been received
         $this->dispatcher->dispatch(
             new RequestReceived($request),
@@ -70,6 +77,12 @@ class RequestHookSetup implements MiddlewareInterface
          */
         $response = $this->hook->do(
             tag: ResponseInterface::class,
+            parameter: $response,
+        );
+
+        /** @var ResponseInterface $response */
+        $response = $this->hook->do(
+            tag: ApplicationHookTags::Http_ResponseSending,
             parameter: $response,
         );
 

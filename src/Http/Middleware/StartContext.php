@@ -52,7 +52,7 @@ class StartContext implements MiddlewareInterface
         $this->hook->doTyped($context);
 
         $this->hook->do(
-            tag: ApplicationHookTags::Http_CreatedRequestContext,
+            tag: ApplicationHookTags::Http_RequestContextCreated,
             parameter: $context,
         );
 
@@ -69,7 +69,7 @@ class StartContext implements MiddlewareInterface
         $this->repository->clear();
 
         $this->hook->do(
-            tag: ApplicationHookTags::Http_ClearedRequestContext,
+            tag: ApplicationHookTags::Http_RequestContextCleared,
             parameter: $context,
         );
 

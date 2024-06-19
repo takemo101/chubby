@@ -47,11 +47,23 @@ final class ApplicationHookTags
      * This hook occurs after creating the request context.
      * You can obtain the `Takemo101\Chubby\Http\RequestContext` instance.
      */
-    public const Http_CreatedRequestContext = 'http.created_request_context';
+    public const Http_RequestContextCreated = 'http.request_context_created';
 
     /**
      * This hook occurs after clearing the request context.
      * You can obtain the `Takemo101\Chubby\Http\RequestContext` instance.
      */
-    public const Http_ClearedRequestContext = 'http.cleared_request_context';
+    public const Http_RequestContextCleared = 'http.request_context_cleared';
+
+    /**
+     * This hook occurs before receiving the request.
+     * You can obtain the `Psr\Http\Message\ServerRequestInterface` instance.
+     */
+    public const Http_RequestReceived = 'http.request_received';
+
+    /**
+     * This hook occurs before sending the response.
+     * You can obtain the `Psr\Http\Message\ResponseInterface` instance.
+     */
+    public const Http_ResponseSending = 'http.response_sending';
 }
