@@ -9,7 +9,9 @@ use Slim\Middleware\ErrorMiddleware;
 use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Hook\Hook;
+use Takemo101\Chubby\Http\Event\AfterAddRoutingMiddleware;
 use Takemo101\Chubby\Http\Event\AfterSlimConfiguration;
+use Takemo101\Chubby\Http\Event\BeforeAddRoutingMiddleware;
 use Takemo101\Chubby\Http\Event\BeforeSlimConfiguration;
 use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
 use Takemo101\Chubby\Http\Middleware\StartContext;
@@ -93,12 +95,22 @@ class DefaultSlimConfigurer implements SlimConfigurer
             parameter: $slim,
         );
 
+        // Dispatch event before add routing middleware.
+        $this->dispatcher->dispatch(
+            new BeforeAddRoutingMiddleware($slim),
+        );
+
         $slim->addRoutingMiddleware();
 
         // Hook after add routing middleware.
         $this->hook->do(
             tag: ApplicationHookTags::Http_AfterAddRoutingMiddleware,
             parameter: $slim,
+        );
+
+        // Dispatch event after add routing middleware.
+        $this->dispatcher->dispatch(
+            new AfterAddRoutingMiddleware($slim),
         );
 
         $slim->add(BodyParsingMiddleware::class);
