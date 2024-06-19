@@ -3,10 +3,10 @@
 namespace Takemo101\Chubby\Http\Listener;
 
 use Takemo101\Chubby\Event\Attribute\AsEventListener;
-use Takemo101\Chubby\Http\Event\BeforeStartContext;
+use Takemo101\Chubby\Http\Event\ContextCreated;
 use Takemo101\Chubby\Http\Uri\ApplicationUri;
 
-#[AsEventListener(BeforeStartContext::class)]
+#[AsEventListener(ContextCreated::class)]
 class ApplicationUriReplace
 {
     /**
@@ -21,11 +21,11 @@ class ApplicationUriReplace
     }
 
     /**
-     * @param BeforeStartContext $event
+     * @param ContextCreated $event
      * @return void
      */
     public function __invoke(
-        BeforeStartContext $event
+        ContextCreated $event
     ): void {
         $request = $event->getRequest();
 
