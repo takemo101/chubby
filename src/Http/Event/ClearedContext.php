@@ -2,36 +2,36 @@
 
 namespace Takemo101\Chubby\Http\Event;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Takemo101\Chubby\Event\StoppableEvent;
 use Takemo101\Chubby\Http\Context\RequestContext;
 
 /**
- * Event fired before the execution of the StartContext middleware.
+ * This is an event after clearing the context.
  */
-class BeforeStartContext extends StoppableEvent
+class ClearedContext extends StoppableEvent
 {
     /**
      * constructor
      *
-     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param RequestContext $context
      */
     public function __construct(
-        private ServerRequestInterface $request,
+        private ResponseInterface $response,
         private RequestContext $context,
     ) {
         //
     }
 
     /**
-     * Get the request.
+     * Get the response.
      *
-     * @return ServerRequestInterface
+     * @return ResponseInterface
      */
-    public function getRequest(): ServerRequestInterface
+    public function getResponse(): ResponseInterface
     {
-        return $this->request;
+        return $this->response;
     }
 
     /**
