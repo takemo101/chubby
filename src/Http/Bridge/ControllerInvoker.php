@@ -73,14 +73,8 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         /** @var ResponseInterface */
         $hookedResponse = $this->hook->do(
-            ResponseInterface::class,
-            $transformedResponse,
-        );
-
-        /** @var ResponseInterface */
-        $hookedResponse = $this->hook->do(
             tag: ApplicationHookTags::Http_AfterControllerExecution,
-            parameter: $hookedResponse,
+            parameter: $transformedResponse,
         );
 
         $this->dispatcher->dispatch(
@@ -112,14 +106,8 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         /** @var ServerRequestInterface */
         $hookedRequest = $this->hook->do(
-            ServerRequestInterface::class,
-            $this->injectRouteArguments($request, $routeArguments),
-        );
-
-        /** @var ServerRequestInterface */
-        $hookedRequest = $this->hook->do(
             tag: ApplicationHookTags::Http_BeforeControllerExecution,
-            parameter: $hookedRequest,
+            parameter: $this->injectRouteArguments($request, $routeArguments),
         );
 
         $this->dispatcher->dispatch(
