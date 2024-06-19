@@ -11,8 +11,8 @@ use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Context\ContextRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Context\RequestContext;
-use Takemo101\Chubby\Http\Event\ClearedContext;
-use Takemo101\Chubby\Http\Event\CreatedContext;
+use Takemo101\Chubby\Http\Event\ContextCleared;
+use Takemo101\Chubby\Http\Event\ContextCreated;
 
 /**
  * Start the request context.
@@ -57,7 +57,7 @@ class StartContext implements MiddlewareInterface
         );
 
         $this->dispatcher->dispatch(
-            new CreatedContext(
+            new ContextCreated(
                 request: $request,
                 context: $context,
             ),
@@ -74,7 +74,7 @@ class StartContext implements MiddlewareInterface
         );
 
         $this->dispatcher->dispatch(
-            new ClearedContext(
+            new ContextCleared(
                 response: $response,
                 context: $context,
             ),

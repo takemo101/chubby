@@ -9,7 +9,7 @@ use Takemo101\Chubby\Http\Context\RequestContext;
 /**
  * This is an event after creating the context.
  */
-class CreatedContext extends StoppableEvent
+class ContextCreated extends StoppableEvent
 {
     /**
      * constructor

@@ -9,7 +9,7 @@ use Takemo101\Chubby\Http\Context\RequestContext;
 /**
  * This is an event after clearing the context.
  */
-class ClearedContext extends StoppableEvent
+class ContextCleared extends StoppableEvent
 {
     /**
      * constructor
