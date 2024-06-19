@@ -31,6 +31,13 @@ interface ContextRepository
     public function has(): bool;
 
     /**
+     * Clears the context.
+     *
+     * @return void
+     */
+    public function clear(): void;
+
+    /**
      * Gets the ID of the current context.
      *
      * @return string
