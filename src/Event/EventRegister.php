@@ -16,7 +16,7 @@ class EventRegister implements Arrayable
      * constructor
      *
      * @param EventMapExtractor $extractor
-     * @param array<class-string,PrioritizedListener[]> $map
+     * @param array<class-string|string,PrioritizedListener[]> $map
      */
     public function __construct(
         private EventMapExtractor $extractor = new EventMapExtractor(),
@@ -119,7 +119,7 @@ class EventRegister implements Arrayable
     /**
      * Create a instance from array
      *
-     * @param class-string[] $listen
+     * @param class-string[] $listeners
      * @return self
      */
     public static function fromArray(array $listeners): self
