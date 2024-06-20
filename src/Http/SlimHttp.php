@@ -2,14 +2,13 @@
 
 namespace Takemo101\Chubby\Http;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App as Slim;
 use Takemo101\Chubby\Http\Concern\HasRouting;
 use Takemo101\Chubby\Http\Configurer\SlimConfigurer;
-use Takemo101\Chubby\Http\Event\AfterSlimConfiguration;
+use Takemo101\Chubby\Http\Middleware\RequestHookSetup;
 
 class SlimHttp implements RequestHandlerInterface
 {
@@ -25,12 +24,10 @@ class SlimHttp implements RequestHandlerInterface
      *
      * @param Slim $application
      * @param SlimConfigurer $configurer
-     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         private readonly Slim $application,
         private readonly SlimConfigurer $configurer,
-        private readonly EventDispatcherInterface $dispatcher,
     ) {
         //
     }
@@ -48,10 +45,7 @@ class SlimHttp implements RequestHandlerInterface
 
         $this->configurer->configure($this->application);
 
-        // Dispatch event after slim configured.
-        $this->dispatcher->dispatch(
-            new AfterSlimConfiguration($this->application),
-        );
+        $this->application->add(RequestHookSetup::class);
 
         $this->isConfigured = true;
     }

@@ -25,7 +25,7 @@ class EventMapExtractor
      * Extract the event map from the listener.
      *
      * @param class-string|object $listener
-     * @return array<class-string,PrioritizedListener[]>
+     * @return array<class-string|string,PrioritizedListener[]>
      * @throws InvalidArgumentException
      */
     public function extract(
@@ -85,7 +85,7 @@ class EventMapExtractor
      * @param ReflectionClass<object> $class
      * @param ReflectionAttribute<AsEventListener>[] $attributes
      * @param class-string|object $listener
-     * @return array<class-string,PrioritizedListener[]>
+     * @return array<class-string|string,PrioritizedListener[]>
      * @throws EventTypeInferenceException
 
      */

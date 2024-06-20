@@ -27,10 +27,14 @@ class RequestContext extends Context
             return $request;
         }
 
-        return $request->withAttribute(
+        $request = $request->withAttribute(
             self::ContextKey,
             $this,
         );
+
+        $this->set(ServerRequestInterface::class, $request);
+
+        return $request;
     }
 
     /**

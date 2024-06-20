@@ -7,8 +7,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
+use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Context\RequestContext;
+use Takemo101\Chubby\Http\Context\RequestContextException;
 use Takemo101\Chubby\Http\Event\AfterControllerExecution;
 use Takemo101\Chubby\Http\Event\BeforeControllerExecution;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
@@ -71,8 +73,8 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         /** @var ResponseInterface */
         $hookedResponse = $this->hook->do(
-            ResponseInterface::class,
-            $transformedResponse,
+            tag: ApplicationHookTags::Http_AfterControllerExecution,
+            parameter: $transformedResponse,
         );
 
         $this->dispatcher->dispatch(
@@ -95,8 +97,6 @@ class ControllerInvoker implements InvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments,
     ): array {
-        $requestContext = RequestContext::fromRequest($request);
-
         // Get the domain route arguments and join them with the route arguments,
         // then set them in the request context
         $domainRouteContext = DomainRouteContext::fromRequest($request) ?? new DomainRouteContext();
@@ -104,19 +104,23 @@ class ControllerInvoker implements InvocationStrategyInterface
         $routeArguments = $domainRouteContext->getArguments()
             ->join(new RouteArguments($routeArguments));
 
-        $requestContext->setTyped($routeArguments);
-
         /** @var ServerRequestInterface */
         $hookedRequest = $this->hook->do(
-            ServerRequestInterface::class,
-            $this->injectRouteArguments($request, $routeArguments),
+            tag: ApplicationHookTags::Http_BeforeControllerExecution,
+            parameter: $this->injectRouteArguments($request, $routeArguments),
         );
 
         $this->dispatcher->dispatch(
-            new BeforeControllerExecution($hookedRequest),
+            new BeforeControllerExecution(
+                request: $hookedRequest,
+                routeArguments: $routeArguments,
+            ),
         );
 
+        $requestContext = $this->getRequestContextOrCreate($hookedRequest);
+
         $requestContext
+            ->setTyped($routeArguments)
             ->set(ServerRequestInterface::class, $hookedRequest)
             ->set(ResponseInterface::class, $response);
 
@@ -144,5 +148,31 @@ class ControllerInvoker implements InvocationStrategyInterface
             $requestWithArguments = $requestWithArguments->withAttribute($key, $value);
         }
         return $requestWithArguments;
+    }
+
+    /**
+     * Get the context from the request or create a new context.
+     *
+     * @param ServerRequestInterface $request
+     * @return RequestContext
+     * @throws RequestContextException
+     */
+    private function getRequestContextOrCreate(
+        ServerRequestInterface $request,
+    ): RequestContext {
+        try {
+            $context = RequestContext::fromRequest($request);
+        } catch (RequestContextException $e) {
+
+            // Check if the exception is not an instance of the error code.
+            if ($e->getCode() === RequestContextException::NotInstanceOfErrorCode) {
+                throw $e;
+            }
+
+            // If the context is not set, create a new context.
+            $context = new RequestContext();
+        }
+
+        return $context;
     }
 }

@@ -6,8 +6,6 @@ use Psr\Container\ContainerInterface;
 use Slim\App as Slim;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\InvocationStrategyInterface;
-use Takemo101\Chubby\Http\GlobalMiddlewareCollection;
-use Takemo101\Chubby\Http\Middleware\StartContext;
 
 class DefaultSlimFactory implements SlimFactory
 {
@@ -16,12 +14,10 @@ class DefaultSlimFactory implements SlimFactory
      *
      * @param ContainerInterface $container
      * @param InvocationStrategyInterface $invocationStrategy
-     * @param GlobalMiddlewareCollection $middlewares
      */
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly InvocationStrategyInterface $invocationStrategy,
-        private readonly GlobalMiddlewareCollection $middlewares,
     ) {
         //
     }
@@ -37,12 +33,6 @@ class DefaultSlimFactory implements SlimFactory
 
         $app->getRouteCollector()
             ->setDefaultInvocationStrategy($this->invocationStrategy);
-
-        foreach ($this->middlewares->classes() as $middleware) {
-            $app->add($middleware);
-        }
-
-        $app->add(StartContext::class);
 
         return $app;
     }

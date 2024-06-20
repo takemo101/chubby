@@ -8,7 +8,7 @@ use InvalidArgumentException;
 /**
  * Event register
  *
- * @implements Arrayable<class-string,PrioritizedListener[]>
+ * @implements Arrayable<class-string|string,PrioritizedListener[]>
  */
 class EventRegister implements Arrayable
 {
@@ -16,7 +16,7 @@ class EventRegister implements Arrayable
      * constructor
      *
      * @param EventMapExtractor $extractor
-     * @param array<class-string,PrioritizedListener[]> $map
+     * @param array<class-string|string,PrioritizedListener[]> $map
      */
     public function __construct(
         private EventMapExtractor $extractor = new EventMapExtractor(),
@@ -50,18 +50,20 @@ class EventRegister implements Arrayable
     /**
      * Register a listener for the event with priority
      *
-     * @param class-string $event
+     * Register a listener for the event by specifying the event name instead of the event object
+     *
+     * @param class-string|string $eventClassOrName
      * @param PrioritizedListener ...$listeners
      * @return self
      */
     public function listen(
-        string $event,
+        string $eventClassOrName,
         PrioritizedListener ...$listeners,
     ): self {
 
-        $exists = $this->map[$event] ?? [];
+        $exists = $this->map[$eventClassOrName] ?? [];
 
-        $this->map[$event] = [
+        $this->map[$eventClassOrName] = [
             ...$exists,
             ...$listeners,
         ];
@@ -72,7 +74,7 @@ class EventRegister implements Arrayable
     /**
      * Get a listener for the event
      *
-     * @param class-string $event
+     * @param class-string|string $event
      * @return PrioritizedListener[]
      */
     public function get(string $event): array
@@ -83,7 +85,7 @@ class EventRegister implements Arrayable
     /**
      * Check if the event has a listener
      *
-     * @param class-string $event
+     * @param class-string|string $event
      * @return bool
      */
     public function has(string $event): bool
@@ -94,7 +96,7 @@ class EventRegister implements Arrayable
     /**
      * Remove a listener for the event
      *
-     * @param class-string $event
+     * @param class-string|string $event
      * @return self
      */
     public function remove(string $event): self
@@ -107,7 +109,7 @@ class EventRegister implements Arrayable
     /**
      * Get all
      *
-     * @return array<class-string,PrioritizedListener[]>
+     * @return array<class-string|string,PrioritizedListener[]>
      */
     public function toArray(): array
     {
@@ -117,14 +119,14 @@ class EventRegister implements Arrayable
     /**
      * Create a instance from array
      *
-     * @param class-string[] $listen
+     * @param class-string[] $listeners
      * @return self
      */
-    public static function fromArray(array $listen): self
+    public static function fromArray(array $listeners): self
     {
         $instance = new self();
 
-        foreach ($listen as $listener) {
+        foreach ($listeners as $listener) {
             $instance->on($listener);
         }
 

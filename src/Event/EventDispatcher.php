@@ -2,31 +2,32 @@
 
 namespace Takemo101\Chubby\Event;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
 
-class EventDispatcher implements EventDispatcherInterface
+class EventDispatcher implements SymfonyEventDispatcherInterface
 {
     /**
      * constructor
      *
-     * @param ListenerProviderInterface $provider
+     * @param ListenerProvider $provider
      */
     public function __construct(
-        private ListenerProviderInterface $provider,
+        private ListenerProvider $provider,
     ) {
         //
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @return object
      */
-    public function dispatch(object $event)
+    public function dispatch(object $event, ?string $eventName = null): object
     {
-        foreach ($this->provider->getListenersForEvent($event) as $listener) {
+        $listeners = is_string($eventName)
+            ? $this->provider->getListeners($eventName)
+            : $this->provider->getListenersForEvent($event);
+
+        foreach ($listeners as $listener) {
             call_user_func($listener, $event);
 
             if (

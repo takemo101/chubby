@@ -7,6 +7,7 @@ use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Symfony\Component\Console\Application as Console;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
 use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Console\Command\LogCleanCommand;
 use Takemo101\Chubby\Console\Command\ServeCommand;
@@ -36,13 +37,17 @@ class ConsoleProvider implements Provider
     {
         $definitions->add(
             [
-                Console::class => function (): Console {
+                Console::class => function (
+                    SymfonyEventDispatcherInterface $dispatcher,
+                ): Console {
                     $console = new Console(
                         Application::Name,
                         Application::Version,
                     );
 
                     $console->setAutoExit(false);
+
+                    $console->setDispatcher($dispatcher);
 
                     return $console;
                 },

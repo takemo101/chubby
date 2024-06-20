@@ -4,22 +4,22 @@ namespace Takemo101\Chubby\Http\Event;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Takemo101\Chubby\Event\StoppableEvent;
-use Takemo101\Chubby\Http\Routing\RouteArguments;
+use Takemo101\Chubby\Http\Context\RequestContext;
 
 /**
- * This is an event before running the controller.
+ * This is an event after creating the context.
  */
-class BeforeControllerExecution extends StoppableEvent
+class ContextCreated extends StoppableEvent
 {
     /**
      * constructor
      *
      * @param ServerRequestInterface $request
-     * @param RouteArguments $routeArguments
+     * @param RequestContext $context
      */
     public function __construct(
         private ServerRequestInterface $request,
-        private RouteArguments $routeArguments,
+        private RequestContext $context,
     ) {
         //
     }
@@ -35,12 +35,12 @@ class BeforeControllerExecution extends StoppableEvent
     }
 
     /**
-     * Get the route arguments.
+     * Get the context.
      *
-     * @return RouteArguments
+     * @return RequestContext
      */
-    public function getRouteArguments(): RouteArguments
+    public function getContext(): RequestContext
     {
-        return $this->routeArguments;
+        return $this->context;
     }
 }
