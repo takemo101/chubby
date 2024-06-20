@@ -15,7 +15,7 @@ class AsEventListener
     /**
      * constructor
      *
-     * @param class-string|null $event
+     * @param class-string|string|null $event Event class name or event name.
      * @param string|null $method
      * @param int|null $priority
      */
@@ -28,7 +28,7 @@ class AsEventListener
     }
 
     /**
-     * @return class-string|null
+     * @return class-string|string|null
      */
     public function getEvent(): ?string
     {
