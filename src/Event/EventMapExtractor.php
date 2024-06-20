@@ -85,7 +85,7 @@ class EventMapExtractor
      * @param ReflectionClass<object> $class
      * @param ReflectionAttribute<AsEventListener>[] $attributes
      * @param class-string|object $listener
-     * @return array<class-string,PrioritizedListener[]>
+     * @return array<class-string|string,PrioritizedListener[]>
      * @throws EventTypeInferenceException
 
      */
