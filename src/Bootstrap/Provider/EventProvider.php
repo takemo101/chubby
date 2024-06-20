@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Bootstrap\Provider;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
 use Takemo101\Chubby\Bootstrap\Support\ConfigBasedDefinitionReplacer;
@@ -49,7 +50,20 @@ class EventProvider implements Provider
 
                     return $register;
                 },
-                EventDispatcherInterface::class => new ConfigBasedDefinitionReplacer(
+                EventDispatcherInterface::class => function (
+                    SymfonyEventDispatcherInterface $dispatcher,
+                    Hook $hook,
+                ) {
+                    /** @var EventDispatcherInterface */
+                    $dispatcher = $hook->do(
+                        tag: EventDispatcherInterface::class,
+                        parameter: $dispatcher,
+                        delayed: true,
+                    );
+
+                    return $dispatcher;
+                },
+                SymfonyEventDispatcherInterface::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: EventDispatcher::class,
                     configKey: 'event.dispatcher',
                 ),
