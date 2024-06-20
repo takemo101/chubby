@@ -8,7 +8,7 @@ use InvalidArgumentException;
 /**
  * Event register
  *
- * @implements Arrayable<class-string,PrioritizedListener[]>
+ * @implements Arrayable<class-string|string,PrioritizedListener[]>
  */
 class EventRegister implements Arrayable
 {
