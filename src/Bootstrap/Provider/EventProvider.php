@@ -11,7 +11,10 @@ use Takemo101\Chubby\Config\ConfigRepository;
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Event\EventListenerProvider;
 use Takemo101\Chubby\Event\EventRegister;
+use Takemo101\Chubby\Event\ListenerProvider;
 use Takemo101\Chubby\Hook\Hook;
+
+use function DI\get;
 
 /**
  * Event related.
@@ -50,10 +53,11 @@ class EventProvider implements Provider
                     defaultClass: EventDispatcher::class,
                     configKey: 'event.dispatcher',
                 ),
-                ListenerProviderInterface::class => new ConfigBasedDefinitionReplacer(
+                ListenerProvider::class => new ConfigBasedDefinitionReplacer(
                     defaultClass: EventListenerProvider::class,
                     configKey: 'event.provider',
                 ),
+                ListenerProviderInterface::class => get(ListenerProvider::class),
             ],
         );
     }

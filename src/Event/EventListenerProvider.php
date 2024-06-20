@@ -2,7 +2,6 @@
 
 namespace Takemo101\Chubby\Event;
 
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Takemo101\Chubby\Event\Attribute\AsEvent;
 use Closure;
 use ReflectionAttribute;
@@ -10,7 +9,7 @@ use ReflectionClass;
 use SplPriorityQueue as PriorityQueue;
 use Takemo101\Chubby\Event\Exception\EventListenerResolveException;
 
-class EventListenerProvider implements ListenerProviderInterface
+class EventListenerProvider implements ListenerProvider
 {
     public function __construct(
         private EventRegister $register,
@@ -32,31 +31,43 @@ class EventListenerProvider implements ListenerProviderInterface
 
         /** @var class-string[] */
         $eventClasses = empty($attributes)
-            ? [get_class($event)]
+            ? []
             : array_map(
                 fn (ReflectionAttribute $attribute) => $attribute->newInstance()->getAlias(),
                 $attributes,
             );
 
+        $eventClasses[] = get_class($event);
+
+        $eventClasses = array_unique($eventClasses);
+
         return $this->createListenerQueue($eventClasses);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getListeners(string $eventName): iterable
+    {
+        return $this->createListenerQueue([$eventName]);
     }
 
     /**
      * Create a queue of listeners.
      *
-     * @param class-string[] $eventClasses
+     * @param array<class-string|string> $eventNames Event names or class names
      * @return iterable<callable(object):void>
      * @throws EventListenerResolveException
      */
     private function createListenerQueue(
-        array $eventClasses,
+        array $eventNames,
     ): iterable {
 
         /** @var PriorityQueue<integer,Closure(object):void> */
         $queue = new PriorityQueue();
 
-        foreach ($eventClasses as $eventClass) {
-            $priorities = $this->register->get($eventClass);
+        foreach ($eventNames as $eventName) {
+            $priorities = $this->register->get($eventName);
 
             foreach ($priorities as $prioritized) {
 
