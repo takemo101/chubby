@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
+use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Context\RequestContext;
 use Takemo101\Chubby\Http\Context\RequestContextException;
@@ -72,8 +73,8 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         /** @var ResponseInterface */
         $hookedResponse = $this->hook->do(
-            ResponseInterface::class,
-            $transformedResponse,
+            tag: ApplicationHookTags::Http_AfterControllerExecution,
+            parameter: $transformedResponse,
         );
 
         $this->dispatcher->dispatch(
@@ -105,8 +106,8 @@ class ControllerInvoker implements InvocationStrategyInterface
 
         /** @var ServerRequestInterface */
         $hookedRequest = $this->hook->do(
-            ServerRequestInterface::class,
-            $this->injectRouteArguments($request, $routeArguments),
+            tag: ApplicationHookTags::Http_BeforeControllerExecution,
+            parameter: $this->injectRouteArguments($request, $routeArguments),
         );
 
         $this->dispatcher->dispatch(

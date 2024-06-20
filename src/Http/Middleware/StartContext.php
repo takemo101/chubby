@@ -7,10 +7,12 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Takemo101\Chubby\ApplicationHookTags;
 use Takemo101\Chubby\Context\ContextRepository;
 use Takemo101\Chubby\Hook\Hook;
 use Takemo101\Chubby\Http\Context\RequestContext;
-use Takemo101\Chubby\Http\Event\BeforeStartContext;
+use Takemo101\Chubby\Http\Event\ContextCleared;
+use Takemo101\Chubby\Http\Event\ContextCreated;
 
 /**
  * Start the request context.
@@ -49,8 +51,13 @@ class StartContext implements MiddlewareInterface
 
         $this->hook->doTyped($context);
 
+        $this->hook->do(
+            tag: ApplicationHookTags::Http_RequestContextCreated,
+            parameter: $context,
+        );
+
         $this->dispatcher->dispatch(
-            new BeforeStartContext(
+            new ContextCreated(
                 request: $request,
                 context: $context,
             ),
@@ -60,6 +67,18 @@ class StartContext implements MiddlewareInterface
 
         // Clear the context.
         $this->repository->clear();
+
+        $this->hook->do(
+            tag: ApplicationHookTags::Http_RequestContextCleared,
+            parameter: $context,
+        );
+
+        $this->dispatcher->dispatch(
+            new ContextCleared(
+                response: $response,
+                context: $context,
+            ),
+        );
 
         return $response;
     }
