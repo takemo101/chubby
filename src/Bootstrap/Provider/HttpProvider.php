@@ -82,7 +82,6 @@ class HttpProvider implements Provider
                 SlimHttp::class => function (
                     Slim $slim,
                     SlimConfigurer $configurer,
-                    EventDispatcherInterface $dispatcher,
                     Hook $hook,
                 ): SlimHttp {
                     $adapter = new SlimHttp(
