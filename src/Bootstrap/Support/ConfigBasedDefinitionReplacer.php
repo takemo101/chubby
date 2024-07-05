@@ -19,6 +19,11 @@ use Takemo101\Chubby\Hook\Hook;
 class ConfigBasedDefinitionReplacer implements DefinitionHelper
 {
     /**
+     * Configuration key for dependencies.
+     */
+    public const DependencyConfigKey = 'dependencies';
+
+    /**
      * constructor
      *
      * @param class-string $defaultClass Default class when there is no class to support entry
@@ -30,7 +35,15 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
         private readonly string $configKey,
         private readonly bool $shouldHook = false,
     ) {
-        //
+        assert(
+            class_exists($defaultClass),
+            "Default class not found: {$defaultClass}",
+        );
+
+        assert(
+            empty($configKey) !== false,
+            "Config key is empty",
+        );
     }
 
     /**
