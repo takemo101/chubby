@@ -115,4 +115,41 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
 
         return $instance;
     }
+
+    /**
+     * Generates an array of dependency definitions by specifying the default values for interfaces and their corresponding implementation classes.
+     *
+     * @param array<class-string,class-string> $defaultDependencies Default class for each entry class
+     * @param string $configKeyPrefix Configuration key prefix
+     * @param boolean $shouldHook Whether to hook the replacement process
+     * @return array<class-string,ConfigBasedDefinitionReplacer> Dependency definitions
+     */
+    public static function createDependencyDefinitions(
+        array $defaultDependencies,
+        string $configKeyPrefix,
+        bool $shouldHook = true,
+    ): array {
+
+        assert(
+            empty($configKeyPrefix) !== false,
+            "Config key prefix is empty",
+        );
+
+        /** @var array<class-string,ConfigBasedDefinitionReplacer> */
+        $definitions = [];
+
+        $dependencyConfigKey = self::DependencyConfigKey;
+
+        foreach ($defaultDependencies as $entryClass => $defaultClass) {
+            $configKey = "{$configKeyPrefix}.{$dependencyConfigKey}.{$entryClass}";
+
+            $definitions[$entryClass] = new self(
+                defaultClass: $defaultClass,
+                configKey: $configKey,
+                shouldHook: $shouldHook,
+            );
+        }
+
+        return $definitions;
+    }
 }
