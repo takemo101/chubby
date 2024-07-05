@@ -67,14 +67,6 @@ class HttpProvider implements Provider
         $definitions->add(
             [
                 InvocationStrategyInterface::class => get(ControllerInvoker::class),
-                SlimFactory::class => new ConfigBasedDefinitionReplacer(
-                    defaultClass: DefaultSlimFactory::class,
-                    configKey: 'slim.factory',
-                ),
-                SlimConfigurer::class => new ConfigBasedDefinitionReplacer(
-                    defaultClass: DefaultSlimConfigurer::class,
-                    configKey: 'slim.configurer',
-                ),
                 Slim::class => function (
                     SlimFactory $factory,
                     Hook $hook,
@@ -139,10 +131,6 @@ class HttpProvider implements Provider
 
                     return $renders;
                 },
-                ErrorHandlerInterface::class => new ConfigBasedDefinitionReplacer(
-                    configKey: 'slim.error.handler',
-                    defaultClass: ErrorHandler::class,
-                ),
                 ErrorHandler::class => function (
                     Slim $slim,
                     LoggerInterface $logger,
@@ -211,7 +199,15 @@ class HttpProvider implements Provider
                     $hook->doTyped($middlewares, true);
 
                     return $middlewares;
-                }
+                },
+                ...ConfigBasedDefinitionReplacer::createDependencyDefinitions(
+                    defaultDependencies: [
+                        SlimFactory::class => DefaultSlimFactory::class,
+                        SlimConfigurer::class => DefaultSlimConfigurer::class,
+                        ErrorHandlerInterface::class => ErrorHandler::class,
+                    ],
+                    configKeyPrefix: 'slim',
+                )
             ],
         );
     }
