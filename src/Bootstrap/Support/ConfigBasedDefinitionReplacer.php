@@ -59,7 +59,7 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
     }
 
     /**
-     * コンフィグキーに対応するインスタンスを生成するハンドラ
+     * Handler to generate an instance corresponding to the config key.
      *
      * @param ConfigRepository $config
      * @param Hook $hook
