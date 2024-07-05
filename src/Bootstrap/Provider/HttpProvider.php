@@ -200,7 +200,7 @@ class HttpProvider implements Provider
                     return $middlewares;
                 },
                 ...ConfigBasedDefinitionReplacer::createDependencyDefinitions(
-                    defaultDependencies: [
+                    dependencies: [
                         SlimFactory::class => DefaultSlimFactory::class,
                         SlimConfigurer::class => DefaultSlimConfigurer::class,
                         ErrorHandlerInterface::class => ErrorHandler::class,
