@@ -23,12 +23,12 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      *
      * @param class-string $defaultClass Default class when there is no class to support entry
      * @param string $configKey Configuration key to get the class name
-     * @param boolean $hook Whether to hook the replacement process
+     * @param boolean $shouldHook Whether to hook the replacement process
      */
     public function __construct(
         private readonly string $defaultClass,
         private readonly string $configKey,
-        private readonly bool $hook = false,
+        private readonly bool $shouldHook = false,
     ) {
         //
     }
@@ -62,7 +62,6 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      * Handler to generate an instance corresponding to the config key.
      *
      * @param ConfigRepository $config
-     * @param Hook $hook
      * @param ContainerInterface $container
      * @param RequestedEntry $entry
      * @return T
@@ -70,7 +69,6 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      */
     public function __invoke(
         ConfigRepository $config,
-        Hook $hook,
         ContainerInterface $container,
         RequestedEntry $entry,
     ): object {
@@ -94,7 +92,7 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
             );
         }
 
-        if ($this->hook) {
+        if ($this->shouldHook) {
             /** @var Hook */
             $hook = $container->get(Hook::class);
 
