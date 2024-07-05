@@ -41,8 +41,8 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
         );
 
         assert(
-            empty($configKey) !== false,
-            "Config key is empty",
+            empty($configKey) === false,
+            'Config key is empty'
         );
     }
 
@@ -131,7 +131,7 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
     ): array {
 
         assert(
-            empty($configKeyPrefix) !== false,
+            empty($configKeyPrefix) === false,
             "Config key prefix is empty",
         );
 
