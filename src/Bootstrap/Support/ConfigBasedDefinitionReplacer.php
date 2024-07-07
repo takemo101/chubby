@@ -31,9 +31,9 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      * @param boolean $shouldHook Whether to hook the replacement process
      */
     public function __construct(
-        private readonly string $defaultClass,
-        private readonly string $configKey,
-        private readonly bool $shouldHook = false,
+        public readonly string $defaultClass,
+        public readonly string $configKey,
+        public readonly bool $shouldHook = false,
     ) {
         assert(
             class_exists($defaultClass),
