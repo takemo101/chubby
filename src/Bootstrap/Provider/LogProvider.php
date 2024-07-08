@@ -21,6 +21,7 @@ use Takemo101\Chubby\Log\LoggerHandlerFactoryCollection;
 use Takemo101\Chubby\Log\LoggerHandlerFactoryResolver;
 use Takemo101\Chubby\Log\LoggerProcessorCollection;
 use Takemo101\Chubby\Log\LoggerProcessorResolver;
+use Takemo101\Chubby\Support\ApplicationPath;
 
 use function DI\get;
 
@@ -125,6 +126,24 @@ class LogProvider implements Provider
                     ignoreEmptyContextAndExtra: true,
                     includeStacktraces: true,
                 ),
+                // This factory class ensures that it is always used as a default when the config file does not exist
+                FileHandlerFactory::class => function (
+                    ApplicationPath $path,
+                    ConfigRepository $config,
+                ) {
+                    /** @var string */
+                    $path = $config->get('config.log.file.path', $path->getStoragePath('logs'));
+                    /** @var string */
+                    $filename = $config->get('config.log.file.filename', 'error.log');
+                    /** @var integer */
+                    $permission = $config->get('config.log.file.permission', 0777);
+
+                    return new FileHandlerFactory(
+                        path: $path,
+                        filename: $filename,
+                        permission: $permission,
+                    );
+                },
             ],
         );
     }
