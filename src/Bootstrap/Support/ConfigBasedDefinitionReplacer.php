@@ -14,23 +14,37 @@ use Takemo101\Chubby\Hook\Hook;
 /**
  * Resolves dependencies by replacing DI definitions based on the configuration file.
  *
- * @template T of object
+ * @template TBase of object
+ * @template TDef of TBase
  */
 class ConfigBasedDefinitionReplacer implements DefinitionHelper
 {
     /**
+     * Configuration key for dependencies.
+     */
+    public const DependencyConfigKey = 'dependencies';
+
+    /**
      * constructor
      *
-     * @param class-string $defaultClass Default class when there is no class to support entry
+     * @param class-string<TDef> $defaultClass Default class when there is no class to support entry
      * @param string $configKey Configuration key to get the class name
-     * @param boolean $hook Whether to hook the replacement process
+     * @param boolean $shouldHook Whether to hook the replacement process
      */
     public function __construct(
-        private readonly string $defaultClass,
-        private readonly string $configKey,
-        private readonly bool $hook = false,
+        public readonly string $defaultClass,
+        public readonly string $configKey,
+        public readonly bool $shouldHook = false,
     ) {
-        //
+        assert(
+            class_exists($defaultClass),
+            "Default class not found: {$defaultClass}",
+        );
+
+        assert(
+            empty($configKey) === false,
+            'Config key is empty'
+        );
     }
 
     /**
@@ -38,7 +52,7 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      *
      * The entry name for this method must be a class name or an interface name.
      *
-     * @param class-string<T> $entryName Container entry class name
+     * @param class-string<TBase> $entryName Container entry class name
      * @return Definition
      * @throws InvalidArgumentException
      */
@@ -59,32 +73,30 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
     }
 
     /**
-     * コンフィグキーに対応するインスタンスを生成するハンドラ
+     * Handler to generate an instance corresponding to the config key.
      *
      * @param ConfigRepository $config
-     * @param Hook $hook
      * @param ContainerInterface $container
      * @param RequestedEntry $entry
-     * @return T
+     * @return TBase
      * @throws DependencySupportException
      */
     public function __invoke(
         ConfigRepository $config,
-        Hook $hook,
         ContainerInterface $container,
         RequestedEntry $entry,
     ): object {
 
-        /** @var class-string<T> */
+        /** @var class-string<TBase> */
         $entryClass = $entry->getName();
 
-        /** @var class-string<T> */
+        /** @var class-string<TBase> */
         $class = $config->get(
             $this->configKey,
             $this->defaultClass,
         );
 
-        /** @var T */
+        /** @var TBase */
         $instance = $container->get($class);
 
         if (!($instance instanceof $entryClass)) {
@@ -94,14 +106,57 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
             );
         }
 
-        if ($this->hook) {
+        if ($this->shouldHook) {
             /** @var Hook */
             $hook = $container->get(Hook::class);
 
-            /** @var T */
+            /** @var TBase */
             $instance = $hook->do($entryClass, $instance);
         }
 
         return $instance;
+    }
+
+    /**
+     * Generates an array of dependency definitions by specifying the default values for interfaces and their corresponding implementation classes.
+     *
+     * @template B of object
+     * @template D of B
+     *
+     * @param array<class-string<B>,class-string<D>> $dependencies Default class for each entry class
+     * @param string $configKeyPrefix Configuration key prefix
+     * @param boolean $shouldHook Whether to hook the replacement process
+     * @return array<class-string<B>,self<B,D>> Dependency definitions
+     */
+    public static function createDependencyDefinitions(
+        array $dependencies,
+        string $configKeyPrefix,
+        bool $shouldHook = true,
+    ): array {
+
+        assert(
+            empty($configKeyPrefix) === false,
+            "Config key prefix is empty",
+        );
+
+        /** @var array<class-string<B>,self<B,D>> */
+        $definitions = [];
+
+        $dependencyConfigKey = self::DependencyConfigKey;
+
+        foreach ($dependencies as $entryClass => $defaultClass) {
+            $configKey = "{$configKeyPrefix}.{$dependencyConfigKey}.{$entryClass}";
+
+            /** @var self<B,D> */
+            $replacer = new self(
+                defaultClass: $defaultClass,
+                configKey: $configKey,
+                shouldHook: $shouldHook,
+            );
+
+            $definitions[$entryClass] = $replacer;
+        }
+
+        return $definitions;
     }
 }
