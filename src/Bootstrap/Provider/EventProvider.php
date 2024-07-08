@@ -63,15 +63,14 @@ class EventProvider implements Provider
 
                     return $dispatcher;
                 },
-                SymfonyEventDispatcherInterface::class => new ConfigBasedDefinitionReplacer(
-                    defaultClass: EventDispatcher::class,
-                    configKey: 'event.dispatcher',
-                ),
-                ListenerProvider::class => new ConfigBasedDefinitionReplacer(
-                    defaultClass: EventListenerProvider::class,
-                    configKey: 'event.provider',
-                ),
                 ListenerProviderInterface::class => get(ListenerProvider::class),
+                ...ConfigBasedDefinitionReplacer::createDependencyDefinitions(
+                    dependencies: [
+                        SymfonyEventDispatcherInterface::class => EventDispatcher::class,
+                        ListenerProvider::class => EventListenerProvider::class,
+                    ],
+                    configKeyPrefix: 'event',
+                )
             ],
         );
     }

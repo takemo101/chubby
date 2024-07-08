@@ -25,4 +25,11 @@ return [
     'middlewares' => [
         // class-string<MiddlewareInterface>
     ],
+
+    // This configuration is used to modify the dependencies for Slim.
+    'dependencies' => [
+        // Takemo101\Chubby\Http\Factory\SlimFactory::class => ImplSlimFactory::class,
+        // Takemo101\Chubby\Http\Configurer\SlimConfigurer::class => ImplSlimConfigurer::class,
+        // Slim\Interfaces\ErrorHandlerInterface::class => ImplErrorHandler::class,
+    ],
 ];
