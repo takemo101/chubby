@@ -126,6 +126,7 @@ class LogProvider implements Provider
                     ignoreEmptyContextAndExtra: true,
                     includeStacktraces: true,
                 ),
+                // This factory class ensures that it is always used as a default when the config file does not exist
                 FileHandlerFactory::class => function (
                     ApplicationPath $path,
                     ConfigRepository $config,
