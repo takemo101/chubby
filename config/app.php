@@ -22,5 +22,9 @@ return [
     'timezone' => 'Asia/Tokyo',
 
     // Built-in server flag
-    'built_in_server' => (bool) env(ServeCommand::BuiltInServerEnvironment, false),
+    'built_in_server' => (bool) env(
+        ServeCommand::BuiltInServerEnvironment,
+        // If the server is running in the command line, it is a built-in server
+        php_sapi_name() === 'cli-server'
+    ),
 ];
