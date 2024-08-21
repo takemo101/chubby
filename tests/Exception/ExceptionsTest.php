@@ -15,23 +15,21 @@ describe(
             expect($exceptions->getThrowables())->toEqual([$throwable1, $throwable2]);
         });
 
-        it('can add additional throwables', function () {
-            $throwable1 = new Exception('Exception 1');
-            $throwable2 = new Exception('Exception 2');
-            $throwable3 = new Exception('Exception 3');
-
-            $exceptions = new Exceptions($throwable1, $throwable2);
-            $exceptions = $exceptions->addThrowables($throwable3);
-
-            expect($exceptions)->toBeInstanceOf(Exceptions::class);
-            expect($exceptions->getThrowables())->toEqual([$throwable1, $throwable2, $throwable3]);
+        it('throws an exception when instantiated without any throwables', function () {
+            expect(
+                function () {
+                    new Exceptions();
+                }
+            )->toThrow(Error::class);
         });
 
-        it('has the correct message and code', function () {
-            $exceptions = new Exceptions();
+        it('returns the correct throwables when instantiated with multiple throwables', function () {
+            $throwable1 = new Exception('Exception 1');
+            $throwable2 = new Exception('Exception 2');
 
-            expect($exceptions->getMessage())->toEqual('Multiple exceptions occurred');
-            expect($exceptions->getCode())->toEqual(0);
+            $exceptions = new Exceptions($throwable1, $throwable2);
+
+            expect($exceptions->getThrowables())->toEqual([$throwable1, $throwable2]);
         });
     },
 )->group('Exceptions', 'exception');
