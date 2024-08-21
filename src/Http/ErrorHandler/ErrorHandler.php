@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpException;
 use Slim\Interfaces\ErrorHandlerInterface;
+use Takemo101\Chubby\Contract\Throwables;
 use Takemo101\Chubby\Http\Renderer\ResponseRenderer;
 use Takemo101\Chubby\Http\ResponseTransformer\ResponseTransformers;
 use Throwable;
@@ -173,20 +174,30 @@ class ErrorHandler implements ErrorHandlerInterface
         ServerRequestInterface $request,
         Throwable $exception,
     ): void {
-        foreach (self::IgnornReportExceptions as $ignornReportException) {
+        foreach (static::IgnornReportExceptions as $ignornReportException) {
             if ($exception instanceof $ignornReportException) {
                 return;
             }
         }
 
-        $this->logger->error(
-            $exception->getMessage(),
-            [
-                'exception' => $exception,
-                'method' => $request->getMethod(),
-                'url' => (string) $request->getUri(),
-            ],
-        );
+        // If exception is Throwables, output all exceptions.
+        $exceptions = $exception instanceof Throwables
+            ? [
+                $exception,
+                ...$exception->getThrowables(),
+            ]
+            : [$exception];
+
+        foreach ($exceptions as $exception) {
+            $this->logger->error(
+                $exception->getMessage(),
+                [
+                    'exception' => $exception,
+                    'method' => $request->getMethod(),
+                    'url' => (string) $request->getUri(),
+                ],
+            );
+        }
     }
 
     /**
