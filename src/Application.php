@@ -162,14 +162,14 @@ class Application implements ApplicationContainer
                         builtInServer: $builtInServer,
                     );
                 },
-                ApplicationUri::class => fn(
+                ApplicationUri::class => fn (
                     ApplicationSummary $summary,
                 ) => $summary->getUri()->copy(),
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                PathHelper::class => fn() => $pathHelper,
+                PathHelper::class => fn () => $pathHelper,
                 LocalFilesystem::class => $filesystem,
                 MimeTypeGuesser::class => $mimeTypeGuesser,
                 MimeTypes::class => $mimeTypes,

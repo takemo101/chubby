@@ -98,7 +98,7 @@ class ServeCommand extends Command
             self::BuiltInServerEnvironment => true,
             'APP_BASE_PATH' => $path->getBasePath(),
             ...collect($_ENV)->mapWithKeys(
-                fn($value, $key) => [$key => $value],
+                fn ($value, $key) => [$key => $value],
             )->all(),
         ];
 
