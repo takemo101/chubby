@@ -45,12 +45,12 @@ class ClockProvider implements Provider
                     Hook $hook,
                 ) {
                     /** @var Clock */
-                    $hooked = $hook->do(
+                    $clock = $hook->do(
                         tag: Clock::class,
                         parameter: $clock,
                     );
 
-                    return $hooked;
+                    return $clock;
                 },
                 PsrClockInterface::class => get(Clock::class),
             ],
