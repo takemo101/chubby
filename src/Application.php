@@ -23,6 +23,7 @@ use Takemo101\Chubby\Bootstrap\Provider\EnvironmentProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Bootstrap\Provider\BootStartProvider;
+use Takemo101\Chubby\Bootstrap\Provider\ClockProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ContextProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
@@ -125,6 +126,7 @@ class Application implements ApplicationContainer
                 envAccessor: $envAccessor,
             ),
             new ErrorProvider(),
+            new ClockProvider(),
             new EventProvider(),
             new ConfigProvider(),
             new LogProvider(),
@@ -160,14 +162,14 @@ class Application implements ApplicationContainer
                         builtInServer: $builtInServer,
                     );
                 },
-                ApplicationUri::class => fn (
+                ApplicationUri::class => fn(
                     ApplicationSummary $summary,
                 ) => $summary->getUri()->copy(),
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                PathHelper::class => fn () => $pathHelper,
+                PathHelper::class => fn() => $pathHelper,
                 LocalFilesystem::class => $filesystem,
                 MimeTypeGuesser::class => $mimeTypeGuesser,
                 MimeTypes::class => $mimeTypes,
