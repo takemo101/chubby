@@ -13,8 +13,6 @@ use Throwable;
  */
 class Exceptions extends Exception implements Throwables
 {
-    public const Message = 'Multiple exceptions occurred';
-
     public const Code = 0;
 
     /**
@@ -25,30 +23,23 @@ class Exceptions extends Exception implements Throwables
     /**
      * constructor
      *
-     * @param Throwable ...$throwables
+     * @param Throwable ...$throwables The exceptions that occurred.
      */
     final public function __construct(
         Throwable ...$throwables
     ) {
+        $errorCount = count($throwables);
+
+        assert(
+            $errorCount > 0,
+            'At least one exception must be specified.',
+        );
+
         $this->throwables = $throwables;
 
         parent::__construct(
-            message: static::Message,
+            message: "Multiple exceptions occurred: {$errorCount} errors.",
             code: static::Code,
-        );
-    }
-
-    /**
-     * Add throwable objects.
-     *
-     * @param Throwable ...$throwables
-     * @return static
-     */
-    public function addThrowables(Throwable ...$throwables): static
-    {
-        return new static(
-            ...$this->throwables,
-            ...$throwables,
         );
     }
 
