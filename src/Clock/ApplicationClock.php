@@ -17,7 +17,7 @@ class ApplicationClock implements Clock
      *
      * @param DateTimeZone $timezone
      */
-    public function __construct(
+    final public function __construct(
         private readonly DateTimeZone $timezone,
     ) {
         //
@@ -34,6 +34,22 @@ class ApplicationClock implements Clock
     /**
      * {@inheritDoc}
      */
+    public function withTimezone(DateTimeZone $timezone): static
+    {
+        return new static($timezone);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTimezone(): DateTimeZone
+    {
+        return $this->timezone;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function __toString(): string
     {
         return $this->now()->format(static::Format);
@@ -43,10 +59,10 @@ class ApplicationClock implements Clock
      * Create a new instance from the specified timezone.
      *
      * @param string $timezone
-     * @return self
+     * @return static
      */
-    public static function fromTimezoneString(string $timezone = 'UTC'): self
+    public static function fromTimezoneString(string $timezone = 'UTC'): static
     {
-        return new self(new DateTimeZone($timezone));
+        return new static(new DateTimeZone($timezone));
     }
 }
