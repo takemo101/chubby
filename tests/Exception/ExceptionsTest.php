@@ -18,7 +18,7 @@ describe(
 
         it('throws an exception when instantiated without any throwables', function () {
 
-            ini_set('assert.exception', '1');
+            ini_set('zend.assertions', 1);
 
             expect(
                 function () {
