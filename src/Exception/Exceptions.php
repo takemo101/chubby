@@ -14,6 +14,8 @@ use Throwable;
  */
 class Exceptions extends Exception implements Throwables
 {
+    public const Message = 'Multiple exceptions occurred';
+
     public const Code = 0;
 
     /**
@@ -38,8 +40,10 @@ class Exceptions extends Exception implements Throwables
 
         $this->throwables = $throwables;
 
+        $message = static::Message;
+
         parent::__construct(
-            message: "Multiple exceptions occurred: {$errorCount} errors.",
+            message: "{$message}: {$errorCount} errors.",
             code: static::Code,
         );
     }
