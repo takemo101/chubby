@@ -2,30 +2,28 @@
 
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Event\StoppableEvent;
-use Mockery as m;
 use Takemo101\Chubby\Event\ListenerProvider;
+use Mockery as m;
+use Takemo101\Chubby\Event\Exception\EventListenerHandlingExceptions;
 
 describe(
     'EventDispatcher',
     function () {
-
         beforeEach(function () {
             $this->provider = m::mock(ListenerProvider::class);
             $this->dispatcher = new EventDispatcher($this->provider);
         });
 
-        it('should dispatch event to listeners', function () {
+        it('should dispatch event to listeners and return the event object', function () {
             $event = new stdClass();
 
-            $listener1 = new class
-            {
+            $listener1 = new class {
                 public function __invoke(stdClass $event)
                 {
                     //
                 }
             };
-            $listener2 = new class
-            {
+            $listener2 = new class {
                 public function __invoke(stdClass $event)
                 {
                     //
@@ -42,17 +40,15 @@ describe(
             expect($actual)->toBe($event);
         });
 
-        it('should dispatch event to listeners with event name', function () {
+        it('should dispatch event to listeners with event name and return the event object', function () {
             $event = new stdClass();
-            $listener1 = new class
-            {
+            $listener1 = new class {
                 public function __invoke(stdClass $event)
                 {
                     //
                 }
             };
-            $listener2 = new class
-            {
+            $listener2 = new class {
                 public function __invoke(stdClass $event)
                 {
                     //
@@ -67,20 +63,18 @@ describe(
             expect($actual)->toBe($event);
         });
 
-        it('should stop propagation if event is stoppable', function () {
-            $event = new class() extends StoppableEvent
-            {
+        it('should stop propagation if event is stoppable and return the event object', function () {
+            $event = new class() extends StoppableEvent {
                 //
             };
 
-            $listener1 = new class
-            {
+            $listener1 = new class {
                 public function __invoke(StoppableEvent $event)
                 {
                     $event->stopPropagation();
                 }
             };
-            $listener2 =  m::mock(EventDispatcherTestListener::class);
+            $listener2 = m::mock(EventDispatcherTestListener::class);
 
             $this->provider->shouldReceive('getListenersForEvent')
                 ->once()
@@ -94,13 +88,11 @@ describe(
             expect($actual)->toBe($event);
         });
 
-        it('should stop propagation if event is stoppable with event name', function () {
-            $event = new class() extends StoppableEvent
-            {
+        it('should stop propagation if event is stoppable with event name and return the event object', function () {
+            $event = new class() extends StoppableEvent {
                 //
             };
-            $listener1 = new class
-            {
+            $listener1 = new class {
                 public function __invoke(StoppableEvent $event)
                 {
                     $event->stopPropagation();
@@ -115,6 +107,32 @@ describe(
             $listener2->shouldNotReceive('__invoke');
             $actual = $this->dispatcher->dispatch($event, 'event.name');
             expect($actual)->toBe($event);
+        });
+
+        it('should throw an exception if an exception occurs during listener call', function () {
+            $event = new stdClass();
+            $listener1 = new class {
+                public function __invoke(stdClass $event)
+                {
+                    throw new Exception('Listener 1 exception');
+                }
+            };
+            $listener2 = new class {
+                public function __invoke(stdClass $event)
+                {
+                    //
+                }
+            };
+            $this->provider->shouldReceive('getListenersForEvent')
+                ->once()
+                ->with($event)
+                ->andReturn([$listener1, $listener2]);
+
+            expect(
+                function () use ($event) {
+                    $this->dispatcher->dispatch($event);
+                }
+            )->toThrow(EventListenerHandlingExceptions::class);
         });
     }
 )->group('EventDispatcher', 'event');

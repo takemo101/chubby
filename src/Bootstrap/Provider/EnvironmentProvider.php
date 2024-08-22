@@ -8,6 +8,7 @@ use Dotenv\Exception\InvalidPathException;
 use Dotenv\Repository\Adapter\PutenvAdapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Dotenv\Repository\RepositoryInterface;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Takemo101\Chubby\ApplicationContainer;
 use Takemo101\Chubby\Bootstrap\Definitions;
@@ -147,13 +148,13 @@ class EnvironmentProvider implements Provider
      *
      * @param string ...$paths
      * @return self
+     * @throws InvalidArgumentException If no path is set.
      */
     public function setDotenvPath(string ...$paths): self
     {
-        assert(
-            !empty($paths),
-            'EnvironmentProvider requires at least one path.'
-        );
+        if (empty($paths) === true) {
+            throw new InvalidArgumentException('EnvironmentProvider requires at least one path.');
+        }
 
         $this->paths = $paths;
 

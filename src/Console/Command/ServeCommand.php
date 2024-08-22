@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Takemo101\Chubby\Support\Environment;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Takemo101\Chubby\Clock\Clock;
 use Takemo101\Chubby\Filesystem\LocalFilesystem;
 use Takemo101\Chubby\Support\ApplicationPath;
 
@@ -84,6 +85,7 @@ class ServeCommand extends Command
         InputInterface $input,
         OutputInterface $output,
         ApplicationPath $path,
+        Clock $clock,
     ) {
         /** @var string */
         $port = $input->getOption('port');
@@ -115,8 +117,9 @@ class ServeCommand extends Command
         $workers = env('PHP_CLI_SERVER_WORKERS', 1);
 
         $process->start(new ServeProcessOutputHandler(
-            $output,
-            $workers > 1,
+            output: $output,
+            isEnabledCliServerWorkers: $workers > 1,
+            startedAt: $clock->now(),
         ));
 
         while ($process->isRunning()) {

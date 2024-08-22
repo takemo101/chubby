@@ -23,6 +23,7 @@ use Takemo101\Chubby\Bootstrap\Provider\EnvironmentProvider;
 use Takemo101\Chubby\Bootstrap\Provider\Provider;
 use Takemo101\Chubby\Support\ApplicationPath;
 use Takemo101\Chubby\Bootstrap\Provider\BootStartProvider;
+use Takemo101\Chubby\Bootstrap\Provider\ClockProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ConfigProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ContextProvider;
 use Takemo101\Chubby\Bootstrap\Provider\ErrorProvider;
@@ -52,7 +53,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.1.7';
+    public const Version = '0.1.8';
 
     /**
      * @var Container|null
@@ -125,6 +126,7 @@ class Application implements ApplicationContainer
                 envAccessor: $envAccessor,
             ),
             new ErrorProvider(),
+            new ClockProvider(),
             new EventProvider(),
             new ConfigProvider(),
             new LogProvider(),

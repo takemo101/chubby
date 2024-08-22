@@ -30,21 +30,20 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      * @param class-string<TDef> $defaultClass Default class when there is no class to support entry
      * @param string $configKey Configuration key to get the class name
      * @param boolean $shouldHook Whether to hook the replacement process
+     * @throws InvalidArgumentException If the default class is not found or the config key is empty
      */
     public function __construct(
         public readonly string $defaultClass,
         public readonly string $configKey,
         public readonly bool $shouldHook = false,
     ) {
-        assert(
-            class_exists($defaultClass),
-            "Default class not found: {$defaultClass}",
-        );
+        if (class_exists($defaultClass) === false) {
+            throw new InvalidArgumentException("Default class not found: {$defaultClass}");
+        }
 
-        assert(
-            empty($configKey) === false,
-            'Config key is empty'
-        );
+        if (empty($configKey) === true) {
+            throw new InvalidArgumentException("Config key is empty.");
+        }
     }
 
     /**
@@ -127,6 +126,7 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
      * @param string $configKeyPrefix Configuration key prefix
      * @param boolean $shouldHook Whether to hook the replacement process
      * @return array<class-string<B>,self<B,D>> Dependency definitions
+     * @throws InvalidArgumentException
      */
     public static function createDependencyDefinitions(
         array $dependencies,
@@ -134,10 +134,9 @@ class ConfigBasedDefinitionReplacer implements DefinitionHelper
         bool $shouldHook = true,
     ): array {
 
-        assert(
-            empty($configKeyPrefix) === false,
-            "Config key prefix is empty",
-        );
+        if (empty($configKeyPrefix) === true) {
+            throw new InvalidArgumentException('Config key prefix is empty');
+        }
 
         /** @var array<class-string<B>,self<B,D>> */
         $definitions = [];
