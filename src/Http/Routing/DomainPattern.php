@@ -13,21 +13,20 @@ readonly class DomainPattern
      * constructor
      *
      * @param string $pattern
+     * @throws InvalidArgumentException If the pattern is empty or contains a slash.
      */
     public function __construct(
         public string $pattern
     ) {
         // The pattern must not contain a slash.
-        assert(
-            !empty($pattern),
-            'The pattern is empty.'
-        );
+        if (empty($pattern) === true) {
+            throw new InvalidArgumentException('The pattern must not be empty.');
+        }
 
         // The pattern must not contain a slash.
-        assert(
-            strpos($pattern, '/') === false,
-            'The pattern must not contain a slash.'
-        );
+        if (strpos($pattern, '/') !== false) {
+            throw new InvalidArgumentException('The pattern must not contain a slash.');
+        }
     }
 
     /**

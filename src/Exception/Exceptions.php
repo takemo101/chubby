@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Exception;
 
 use Takemo101\Chubby\Contract\Throwables;
 use Exception;
+use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -24,16 +25,16 @@ class Exceptions extends Exception implements Throwables
      * constructor
      *
      * @param Throwable ...$throwables The exceptions that occurred.
+     * @throws InvalidArgumentException If no exceptions were provided.
      */
     final public function __construct(
         Throwable ...$throwables
     ) {
         $errorCount = count($throwables);
 
-        assert(
-            $errorCount > 0,
-            'At least one exception must be specified.',
-        );
+        if ($errorCount === 0) {
+            throw new InvalidArgumentException('No exceptions were provided.');
+        }
 
         $this->throwables = $throwables;
 

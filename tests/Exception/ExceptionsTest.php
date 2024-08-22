@@ -17,14 +17,11 @@ describe(
         });
 
         it('throws an exception when instantiated without any throwables', function () {
-
-            ini_set('zend.assertions', 1);
-
             expect(
                 function () {
                     new Exceptions();
                 }
-            )->toThrow(AssertionError::class);
+            )->toThrow(InvalidArgumentException::class);
         });
 
         it('returns the correct throwables when instantiated with multiple throwables', function () {
