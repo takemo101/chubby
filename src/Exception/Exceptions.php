@@ -4,7 +4,6 @@ namespace Takemo101\Chubby\Exception;
 
 use Takemo101\Chubby\Contract\Throwables;
 use Exception;
-use InvalidArgumentException;
 use Throwable;
 
 /**

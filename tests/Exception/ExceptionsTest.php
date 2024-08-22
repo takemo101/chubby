@@ -24,7 +24,7 @@ describe(
                 function () {
                     new Exceptions();
                 }
-            )->toThrow(Error::class);
+            )->toThrow(AssertionError::class);
         });
 
         it('returns the correct throwables when instantiated with multiple throwables', function () {
