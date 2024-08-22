@@ -53,7 +53,7 @@ class Application implements ApplicationContainer
     /**
      * @var string
      */
-    public const Version = '0.1.7';
+    public const Version = '0.1.8';
 
     /**
      * @var Container|null
@@ -162,14 +162,14 @@ class Application implements ApplicationContainer
                         builtInServer: $builtInServer,
                     );
                 },
-                ApplicationUri::class => fn (
+                ApplicationUri::class => fn(
                     ApplicationSummary $summary,
                 ) => $summary->getUri()->copy(),
                 ApplicationContainer::class => get(Application::class),
                 ContainerInterface::class => get(Application::class),
                 InvokerInterface::class => get(Application::class),
                 FactoryInterface::class => get(Application::class),
-                PathHelper::class => fn () => $pathHelper,
+                PathHelper::class => fn() => $pathHelper,
                 LocalFilesystem::class => $filesystem,
                 MimeTypeGuesser::class => $mimeTypeGuesser,
                 MimeTypes::class => $mimeTypes,
