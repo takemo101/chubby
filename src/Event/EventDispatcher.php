@@ -4,7 +4,7 @@ namespace Takemo101\Chubby\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
-use Takemo101\Chubby\Exception\Exceptions;
+use Takemo101\Chubby\Event\Exception\EventListenerHandlingExceptions;
 use Throwable;
 
 class EventDispatcher implements SymfonyEventDispatcherInterface
@@ -23,7 +23,7 @@ class EventDispatcher implements SymfonyEventDispatcherInterface
     /**
      * {@inheritDoc}
      *
-     * @throws Exceptions
+     * @throws EventListenerHandlingExceptions
      */
     public function dispatch(object $event, ?string $eventName = null): object
     {
@@ -47,9 +47,9 @@ class EventDispatcher implements SymfonyEventDispatcherInterface
      *
      * @param iterable<callable> $listeners
      * @param object $event
-     * @return Exceptions|null
+     * @return EventListenerHandlingExceptions|null
      */
-    private function handleListeners(iterable $listeners, object $event): ?Exceptions
+    private function handleListeners(iterable $listeners, object $event): ?EventListenerHandlingExceptions
     {
         $throwables = [];
 
@@ -68,8 +68,6 @@ class EventDispatcher implements SymfonyEventDispatcherInterface
             }
         }
 
-        return empty($throwables) === false
-            ? new Exceptions(...$throwables)
-            : null;
+        return EventListenerHandlingExceptions::createIfNotEmpty(...$throwables);
     }
 }
