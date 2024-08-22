@@ -4,6 +4,7 @@ namespace Takemo101\Chubby\Exception;
 
 use Takemo101\Chubby\Contract\Throwables;
 use Exception;
+use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -32,7 +33,7 @@ class Exceptions extends Exception implements Throwables
 
         assert(
             $errorCount > 0,
-            'At least one exception must be specified.',
+            new InvalidArgumentException('At least one exception must be specified.'),
         );
 
         $this->throwables = $throwables;
