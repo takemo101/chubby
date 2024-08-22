@@ -33,7 +33,7 @@ class Exceptions extends Exception implements Throwables
 
         assert(
             $errorCount > 0,
-            new InvalidArgumentException('At least one exception must be specified.'),
+            'At least one exception must be specified.',
         );
 
         $this->throwables = $throwables;

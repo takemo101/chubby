@@ -5,6 +5,7 @@ use Takemo101\Chubby\Exception\Exceptions;
 describe(
     'Exceptions',
     function () {
+
         it('can be instantiated with multiple throwables', function () {
             $throwable1 = new Exception('Exception 1');
             $throwable2 = new Exception('Exception 2');
@@ -16,11 +17,14 @@ describe(
         });
 
         it('throws an exception when instantiated without any throwables', function () {
+
+            ini_set('assert.exception', '1');
+
             expect(
                 function () {
                     new Exceptions();
                 }
-            )->toThrow(InvalidArgumentException::class);
+            )->toThrow(Error::class);
         });
 
         it('returns the correct throwables when instantiated with multiple throwables', function () {
