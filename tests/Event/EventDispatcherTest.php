@@ -3,8 +3,8 @@
 use Takemo101\Chubby\Event\EventDispatcher;
 use Takemo101\Chubby\Event\StoppableEvent;
 use Takemo101\Chubby\Event\ListenerProvider;
-use Takemo101\Chubby\Exception\Exceptions;
 use Mockery as m;
+use Takemo101\Chubby\Event\Exception\EventListenerHandlingExceptions;
 
 describe(
     'EventDispatcher',
@@ -132,7 +132,7 @@ describe(
                 function () use ($event) {
                     $this->dispatcher->dispatch($event);
                 }
-            )->toThrow(Exceptions::class, 'Multiple exceptions occurred: 1 errors.');
+            )->toThrow(EventListenerHandlingExceptions::class);
         });
     }
 )->group('EventDispatcher', 'event');
